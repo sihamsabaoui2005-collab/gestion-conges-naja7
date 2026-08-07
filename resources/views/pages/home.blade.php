@@ -74,7 +74,7 @@
 
   .eyebrow{display:inline-flex; align-items:center; gap:8px; background:rgba(56,189,248,.12); color:var(--orange); font-weight:600; font-size:12.5px; padding:7px 16px; border-radius:50px; margin-bottom:16px; width:fit-content;}
   .eyebrow i{width:13px; height:13px;}
-  .hero-left h1{font-size:36px; font-weight:700; line-height:1.25; margin-bottom:14px; color:#fff;}
+  .hero-left h1{font-size:48px; font-weight:700; line-height:1.2; margin-bottom:14px; color:#fff;}
   .hero-left h1 span{color:var(--orange);}
   .hero-left p.lead{color:#94A3B8; font-size:14.5px; line-height:1.7; margin-bottom:24px; max-width:420px;}
 
@@ -274,8 +274,6 @@
     <div class="hero-row">
       <div class="hero-left">
         <h1>Gérez les congés <span>en toute simplicité</span></h1>
-        <p class="lead">Une solution complète pour les demandes de congés, l'approbation par les RH et le suivi des soldes en temps réel.</p>
-
         <div class="feature-list">
           <div class="feature-item"><span class="ico ico-blue"><i data-lucide="calendar" style="width:18px;height:18px;" stroke-width="2.5"></i></span><div><b>Demandes faciles</b><span>Soumettez vos congés en quelques clics.</span></div></div>
           <div class="feature-item"><span class="ico ico-green"><i data-lucide="check" style="width:18px;height:18px;" stroke-width="2.5"></i></span><div><b>Validation rapide</b><span>Les RH approuvent en un instant.</span></div></div>
