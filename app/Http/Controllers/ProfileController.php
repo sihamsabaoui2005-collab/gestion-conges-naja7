@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -30,6 +31,21 @@ class ProfileController extends Controller
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
+        }
+
+        // Photo de profil (champ optionnel, ajouté séparément du reste du formulaire)
+        if ($request->hasFile('photo')) {
+            $request->validate([
+                'photo' => ['image', 'max:2048'], // 2 Mo max
+            ]);
+
+            // Supprime l'ancienne photo si elle existe
+            if ($request->user()->photo_path) {
+                Storage::disk('public')->delete($request->user()->photo_path);
+            }
+
+            $chemin = $request->file('photo')->store('avatars', 'public');
+            $request->user()->photo_path = $chemin;
         }
 
         $request->user()->save();
