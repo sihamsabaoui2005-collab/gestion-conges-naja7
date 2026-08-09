@@ -274,6 +274,7 @@
     <div class="hero-row">
       <div class="hero-left">
         <h1>Gérez les congés <span>en toute simplicité</span></h1>
+
         <div class="feature-list">
           <div class="feature-item"><span class="ico ico-blue"><i data-lucide="calendar" style="width:18px;height:18px;" stroke-width="2.5"></i></span><div><b>Demandes faciles</b><span>Soumettez vos congés en quelques clics.</span></div></div>
           <div class="feature-item"><span class="ico ico-green"><i data-lucide="check" style="width:18px;height:18px;" stroke-width="2.5"></i></span><div><b>Validation rapide</b><span>Les RH approuvent en un instant.</span></div></div>
@@ -389,25 +390,34 @@
     <h2>Connexion à votre compte</h2>
     <p class="sub">Accédez à votre espace personnel</p>
 
-    <form id="loginForm">
+    @if ($errors->any())
+      <div style="background:#FEE2E2; color:#991B1B; font-size:12.5px; font-weight:600; padding:10px 14px; border-radius:10px; margin-bottom:16px; text-align:left;">
+        @foreach ($errors->all() as $error)
+          {{ $error }}
+        @endforeach
+      </div>
+    @endif
+
+    <form id="loginForm" method="POST" action="{{ route('login') }}">
+      @csrf
       <div class="field">
         <label>Email</label>
         <div class="input-wrap">
-          <input type="email" placeholder="exemple@entreprise.com" required>
+          <input type="email" name="email" placeholder="exemple@entreprise.com" required>
           <i data-lucide="mail" class="field-ico"></i>
         </div>
       </div>
       <div class="field">
         <label>Mot de passe</label>
         <div class="input-wrap">
-          <input type="password" id="loginPassword" placeholder="Votre mot de passe" required>
+          <input type="password" name="password" id="loginPassword" placeholder="Votre mot de passe" required>
           <i data-lucide="eye" class="field-ico" id="togglePassword" style="cursor:pointer;"></i>
         </div>
       </div>
 
       <div class="modal-row-between">
-        <label class="remember"><input type="checkbox"> Se souvenir de moi</label>
-        <a href="#">Mot de passe oublié ?</a>
+        <label class="remember"><input type="checkbox" name="remember"> Se souvenir de moi</label>
+        <a href="{{ route('password.request') }}">Mot de passe oublié ?</a>
       </div>
 
       <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Se connecter</button>
@@ -451,13 +461,16 @@
 
   const modal = document.getElementById('loginModal');
   function openModal(){ modal.classList.add('open'); requestAnimationFrame(() => modal.classList.add('show')); }
+  @if ($errors->any())
+    openModal();
+  @endif
   function closeModal(){ modal.classList.remove('show'); setTimeout(() => modal.classList.remove('open'), 300); }
   ['openLogin','openLoginCta'].forEach(id => { const btn = document.getElementById(id); if(btn) btn.addEventListener('click', openModal); });
   document.getElementById('closeModal').addEventListener('click', closeModal);
   modal.addEventListener('click', e => { if(e.target === modal) closeModal(); });
   document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
   document.querySelectorAll('.modal-options button').forEach(btn => btn.addEventListener('click', () => { document.querySelectorAll('.modal-options button').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }));
-  document.getElementById('loginForm').addEventListener('submit', e => { e.preventDefault(); closeModal(); });
+
 </script>
 </body>
 </html>
