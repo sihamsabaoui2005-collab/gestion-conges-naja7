@@ -64,30 +64,23 @@ class DashboardController extends Controller
                 'type' => $d->type,
             ]);
 
-        // Liste des années à proposer dans le graphique : toutes les années où l'utilisateur
-        // a au moins une demande approuvée, plus l'année en cours (jamais une liste vide).
-        // On utilise pluck() plutôt que get()->map() pour éviter un piège de Laravel :
-        // unique() se comporte différemment sur une collection "Eloquent" que sur une collection normale.
-        $anneesAvecDonnees = LeaveRequest::where('user_id', $userId)
+        // Le sélecteur d'année du graphique propose toute la plage 2001 → 2030.
+        // On récupère les vraies demandes en une seule requête, puis on remplit
+        // chaque année de la plage (0 partout si l'utilisateur n'a rien cette année-là).
+        $toutesLesDemandesApprouvees = LeaveRequest::where('user_id', $userId)
             ->where('statut', 'approuve')
-            ->pluck('date_debut')
-            ->map(fn ($date) => $date->year)
-            ->push($anneeActuelle)
-            ->unique()
-            ->sortDesc()
-            ->values();
+            ->get()
+            ->groupBy(fn ($d) => $d->date_debut->year);
 
         $congesParMoisParAnnee = [];
-        foreach ($anneesAvecDonnees as $annee) {
+        for ($annee = 2030; $annee >= 2001; $annee--) {
             $valeurs = array_fill(1, 12, 0);
-            $groupes = LeaveRequest::where('user_id', $userId)
-                ->where('statut', 'approuve')
-                ->whereYear('date_debut', $annee)
-                ->get()
-                ->groupBy(fn ($d) => $d->date_debut->month);
 
-            foreach ($groupes as $mois => $groupe) {
-                $valeurs[$mois] = $groupe->sum('jours');
+            if ($toutesLesDemandesApprouvees->has($annee)) {
+                $groupes = $toutesLesDemandesApprouvees->get($annee)->groupBy(fn ($d) => $d->date_debut->month);
+                foreach ($groupes as $mois => $groupe) {
+                    $valeurs[$mois] = $groupe->sum('jours');
+                }
             }
 
             $congesParMoisParAnnee[$annee] = array_values($valeurs);

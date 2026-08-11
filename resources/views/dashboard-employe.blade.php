@@ -11,60 +11,70 @@
   :root{
     --blue:#3B82F6; --blue-2:#60A5FA;
     --orange:#F59E0B; --green:#10B981; --red:#EF4444; --purple:#8B5CF6;
-    --bg:#05070F; --panel:#0C1120; --panel-2:#111A2E;
-    --border:rgba(255,255,255,.06);
-    --text:#E5E9F0; --text-dim:#7C8AA5;
-    --radius:20px;
+    --bg:#05070F; --panel:rgba(18,24,42,.55); --panel-2:rgba(255,255,255,.06);
+    --border:rgba(255,255,255,.12);
+    --text:#F1F4FA; --text-dim:#9AA5BD;
+    --radius:22px;
+    --glass-blur:22px;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  body{font-family:'Poppins',sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased;}
+  html, body{height:100%;}
+  body{
+    font-family:'Poppins',sans-serif; color:var(--text); -webkit-font-smoothing:antialiased;
+    background:
+      linear-gradient(180deg, rgba(4,6,14,.72), rgba(4,6,14,.88)),
+      url('{{ asset('images/dashboard-bg.jpg') }}') center/cover no-repeat fixed;
+  }
   a{text-decoration:none; color:inherit;}
   button{font-family:inherit; cursor:pointer; border:none; background:none; color:inherit;}
   ul{list-style:none;}
 
-  .app{display:flex; min-height:100vh;}
+  .app{display:flex; align-items:center; min-height:100vh; padding:16px 24px; gap:16px; max-width:1500px; margin:0 auto;}
 
-  /* ===== SIDEBAR (icônes seules) ===== */
-  .sidebar{width:84px; flex:none; background:var(--panel); border-right:1px solid var(--border); padding:22px 0; display:flex; flex-direction:column; align-items:center;}
-  .side-logo{width:42px; height:42px; border-radius:13px; background:linear-gradient(135deg,var(--orange),#DC2626); display:flex; align-items:center; justify-content:center; margin-bottom:28px; font-weight:700; overflow:hidden;}
+  /* ===== SIDEBAR (icônes seules, petite pilule flottante, comme la maquette) ===== */
+  .sidebar{width:64px; flex:none; align-self:center; position:relative; z-index:100; background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:999px; padding:16px 0; display:flex; flex-direction:column; align-items:center; box-shadow:0 8px 32px rgba(0,0,0,.35); max-height:82vh;}
+  .side-logo{width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,var(--orange),#DC2626); display:flex; align-items:center; justify-content:center; margin-bottom:18px; font-weight:700; overflow:hidden;}
   .side-logo img{width:100%; height:100%; object-fit:cover;}
-  .side-nav{display:flex; flex-direction:column; gap:10px; flex:1;}
-  .side-link{position:relative; width:46px; height:46px; border-radius:14px; display:flex; align-items:center; justify-content:center; color:var(--text-dim);}
-  .side-link:hover{background:rgba(255,255,255,.04); color:#fff;}
-  .side-link.active{background:var(--orange); color:#fff; box-shadow:0 0 0 4px rgba(245,158,11,.18);}
-  .side-link .tip{position:absolute; left:58px; top:50%; transform:translateY(-50%); background:#1a2338; padding:6px 12px; border-radius:8px; font-size:12px; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .15s; z-index:20; display:flex; align-items:center; gap:6px;}
+  .side-nav{display:flex; flex-direction:column; gap:6px; flex:1;}
+  .side-link{position:relative; width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:var(--text-dim);}
+  .side-link:hover{background:rgba(255,255,255,.08); color:#fff;}
+  .side-link.active{background:var(--orange); color:#fff;}
+  .side-link .tip{position:absolute; left:48px; top:50%; transform:translateY(-50%); background:rgba(20,26,46,.92); backdrop-filter:blur(10px); padding:6px 12px; border-radius:8px; font-size:12px; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .15s; z-index:30; border:1px solid var(--border);}
   .side-link:hover .tip{opacity:1;}
-  /* L'item actif garde son étiquette visible en permanence, dans une pastille bleue */
-  .side-link.active .tip{opacity:1; background:var(--orange); color:#fff; font-weight:600;}
-  .side-link .tip .chevron{opacity:.6; font-size:11px;}
-  .side-bottom{display:flex; flex-direction:column; gap:10px; padding-top:14px; border-top:1px solid var(--border); align-items:center;}
+  .side-bottom{display:flex; flex-direction:column; gap:6px; padding-top:10px; margin-top:8px; border-top:1px solid var(--border); align-items:center;}
+  .side-link:focus .tip{opacity:1;}
 
   /* ===== MAIN ===== */
-  .main{flex:1; padding:26px 32px 40px; max-width:100%; overflow-x:hidden; position:relative;}
+  .main{flex:1; align-self:stretch; padding:6px 6px 40px; max-width:100%; overflow-x:hidden; position:relative;}
 
   /* ===== TOPBAR ===== */
+  .brand-lockup{display:flex; align-items:center; gap:10px;}
+  .brand-lockup .side-logo{margin-bottom:0;}
+  .brand-lockup .brand-text b{display:block; font-size:15px; font-weight:800; letter-spacing:.02em;}
+  .brand-lockup .brand-text b span{color:var(--orange);}
+  .brand-lockup .brand-text small{display:block; font-size:9.5px; color:var(--text-dim); line-height:1.2;}
   .topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:30px;}
   .search{position:relative; width:360px;}
-  .search input{width:100%; background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:11px 44px 11px 16px; color:#fff; font-size:13.5px;}
+  .search input{width:100%; background:var(--panel); backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:16px; padding:11px 44px 11px 16px; color:#fff; font-size:13.5px;}
   .search input::placeholder{color:var(--text-dim);}
   .search i{position:absolute; left:14px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--text-dim);}
-  .search .kbd{position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:10.5px; color:var(--text-dim); background:var(--panel-2); padding:3px 7px; border-radius:6px;}
+  .search .kbd{position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:10.5px; color:var(--text-dim); background:rgba(255,255,255,.08); padding:3px 7px; border-radius:6px;}
 
-  .top-right{display:flex; align-items:center; gap:16px; position:relative;}
-  .icon-btn{position:relative; width:40px; height:40px; border-radius:13px; background:var(--panel); border:1px solid var(--border); display:flex; align-items:center; justify-content:center;}
+  .top-right{display:flex; align-items:center; gap:14px; position:relative;}
+  .icon-btn{position:relative; width:40px; height:40px; border-radius:14px; background:var(--panel); backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); display:flex; align-items:center; justify-content:center;}
   .icon-btn .dot{position:absolute; top:-3px; right:-3px; background:var(--red); color:#fff; font-size:9.5px; font-weight:700; width:17px; height:17px; border-radius:50%; display:flex; align-items:center; justify-content:center;}
-  .user-chip{display:flex; align-items:center; gap:10px; cursor:pointer;}
-  .avatar{width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,var(--orange),#DC2626); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; overflow:hidden;}
+  .user-chip{display:flex; align-items:center; gap:10px; cursor:pointer; background:var(--panel); backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:16px; padding:6px 14px 6px 6px;}
+  .avatar{width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--orange),#DC2626); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; overflow:hidden;}
   .avatar img{width:100%; height:100%; object-fit:cover;}
-  .user-chip p{font-size:13.5px; font-weight:600;}
-  .user-chip span{font-size:11.5px; color:var(--text-dim);}
+  .user-chip p{font-size:13px; font-weight:600;}
+  .user-chip span{font-size:11px; color:var(--text-dim);}
 
   /* ===== DROPDOWNS (profil + notifications) ===== */
-  .dropdown{position:absolute; top:52px; right:0; background:#131c30; border:1px solid var(--border); border-radius:16px; padding:8px; width:230px; box-shadow:0 12px 30px rgba(0,0,0,.4); display:none; z-index:50;}
+  .dropdown{position:absolute; top:52px; right:0; background:rgba(18,24,42,.85); backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:16px; padding:8px; width:230px; box-shadow:0 12px 30px rgba(0,0,0,.4); display:none; z-index:50;}
   .dropdown.open{display:block;}
   .dropdown-item{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:11px; font-size:13px; width:100%; text-align:left;}
   .dropdown-item:hover{background:rgba(255,255,255,.05);}
-  .notif-panel{position:absolute; top:52px; right:60px; background:#131c30; border:1px solid var(--border); border-radius:16px; padding:10px; width:290px; box-shadow:0 12px 30px rgba(0,0,0,.4); display:none; z-index:50;}
+  .notif-panel{position:absolute; top:52px; right:60px; background:rgba(18,24,42,.85); backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:16px; padding:10px; width:290px; box-shadow:0 12px 30px rgba(0,0,0,.4); display:none; z-index:50;}
   .notif-panel.open{display:block;}
   .notif-panel h4{font-size:12.5px; padding:6px 8px 10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em;}
   .notif-item{display:flex; align-items:flex-start; gap:10px; padding:9px 8px; border-radius:11px; font-size:12.5px;}
@@ -73,14 +83,16 @@
   .notif-empty{padding:14px 8px; font-size:12.5px; color:var(--text-dim); text-align:center;}
 
   /* ===== GREETING ===== */
-  .greeting{margin-bottom:28px; position:relative;}
-  .greeting h1{font-size:26px; font-weight:700;}
-  .greeting p{color:var(--text-dim); font-size:13.5px; margin-top:4px;}
-  .greeting-img{position:absolute; top:-30px; right:0; width:220px; height:150px; object-fit:cover; border-radius:16px; opacity:.9; z-index:0; pointer-events:none; mask-image:linear-gradient(to left, black 60%, transparent 100%); -webkit-mask-image:linear-gradient(to left, black 60%, transparent 100%);}
+  .greeting{margin-bottom:26px; position:relative;}
+  .greeting h1{font-size:27px; font-weight:700; text-shadow:0 2px 12px rgba(0,0,0,.5);}
+  .greeting p{color:var(--text-dim); font-size:13.5px; margin-top:4px; text-shadow:0 2px 8px rgba(0,0,0,.5); max-width:520px;}
+  .kpi-row{display:grid; grid-template-columns:3fr 1.1fr; gap:16px; margin-bottom:16px; align-items:stretch;}
+  .kpi-image-card{background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:20px; box-shadow:0 8px 24px rgba(0,0,0,.25); display:flex; align-items:center; justify-content:center; overflow:hidden; min-height:100%;}
+  .kpi-image-card img{width:100%; height:100%; object-fit:cover;}
 
   /* ===== STAT CARDS ===== */
-  .stats-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:22px;}
-  .stat-card{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:20px; position:relative;}
+  .stats-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px;}
+  .stat-card{background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:var(--radius); padding:20px; position:relative; box-shadow:0 8px 24px rgba(0,0,0,.25);}
   .stat-card .top{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
   .stat-card .ico{width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center;}
   .stat-card .dots{color:var(--text-dim); font-size:16px; letter-spacing:2px;}
@@ -89,25 +101,30 @@
   .stat-card .label{font-size:12px; color:var(--text-dim); margin-top:2px;}
   .stat-card svg.spark{margin-top:12px; width:100%; height:26px; display:block;}
   .stat-card .foot{display:block; margin-top:10px; font-size:11.5px; font-weight:600;}
-  .ico-blue{background:rgba(59,130,246,.15); color:var(--blue-2);}
-  .ico-orange{background:rgba(245,158,11,.15); color:var(--orange);}
-  .ico-green{background:rgba(16,185,129,.15); color:var(--green);}
-  .ico-purple{background:rgba(139,92,246,.15); color:var(--purple);}
+  .ico-blue{background:rgba(59,130,246,.2); color:var(--blue-2);}
+  .ico-orange{background:rgba(245,158,11,.2); color:var(--orange);}
+  .ico-green{background:rgba(16,185,129,.2); color:var(--green);}
+  .ico-purple{background:rgba(139,92,246,.2); color:var(--purple);}
   .foot-blue{color:var(--blue-2);} .foot-orange{color:var(--orange);} .foot-green{color:var(--green);} .foot-purple{color:var(--purple);}
 
   /* ===== GRID LAYOUT ===== */
-  .grid-2{display:grid; grid-template-columns:2fr 1.1fr; gap:20px; margin-bottom:20px;}
-  .grid-2b{display:grid; grid-template-columns:1fr 1.4fr; gap:20px; margin-bottom:20px;}
+  .grid-2{display:grid; grid-template-columns:1.7fr 1fr; gap:16px; margin-bottom:12px; height:250px;}
+  .row2-grid{display:grid; grid-template-columns:0.9fr 1.5fr 0.8fr; gap:16px; margin-bottom:12px; height:180px;}
+  .row2-grid > .panel, .grid-2 > .panel{height:100%; padding:14px 16px; overflow:hidden; display:flex; flex-direction:column;}
+  @media (max-width:1100px){
+    .row2-grid{grid-template-columns:1fr;}
+  }
+  .grid-2b{display:grid; grid-template-columns:1fr 1.4fr; gap:16px; margin-bottom:16px;}
 
-  .card{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:22px;}
-  .card-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;}
+  .card{background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:var(--radius); padding:22px; box-shadow:0 8px 24px rgba(0,0,0,.25);}
+  .card-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
   .card-head h2{font-size:15.5px; font-weight:700;}
   .card-head a{font-size:12.5px; color:var(--blue-2); font-weight:600;}
 
   /* ===== TABLE ===== */
   table{width:100%; border-collapse:collapse;}
   th{text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.03em; color:var(--text-dim); padding:0 8px 10px; font-weight:600;}
-  td{padding:12px 8px; font-size:13px; border-top:1px solid var(--border); vertical-align:middle;}
+  td{padding:11px 8px; font-size:13px; border-top:1px solid var(--border); vertical-align:middle;}
   .type-cell{display:flex; align-items:center; gap:9px;}
   .type-ico{width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex:none;}
   .badge{display:inline-flex; align-items:center; gap:5px; padding:4px 11px; border-radius:20px; font-size:11px; font-weight:600;}
@@ -122,17 +139,18 @@
   .cal-nav button{width:26px; height:26px; border-radius:8px; background:var(--panel-2); display:flex; align-items:center; justify-content:center;}
   .cal-nav span{font-size:13px; font-weight:600; width:100px; text-align:center;}
   .btn-today{background:var(--blue); font-size:11.5px; font-weight:600; padding:6px 12px; border-radius:9px;}
-  .cal-quickpick{display:flex; gap:8px; margin-bottom:14px;}
-  .cal-quickpick select{background:var(--panel-2); border:1px solid var(--border); color:#fff; font-size:12px; padding:6px 8px; border-radius:8px; flex:1;}
+  .cal-quickpick{display:flex; gap:8px; margin-bottom:8px;}
+  .cal-quickpick select{background:#1a2338; border:1px solid var(--border); color:#fff; font-size:12px; padding:6px 8px; border-radius:8px; flex:1;}
+  select option{background:#1a2338; color:#fff;}
   .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-align:center;}
   .cal-grid .dow{font-size:10px; color:var(--text-dim); font-weight:600; padding-bottom:8px;}
-  .cal-day{font-size:12px; padding:8px 0; border-radius:9px; color:var(--text);}
+  .cal-day{font-size:12px; padding:7px 0; border-radius:9px; color:var(--text);}
   .cal-day.muted{color:#374156;}
   .cal-day.approuve{background:var(--blue); color:#fff; font-weight:700;}
   .cal-day.en_attente{background:var(--orange); color:#fff; font-weight:700;}
   .cal-day.absent{background:var(--red); color:#fff; font-weight:700;}
   .cal-day.today{border:1.5px solid var(--purple); font-weight:700;}
-  .cal-legend{display:flex; flex-wrap:wrap; gap:14px; margin-top:16px; font-size:11px; color:var(--text-dim);}
+  .cal-legend{display:flex; flex-wrap:wrap; gap:10px; margin-top:8px; font-size:10.5px; color:var(--text-dim);}
   .cal-legend .row{display:flex; align-items:center; gap:6px;}
   .dot{width:8px; height:8px; border-radius:50%; flex:none;}
 
@@ -149,8 +167,8 @@
   .donut-foot i{color:var(--green); flex:none;}
 
   /* ===== LINE CHART ===== */
-  .chart-select{background:var(--panel-2); border:1px solid var(--border); color:#fff; font-size:12px; padding:5px 10px; border-radius:8px;}
-  .chart-months{display:grid; grid-template-columns:repeat(12,1fr); text-align:center; font-size:10px; color:var(--text-dim); margin-top:2px;}
+  .chart-select{background:#1a2338; border:1px solid var(--border); color:#fff; font-size:12px; padding:5px 10px; border-radius:8px;}
+  .chart-months{display:grid; grid-template-columns:repeat(12,1fr); text-align:center; font-size:10px; color:var(--text-dim); margin-top:2px; padding-left:4.3%;}
   .chart-tip{position:absolute; background:#1a2338; border:1px solid var(--border); border-radius:9px; padding:5px 10px; font-size:11px; font-weight:600; white-space:nowrap; transform:translate(-50%,-130%); pointer-events:none;}
 
   /* ===== PROCHAINES ABSENCES ===== */
@@ -162,15 +180,63 @@
   .badge-days{background:rgba(16,185,129,.15); color:var(--green); font-size:11px; font-weight:600; padding:5px 12px; border-radius:20px; white-space:nowrap;}
 
   /* ===== DOC CARD ===== */
-  .doc-card{background:linear-gradient(155deg,var(--orange),#B45309); border-radius:var(--radius); padding:22px; display:flex; flex-direction:column; gap:12px; position:relative; overflow:hidden;}
+  .doc-card{background:linear-gradient(155deg,var(--orange),#B45309); border-radius:var(--radius); padding:18px; display:flex; flex-direction:column; gap:8px; position:relative; overflow:hidden; border:1px solid var(--border); box-shadow:0 8px 24px rgba(0,0,0,.25); height:250px; justify-content:center;}
   .doc-card .doc-ico{width:46px; height:46px; border-radius:13px; background:rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center;}
   .doc-card h3{font-size:15px; font-weight:700;}
   .doc-card p{font-size:12px; opacity:.85; max-width:220px;}
   .btn-doc{background:#fff; color:#B45309; font-weight:700; font-size:13px; padding:10px 16px; border-radius:12px; display:inline-flex; align-items:center; gap:8px; width:fit-content;}
 
+  /* ===== MISE EN PAGE FUSIONNÉE (panneaux avec séparateurs internes, façon maquette) ===== */
+  .dash-left{display:flex; flex-direction:column; gap:16px;}
+  .triple-grid{display:grid; grid-template-columns:1.7fr 1.2fr 1fr; gap:12px; margin-bottom:12px; align-items:stretch;}
   @media (max-width:1100px){
-    .stats-grid{grid-template-columns:1fr 1fr;}
-    .grid-2, .grid-2b{grid-template-columns:1fr;}
+    .triple-grid{grid-template-columns:1fr;}
+    .kpi-row{grid-template-columns:1fr;}
+  }
+
+  .panel{background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:20px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,.25);}
+
+  /* Rangée des 4 statistiques, dans UN SEUL panneau avec séparateurs verticaux */
+  .stats-panel{display:flex; padding:28px 12px;}
+  .stat-cell{flex:1; padding:0 14px; position:relative; display:flex; flex-direction:column; align-items:center; text-align:center;}
+  .stat-cell + .stat-cell{border-left:1px solid var(--border);}
+  .ring-wrap{position:relative; width:170px; height:170px; margin-bottom:12px; border-radius:50%; box-shadow:0 0 55px -8px var(--ring-c);}
+  .ring-wrap svg circle.ring-glow{filter:drop-shadow(0 0 4px var(--ring-c));}
+  .ring-center{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .ring-center b{font-size:27px; font-weight:700; color:#fff; line-height:1.05;}
+  .ring-center .ring-sub1{font-size:12px; color:#fff; opacity:.9; margin-top:1px;}
+  .ring-center .ring-sub2{font-size:10.5px; color:rgba(255,255,255,.65); margin-top:1px;}
+  .ring-badge{width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:9px; margin-top:6px; box-shadow:0 0 10px var(--ring-c);}
+  .stat-cell .foot-btn{display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600;}
+
+  /* Panneau divisé en deux (demandes+calendrier, ou donut+courbe) — UN seul panneau, un séparateur interne */
+  .split-panel{display:flex; padding:22px;}
+  .split-left{flex:1.6; padding-right:24px;}
+  .split-divider{width:1px; background:var(--border); flex:none;}
+  .split-right{flex:1; padding-left:24px;}
+
+  /* Colonne de droite : UN panneau unique avec sections séparées */
+  .side-panel{padding:24px; display:flex; flex-direction:column;}
+  .side-panel .divider{height:1px; background:var(--border); margin:20px 0;}
+  .clock-block .time{font-size:26px; font-weight:700;}
+  .clock-block .date{font-size:12px; color:var(--text-dim); margin-top:2px;}
+  .agenda-title{font-size:12.5px; font-weight:700; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em; margin:18px 0 10px;}
+
+  .actions-grid{display:grid; grid-template-columns:repeat(2, 140px); grid-template-rows:repeat(2, 75px); gap:12px; margin-top:10px;}
+  .action-tile{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; width:140px; height:75px; border-radius:14px; font-size:11px; font-weight:600; text-align:center;}
+  .action-tile .ico{width:34px; height:34px; border-radius:11px; display:flex; align-items:center; justify-content:center;}
+  .tile-orange{background:rgba(245,158,11,.15);} .tile-orange .ico{background:var(--orange); color:#fff;}
+  .tile-blue{background:rgba(59,130,246,.15);} .tile-blue .ico{background:var(--blue); color:#fff;}
+  .tile-green{background:rgba(16,185,129,.15);} .tile-green .ico{background:var(--green); color:#fff;}
+  .tile-purple{background:rgba(139,92,246,.15);} .tile-purple .ico{background:var(--purple); color:#fff;}
+
+  @media (max-width:1100px){
+    .dash-layout{grid-template-columns:1fr;}
+    .stats-panel{flex-wrap:wrap;}
+    .stat-cell{flex:1 1 50%; margin-bottom:16px;}
+    .split-panel{flex-direction:column;}
+    .split-divider{display:none;}
+    .split-left, .split-right{padding:0;}
   }
   @media (max-width:800px){
     .sidebar{display:none;}
@@ -189,21 +255,21 @@
     </div>
 
     <nav class="side-nav">
-      <a href="{{ route('dashboard') }}" class="side-link active"><i data-lucide="layout-dashboard" style="width:19px;height:19px;"></i><span class="tip">Tableau de bord <span class="chevron">›</span></span></a>
-      <a href="#" class="side-link"><i data-lucide="file-text" style="width:19px;height:19px;"></i><span class="tip">Mes demandes <span class="chevron">›</span></span></a>
-      <a href="#" class="side-link"><i data-lucide="plus-circle" style="width:19px;height:19px;"></i><span class="tip">Nouvelle demande <span class="chevron">›</span></span></a>
-      <a href="#" class="side-link"><i data-lucide="calendar-days" style="width:19px;height:19px;"></i><span class="tip">Calendrier <span class="chevron">›</span></span></a>
-      <a href="#" class="side-link"><i data-lucide="wallet" style="width:19px;height:19px;"></i><span class="tip">Mon solde <span class="chevron">›</span></span></a>
-      <a href="#" class="side-link"><i data-lucide="history" style="width:19px;height:19px;"></i><span class="tip">Historique <span class="chevron">›</span></span></a>
-      <a href="{{ route('profile.edit') }}" class="side-link"><i data-lucide="user" style="width:19px;height:19px;"></i><span class="tip">Mon profil <span class="chevron">›</span></span></a>
-      <a href="#" class="side-link"><i data-lucide="settings" style="width:19px;height:19px;"></i><span class="tip">Paramètres <span class="chevron">›</span></span></a>
+      <a href="{{ route('dashboard') }}" class="side-link active"><i data-lucide="layout-dashboard" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
+      <a href="#" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Mes demandes</span></a>
+      <a href="#" class="side-link"><i data-lucide="plus-circle" style="width:17px;height:17px;"></i><span class="tip">Nouvelle demande</span></a>
+      <a href="#" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier</span></a>
+      <a href="#" class="side-link"><i data-lucide="wallet" style="width:17px;height:17px;"></i><span class="tip">Mon solde</span></a>
+      <a href="#" class="side-link"><i data-lucide="history" style="width:17px;height:17px;"></i><span class="tip">Historique</span></a>
+      <a href="{{ route('profile.edit') }}" class="side-link"><i data-lucide="user" style="width:17px;height:17px;"></i><span class="tip">Mon profil</span></a>
+      <a href="#" class="side-link"><i data-lucide="settings" style="width:17px;height:17px;"></i><span class="tip">Paramètres</span></a>
     </nav>
 
     <div class="side-bottom">
-      <a href="#" class="side-link"><i data-lucide="headphones" style="width:18px;height:18px;"></i><span class="tip">Support</span></a>
+      <a href="#" class="side-link"><i data-lucide="headphones" style="width:16px;height:16px;"></i><span class="tip">Support</span></a>
       <form method="POST" action="{{ route('logout') }}">
         @csrf
-        <button type="submit" class="side-link" title="Se déconnecter"><i data-lucide="log-out" style="width:18px;height:18px;"></i></button>
+        <button type="submit" class="side-link"><i data-lucide="log-out" style="width:16px;height:16px;"></i><span class="tip">Déconnexion</span></button>
       </form>
     </div>
   </aside>
@@ -275,193 +341,292 @@
 
     <!-- ===== GREETING ===== -->
     <div class="greeting">
-      <img src="{{ asset('images/dashboard-illustration.jpg') }}" alt="" class="greeting-img">
       <h1>Bonjour, {{ explode(' ', auth()->user()->name)[0] }} !</h1>
       <p>Vous êtes sur le tableau de bord : il réunit tous les résumés de vos congés, demandes et absences en un seul endroit.</p>
     </div>
 
-    <!-- ===== STATS ===== -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="top"><span class="ico ico-blue"><i data-lucide="calendar-check" style="width:18px;height:18px;"></i></span><span class="dots">⋯</span></div>
-        <b>{{ $soldeDisponible }} <small>jours</small></b>
-        <div class="label">de congés restants</div>
-        <svg class="spark" viewBox="0 0 100 26" preserveAspectRatio="none"><path d="M0,18 Q15,8 30,15 T60,10 T100,14" fill="none" stroke="var(--blue-2)" stroke-width="2"/></svg>
-        <a class="foot foot-blue" href="#">Voir mon solde →</a>
-      </div>
-      <div class="stat-card">
-        <div class="top"><span class="ico ico-orange"><i data-lucide="hourglass" style="width:18px;height:18px;"></i></span><span class="dots">⋯</span></div>
-        <b>{{ $demandesEnAttente }}</b>
-        <div class="label">demandes en cours</div>
-        <svg class="spark" viewBox="0 0 100 26" preserveAspectRatio="none"><path d="M0,14 Q20,20 40,12 T80,16 T100,9" fill="none" stroke="var(--orange)" stroke-width="2"/></svg>
-        <a class="foot foot-orange" href="#">Voir mes demandes →</a>
-      </div>
-      <div class="stat-card">
-        <div class="top"><span class="ico ico-green"><i data-lucide="check-circle-2" style="width:18px;height:18px;"></i></span><span class="dots">⋯</span></div>
-        <b>{{ $congesApprouves }} <small>jours</small></b>
-        <div class="label">cette année</div>
-        <svg class="spark" viewBox="0 0 100 26" preserveAspectRatio="none"><path d="M0,20 Q20,16 35,17 T70,6 T100,10" fill="none" stroke="var(--green)" stroke-width="2"/></svg>
-        <a class="foot foot-green" href="#">Voir l'historique →</a>
-      </div>
-      <div class="stat-card">
-        <div class="top"><span class="ico ico-purple"><i data-lucide="plane" style="width:18px;height:18px;"></i></span><span class="dots">⋯</span></div>
-        @if ($prochaineAbsence)
-          <b style="font-size:17px;">{{ $prochaineAbsence->date_debut->format('d M') }} → {{ $prochaineAbsence->date_fin->format('d M') }}</b>
-          <div class="label">{{ $prochaineAbsence->jours }} jours de congé</div>
-        @else
-          <b style="font-size:17px;">Aucune</b>
-          <div class="label">rien de prévu</div>
-        @endif
-        <svg class="spark" viewBox="0 0 100 26" preserveAspectRatio="none"><path d="M0,10 Q20,18 40,14 T75,20 T100,12" fill="none" stroke="var(--purple)" stroke-width="2"/></svg>
-        <a class="foot foot-purple" href="#">Voir le calendrier →</a>
-      </div>
-    </div>
+    <!-- ===== MISE EN PAGE FUSIONNÉE (2 colonnes, panneaux internes) ===== -->
+    <div class="dash-left">
 
-    <!-- ===== DEMANDES + CALENDRIER ===== -->
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-head">
-          <h2>Mes demandes récentes</h2>
-          <a href="#">Voir tout →</a>
-        </div>
-        <table id="demandesTable">
-          <thead>
-            <tr><th>Type</th><th>Date</th><th>Durée</th><th>Statut</th><th></th></tr>
-          </thead>
-          <tbody>
-            @php
-              $icones = ['paye' => ['plane', 'ico-blue'], 'maladie' => ['plus', 'ico-green'], 'sans_solde' => ['calendar-x', 'ico-orange']];
-              $libelles = ['paye' => 'Congé payé', 'maladie' => 'Congé maladie', 'sans_solde' => 'Congé sans solde'];
-            @endphp
-            @forelse ($demandesRecentes as $demande)
-              @php
-                [$icone, $iconeClasse] = $icones[$demande->type] ?? ['calendar', 'ico-blue'];
-                $badge = ['approuve' => 'badge-approved', 'en_attente' => 'badge-pending', 'refuse' => 'badge-rejected'][$demande->statut];
-                $statutLabel = ['approuve' => 'Approuvé', 'en_attente' => 'En attente', 'refuse' => 'Refusé'][$demande->statut];
-                $texteRecherche = strtolower(($libelles[$demande->type] ?? $demande->type).' '.$statutLabel.' '.$demande->date_debut->format('d M'));
-              @endphp
-              <tr data-recherche="{{ $texteRecherche }}">
-                <td>
-                  <div class="type-cell">
-                    <span class="type-ico {{ $iconeClasse }}"><i data-lucide="{{ $icone }}" style="width:14px;height:14px;"></i></span>
-                    {{ $libelles[$demande->type] ?? $demande->type }}
-                  </div>
-                </td>
-                <td>{{ $demande->date_debut->format('d M') }} - {{ $demande->date_fin->format('d M') }}</td>
-                <td>{{ $demande->jours }} jours</td>
-                <td><span class="badge {{ $badge }}">{{ $statutLabel }}</span></td>
-                <td><span class="action-dots">⋯</span></td>
-              </tr>
-            @empty
-              <tr><td colspan="5" style="text-align:center; color:var(--text-dim);">Aucune demande pour l'instant.</td></tr>
-            @endforelse
-          </tbody>
-        </table>
-        <p id="rechercheVide" style="display:none; text-align:center; color:var(--text-dim); font-size:13px; padding:14px 0;">Aucun résultat pour cette recherche.</p>
-      </div>
+        <!-- ===== KPI (4 anneaux) + image, même hauteur ===== -->
+        <div class="kpi-row">
+        <div class="panel stats-panel">
+          @php
+            // Chaque couleur a une fonction précise : bleu = info, orange = alerte/action, vert = positif, violet = secondaire
+            $anneaux = [
+                ['couleur' => '#2F8CFF', 'icone' => 'wallet'],
+                ['couleur' => '#FF9F1C', 'icone' => 'hourglass'],
+                ['couleur' => '#12E19D', 'icone' => 'check-circle-2'],
+                ['couleur' => '#A855F7', 'icone' => 'plane'],
+            ];
+            $circonf = 2 * pi() * 74;
+            // Anneau en 2 segments séparés par 2 petits espaces (haut et bas), comme la maquette
+            $segment = $circonf * 0.44;
+            $espace = $circonf * 0.06;
+            $motif = $segment.' '.$espace.' '.$segment.' '.$espace;
+          @endphp
 
-      <div class="card">
-        <div class="cal-head">
-          <h2 style="font-size:15.5px; font-weight:700;">Calendrier</h2>
-          <div class="cal-nav">
-            <button id="calPrev"><i data-lucide="chevron-left" style="width:14px;height:14px;"></i></button>
-            <span id="calLabel"></span>
-            <button id="calNext"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></button>
-          </div>
-        </div>
-        <div class="cal-quickpick">
-          <select id="calMoisSelect"></select>
-          <select id="calAnneeSelect"></select>
-          <button class="btn-today" id="calToday">Aujourd'hui</button>
-        </div>
-        <div class="cal-grid" id="calGrid"></div>
-        <div class="cal-legend">
-          <span class="row"><span class="dot" style="background:var(--blue);"></span> Congé approuvé</span>
-          <span class="row"><span class="dot" style="background:var(--orange);"></span> En attente</span>
-          <span class="row"><span class="dot" style="background:var(--red);"></span> Absent(e)</span>
-          <span class="row"><span class="dot" style="border:1.5px solid var(--purple); background:transparent;"></span> Aujourd'hui</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== DONUT + COURBE MENSUELLE ===== -->
-    <div class="grid-2b">
-      <div class="card">
-        <div class="card-head"><h2>Utilisation de vos congés</h2></div>
-        <div class="donut-wrap">
-          <div class="donut-ring">
-            <svg viewBox="0 0 120 120" width="120" height="120" style="transform:rotate(-90deg);">
-              <circle cx="60" cy="60" r="50" fill="none" stroke="var(--panel-2)" stroke-width="13" />
-              <circle cx="60" cy="60" r="50" fill="none" stroke="url(#grad)" stroke-width="13" stroke-linecap="round"
-                stroke-dasharray="{{ 2 * pi() * 50 * ($pourcentageUtilise / 100) }} {{ 2 * pi() * 50 }}" />
-              <defs>
-                <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#F59E0B" />
-                  <stop offset="100%" stop-color="#10B981" />
-                </linearGradient>
-              </defs>
-            </svg>
-            <div class="center"><b>{{ $pourcentageUtilise }}%</b><span>utilisé</span></div>
-          </div>
-          <div class="donut-legend">
-            <div class="row"><span class="dot" style="background:var(--blue);"></span> Utilisés <b style="margin-left:auto;">{{ $joursUtilises }} jours</b></div>
-            <div class="row"><span class="dot" style="background:var(--green);"></span> Restants <b style="margin-left:auto;">{{ $soldeDisponible }} jours</b></div>
-            <div class="row"><span class="dot" style="background:#475569;"></span> Total annuel <b style="margin-left:auto;">{{ $soldeAnnuel }} jours</b></div>
-          </div>
-        </div>
-        <div class="donut-foot">
-          <i data-lucide="trending-up" style="width:15px;height:15px;"></i>
-          Vous avez utilisé {{ $joursUtilises }} jours sur {{ $soldeAnnuel }}. Il vous reste {{ $soldeDisponible }} jours disponibles.
-        </div>
-      </div>
-
-      <div class="card" style="position:relative;">
-        <div class="card-head">
-          <h2>Congés utilisés par mois</h2>
-          <select class="chart-select" id="anneeSelect">
-            @foreach (array_keys($congesParMoisParAnnee) as $annee)
-              <option value="{{ $annee }}" @selected($annee === $anneeActuelle)>{{ $annee }}</option>
-            @endforeach
-          </select>
-        </div>
-        <div style="position:relative;">
-          <svg id="chartSvg" viewBox="0 0 600 130" width="100%" height="130"></svg>
-          <div class="chart-tip" id="chartTip" style="display:none;"></div>
-        </div>
-        <div class="chart-months">
-          @foreach (['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'] as $m)
-            <span>{{ $m }}</span>
-          @endforeach
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== PROCHAINES ABSENCES + DOCUMENT ===== -->
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-head"><h2>Prochaines absences</h2><a href="#">Voir tout →</a></div>
-        @forelse ($prochainesAbsences as $absence)
-          <div class="absence-row">
-            <div class="left">
-              <span class="ico"><i data-lucide="{{ $absence->type === 'maladie' ? 'stethoscope' : 'plane' }}" style="width:16px;height:16px;"></i></span>
-              <div>
-                <p>{{ $libelles[$absence->type] ?? $absence->type }}</p>
-                <span>{{ $absence->date_debut->format('d M') }} - {{ $absence->date_fin->format('d M') }} · {{ $absence->jours }} jours</span>
+          <div class="stat-cell">
+            <div class="ring-wrap" style="--ring-c: {{ $anneaux[0]['couleur'] }};">
+              <svg viewBox="0 0 170 170" width="170" height="170" style="transform:rotate(-99deg); overflow:visible;">
+                <circle cx="85" cy="85" r="74" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7" />
+                <circle class="ring-glow" cx="85" cy="85" r="74" fill="none" stroke="{{ $anneaux[0]['couleur'] }}" stroke-width="7" stroke-linecap="round"
+                  stroke-dasharray="{{ $motif }}" />
+              </svg>
+              <div class="ring-center">
+                <div class="ring-badge" style="background:{{ $anneaux[0]['couleur'] }};"><i data-lucide="wallet" style="width:15px;height:15px; color:#fff;"></i></div>
+                <b>{{ $soldeDisponible }}</b>
+                <div class="ring-sub1">jours</div>
+                <div class="ring-sub2">de congés restants</div>
               </div>
             </div>
-            <span class="badge-days">Dans {{ now()->diffInDays($absence->date_debut) }} jours</span>
+            <a class="foot-btn" href="#" style="color:{{ $anneaux[0]['couleur'] }};">Voir mon solde <i data-lucide="arrow-right" style="width:11px;height:11px;"></i></a>
           </div>
-        @empty
-          <p style="color:var(--text-dim); font-size:13px;">Aucune absence prévue.</p>
-        @endforelse
-      </div>
 
-      <div class="doc-card">
-        <span class="doc-ico"><i data-lucide="file-text" style="width:22px;height:22px;"></i></span>
-        <h3>Besoin d'un document ?</h3>
-        <p>Générez une attestation de congé pour votre demande.</p>
-        <button class="btn-doc" id="genererDoc"><i data-lucide="download" style="width:15px;height:15px;"></i> Générer une attestation</button>
-      </div>
+          <div class="stat-cell">
+            <div class="ring-wrap" style="--ring-c: {{ $anneaux[1]['couleur'] }};">
+              <svg viewBox="0 0 170 170" width="170" height="170" style="transform:rotate(-99deg); overflow:visible;">
+                <circle cx="85" cy="85" r="74" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7" />
+                <circle class="ring-glow" cx="85" cy="85" r="74" fill="none" stroke="{{ $anneaux[1]['couleur'] }}" stroke-width="7" stroke-linecap="round"
+                  stroke-dasharray="{{ $motif }}" />
+              </svg>
+              <div class="ring-center">
+                <div class="ring-badge" style="background:{{ $anneaux[1]['couleur'] }};"><i data-lucide="hourglass" style="width:15px;height:15px; color:#fff;"></i></div>
+                <b>{{ $demandesEnAttente }}</b>
+                <div class="ring-sub1">demandes</div>
+                <div class="ring-sub2">en cours</div>
+              </div>
+            </div>
+            <a class="foot-btn" href="#" style="color:{{ $anneaux[1]['couleur'] }};">Voir mes demandes <i data-lucide="arrow-right" style="width:11px;height:11px;"></i></a>
+          </div>
+
+          <div class="stat-cell">
+            <div class="ring-wrap" style="--ring-c: {{ $anneaux[2]['couleur'] }};">
+              <svg viewBox="0 0 170 170" width="170" height="170" style="transform:rotate(-99deg); overflow:visible;">
+                <circle cx="85" cy="85" r="74" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7" />
+                <circle class="ring-glow" cx="85" cy="85" r="74" fill="none" stroke="{{ $anneaux[2]['couleur'] }}" stroke-width="7" stroke-linecap="round"
+                  stroke-dasharray="{{ $motif }}" />
+              </svg>
+              <div class="ring-center">
+                <div class="ring-badge" style="background:{{ $anneaux[2]['couleur'] }};"><i data-lucide="check-circle-2" style="width:15px;height:15px; color:#fff;"></i></div>
+                <b>{{ $congesApprouves }}</b>
+                <div class="ring-sub1">jours</div>
+                <div class="ring-sub2">cette année</div>
+              </div>
+            </div>
+            <a class="foot-btn" href="#" style="color:{{ $anneaux[2]['couleur'] }};">Voir l'historique <i data-lucide="arrow-right" style="width:11px;height:11px;"></i></a>
+          </div>
+
+          <div class="stat-cell">
+            <div class="ring-wrap" style="--ring-c: {{ $anneaux[3]['couleur'] }};">
+              <svg viewBox="0 0 170 170" width="170" height="170" style="transform:rotate(-99deg); overflow:visible;">
+                <circle cx="85" cy="85" r="74" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7" />
+                <circle class="ring-glow" cx="85" cy="85" r="74" fill="none" stroke="{{ $anneaux[3]['couleur'] }}" stroke-width="7" stroke-linecap="round"
+                  stroke-dasharray="{{ $motif }}" />
+              </svg>
+              <div class="ring-center">
+                <div class="ring-badge" style="background:{{ $anneaux[3]['couleur'] }};"><i data-lucide="plane" style="width:15px;height:15px; color:#fff;"></i></div>
+                @if ($prochaineAbsence)
+                  <b style="font-size:16px;">{{ $prochaineAbsence->date_debut->format('d M') }} → {{ $prochaineAbsence->date_fin->format('d M') }}</b>
+                  <div class="ring-sub2" style="margin-top:4px;">{{ $prochaineAbsence->jours }} jours de congé</div>
+                @else
+                  <b style="font-size:18px;">Aucune</b>
+                  <div class="ring-sub2" style="margin-top:4px;">rien de prévu</div>
+                @endif
+              </div>
+            </div>
+            <a class="foot-btn" href="#" style="color:{{ $anneaux[3]['couleur'] }};">Voir le calendrier <i data-lucide="arrow-right" style="width:11px;height:11px;"></i></a>
+          </div>
+        </div>
+
+        <div class="kpi-image-card">
+          <img src="{{ asset('images/greeting-illustration.png') }}" alt="">
+        </div>
+        </div>
+
+        <!-- ===== RANGÉE 1 : Demandes / Calendrier / Solde moyen ===== -->
+        <div class="triple-grid">
+          <div class="panel">
+            <div class="card-head">
+              <h2>Mes demandes récentes</h2>
+              <a href="#">Voir tout →</a>
+            </div>
+            <table id="demandesTable">
+              <thead>
+                <tr><th>Type</th><th>Date</th><th>Durée</th><th>Statut</th><th></th></tr>
+              </thead>
+              <tbody>
+                @php
+                  $icones = ['paye' => ['plane', 'ico-blue'], 'maladie' => ['plus', 'ico-green'], 'sans_solde' => ['calendar-x', 'ico-orange']];
+                  $libelles = ['paye' => 'Congé payé', 'maladie' => 'Congé maladie', 'sans_solde' => 'Congé sans solde'];
+                @endphp
+                @forelse ($demandesRecentes as $demande)
+                  @php
+                    [$icone, $iconeClasse] = $icones[$demande->type] ?? ['calendar', 'ico-blue'];
+                    $badge = ['approuve' => 'badge-approved', 'en_attente' => 'badge-pending', 'refuse' => 'badge-rejected'][$demande->statut];
+                    $statutLabel = ['approuve' => 'Approuvé', 'en_attente' => 'En attente', 'refuse' => 'Refusé'][$demande->statut];
+                    $texteRecherche = strtolower(($libelles[$demande->type] ?? $demande->type).' '.$statutLabel.' '.$demande->date_debut->format('d M'));
+                  @endphp
+                  <tr data-recherche="{{ $texteRecherche }}">
+                    <td>
+                      <div class="type-cell">
+                        <span class="type-ico {{ $iconeClasse }}"><i data-lucide="{{ $icone }}" style="width:14px;height:14px;"></i></span>
+                        {{ $libelles[$demande->type] ?? $demande->type }}
+                      </div>
+                    </td>
+                    <td>{{ $demande->date_debut->format('d M') }} - {{ $demande->date_fin->format('d M') }}</td>
+                    <td>{{ $demande->jours }} jours</td>
+                    <td><span class="badge {{ $badge }}">{{ $statutLabel }}</span></td>
+                    <td><span class="action-dots">⋯</span></td>
+                  </tr>
+                @empty
+                  <tr><td colspan="5" style="padding:26px 0;">
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:8px; color:var(--text-dim);">
+                      <span style="width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,.06); display:flex; align-items:center; justify-content:center;"><i data-lucide="inbox" style="width:20px;height:20px;"></i></span>
+                      <span style="font-size:13px; font-weight:600; color:#fff;">Aucune demande pour le moment</span>
+                      <span style="font-size:11.5px;">Vous n'avez pas encore fait de demande de congé.</span>
+                    </div>
+                  </td></tr>
+                @endforelse
+              </tbody>
+            </table>
+            <p id="rechercheVide" style="display:none; text-align:center; color:var(--text-dim); font-size:13px; padding:14px 0;">Aucun résultat pour cette recherche.</p>
+          </div>
+
+          <div class="panel">
+            <div class="cal-head">
+              <h2 style="font-size:15.5px; font-weight:700;">Mon calendrier</h2>
+              <div class="cal-nav">
+                <button id="calPrev"><i data-lucide="chevron-left" style="width:14px;height:14px;"></i></button>
+                <span id="calLabel"></span>
+                <button id="calNext"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></button>
+              </div>
+            </div>
+            <div class="cal-quickpick">
+              <select id="calMoisSelect"></select>
+              <select id="calAnneeSelect"></select>
+              <button class="btn-today" id="calToday">Aujourd'hui</button>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
+            <div class="cal-legend">
+              <span class="row"><span class="dot" style="background:var(--blue);"></span> Congé approuvé</span>
+              <span class="row"><span class="dot" style="background:var(--orange);"></span> En attente</span>
+              <span class="row"><span class="dot" style="background:var(--red);"></span> Absent(e)</span>
+              <span class="row"><span class="dot" style="border:1.5px solid var(--purple); background:transparent;"></span> Aujourd'hui</span>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div class="panel" style="position:relative; overflow:hidden;">
+              <div class="card-head" style="position:relative; z-index:1;"><h2>Solde moyen de congés</h2></div>
+              <div style="display:flex; align-items:center; gap:14px; position:relative; z-index:1;">
+                <div style="position:relative; width:90px; height:90px; flex:none;">
+                  <svg viewBox="0 0 90 90" width="90" height="90" style="transform:rotate(-90deg);">
+                    <circle cx="45" cy="45" r="36" fill="none" stroke="var(--panel-2)" stroke-width="9" />
+                    <circle cx="45" cy="45" r="36" fill="none" stroke="url(#soldeGrad)" stroke-width="9" stroke-linecap="round"
+                      stroke-dasharray="{{ 2 * pi() * 36 * ($pourcentageUtilise / 100) }} {{ 2 * pi() * 36 }}" />
+                    <defs>
+                      <linearGradient id="soldeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#3B82F6" />
+                        <stop offset="100%" stop-color="#22C55E" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                    <b style="font-size:19px; font-weight:700; line-height:1;">{{ $soldeDisponible }}</b>
+                    <span style="font-size:9px; color:var(--text-dim); text-align:center;">jours<br>restants</span>
+                  </div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:7px; font-size:11.5px;">
+                  <div style="display:flex; align-items:center; gap:6px;"><span class="dot" style="background:var(--blue);"></span> Utilisés <b style="margin-left:auto;">{{ $joursUtilises }}j</b></div>
+                  <div style="display:flex; align-items:center; gap:6px;"><span class="dot" style="background:var(--green);"></span> Restants <b style="margin-left:auto;">{{ $soldeDisponible }}j</b></div>
+                  <div style="display:flex; align-items:center; gap:6px;"><span class="dot" style="background:#64748b;"></span> Total <b style="margin-left:auto;">{{ $soldeAnnuel }}j</b></div>
+                </div>
+              </div>
+              <img src="{{ asset('images/greeting-illustration.png') }}" alt=""
+                style="position:absolute; top:6px; right:-6px; width:76px; height:76px; object-fit:contain; opacity:.4; pointer-events:none; z-index:0;">
+            </div>
+
+            <div class="panel">
+              <div class="card-head"><h2>Actions rapides</h2></div>
+              <div style="display:flex; gap:10px;">
+                <a href="#" class="action-tile tile-orange" style="width:auto; flex:1;"><span class="ico"><i data-lucide="plus" style="width:16px;height:16px;"></i></span> Nouvelle demande</a>
+                <button type="button" id="genererDoc" class="action-tile tile-blue" style="width:auto; flex:1;"><span class="ico"><i data-lucide="download" style="width:16px;height:16px;"></i></span> Exporter rapport</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== RANGÉE 2 : Utilisation / Courbe / Prochaines absences ===== -->
+        <div class="row2-grid">
+          <div class="panel" style="display:flex; flex-direction:column; justify-content:center;">
+            <div class="card-head"><h2>Utilisation de vos congés</h2></div>
+            <div class="donut-wrap">
+              <div class="donut-ring">
+                <svg viewBox="0 0 120 120" width="90" height="90" style="transform:rotate(-90deg);">
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="var(--panel-2)" stroke-width="13" />
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="url(#grad)" stroke-width="13" stroke-linecap="round"
+                    stroke-dasharray="{{ 2 * pi() * 50 * ($pourcentageUtilise / 100) }} {{ 2 * pi() * 50 }}" />
+                  <defs>
+                    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#F59E0B" />
+                      <stop offset="100%" stop-color="#10B981" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div class="center"><b>{{ $pourcentageUtilise }}%</b><span>utilisé</span></div>
+              </div>
+              <div class="donut-legend" style="margin-top:0;">
+                <div class="row"><span class="dot" style="background:var(--blue);"></span> Utilisés <b style="margin-left:auto;">{{ $joursUtilises }} j</b></div>
+                <div class="row"><span class="dot" style="background:var(--green);"></span> Restants <b style="margin-left:auto;">{{ $soldeDisponible }} j</b></div>
+                <div class="row"><span class="dot" style="background:#475569;"></span> Total <b style="margin-left:auto;">{{ $soldeAnnuel }} j</b></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel" style="position:relative; display:flex; flex-direction:column; justify-content:center;">
+            <div class="card-head">
+              <h2>Congés utilisés par mois</h2>
+              <select class="chart-select" id="anneeSelect">
+                @foreach (array_keys($congesParMoisParAnnee) as $annee)
+                  <option value="{{ $annee }}" @selected($annee === $anneeActuelle)>{{ $annee }}</option>
+                @endforeach
+              </select>
+            </div>
+            <div style="position:relative;">
+              <svg id="chartSvg" viewBox="0 0 600 130" width="100%" height="92" style="margin-top:8px; overflow:visible;"></svg>
+              <div class="chart-tip" id="chartTip" style="display:none;"></div>
+            </div>
+            <div class="chart-months">
+              @foreach (['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'] as $m)
+                <span>{{ $m }}</span>
+              @endforeach
+            </div>
+          </div>
+
+          <div class="panel" style="display:flex; flex-direction:column; justify-content:center;">
+            <div class="card-head"><h2>Prochaines absences</h2><a href="#">Voir tout →</a></div>
+            @forelse ($prochainesAbsences as $absence)
+              <div class="absence-row">
+                <div class="left">
+                  <span class="ico"><i data-lucide="{{ $absence->type === 'maladie' ? 'stethoscope' : 'plane' }}" style="width:16px;height:16px;"></i></span>
+                  <div>
+                    <p>{{ $libelles[$absence->type] ?? $absence->type }}</p>
+                    <span>{{ $absence->date_debut->format('d M') }} - {{ $absence->date_fin->format('d M') }} · {{ $absence->jours }} jours</span>
+                  </div>
+                </div>
+                <span class="badge-days">Dans {{ now()->diffInDays($absence->date_debut) }} j</span>
+              </div>
+            @empty
+              <p style="color:var(--text-dim); font-size:13px; text-align:center; padding:16px 0; margin:0;">
+                <span style="width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,.06); display:flex; align-items:center; justify-content:center; margin:0 auto 8px;"><i data-lucide="calendar-x" style="width:20px;height:20px;"></i></span>
+                <span style="display:block; font-size:13px; font-weight:600; color:#fff; margin-bottom:2px;">Aucune absence à venir</span>
+                Aucune demande de congé prévue.
+              </p>
+            @endforelse
+          </div>
+        </div>
+
     </div>
 
   </main>
@@ -469,6 +634,12 @@
 
 <script>
   lucide.createIcons();
+
+  // Les liens de la sidebar qui ne mènent nulle part pour l'instant (href="#")
+  // ne doivent pas faire sauter la page ; l'étiquette reste visible après un clic (:focus).
+  document.querySelectorAll('.sidebar a[href="#"]').forEach(lien => {
+    lien.addEventListener('click', (e) => e.preventDefault());
+  });
 
   /* ===================== CALENDRIER NAVIGABLE ===================== */
   // Toutes les demandes de l'utilisateur, envoyées par le contrôleur.
@@ -616,17 +787,26 @@
 
   function dessinerGraphique(annee) {
     const valeurs = donneesParAnnee[annee] || new Array(12).fill(0);
-    const max = Math.max(...valeurs, 1);
-    const largeur = 600, hauteur = 110, pas = largeur / 11;
+    const axisMax = Math.max(...valeurs, 5); // l'axe démarre toujours au moins jusqu'à 5, et s'adapte si les valeurs dépassent
+    const largeurTotale = 600, largeurAxe = 26, largeur = largeurTotale - largeurAxe, hauteur = 110, pas = largeur / 11;
 
-    const points = valeurs.map((v, i) => [i * pas, hauteur - (v / max) * hauteur]);
+    const points = valeurs.map((v, i) => [largeurAxe + i * pas, hauteur - (v / axisMax) * hauteur]);
     const chemin = points.map((p, i) => (i === 0 ? 'M' : 'L') + p[0] + ',' + p[1]).join(' ');
-    const zone = chemin + ` L${largeur},${hauteur} L0,${hauteur} Z`;
+    const zone = chemin + ` L${largeurAxe + largeur},${hauteur} L${largeurAxe},${hauteur} Z`;
 
     let cercles = '';
     points.forEach((p, i) => {
       cercles += `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#F59E0B" data-mois="${moisAbrev[i]}" data-valeur="${valeurs[i]}" style="cursor:pointer;" />`;
     });
+
+    // Axe des ordonnées : 6 graduations de 0 à axisMax (ex. 0,1,2,3,4,5)
+    let axeY = '';
+    for (let i = 0; i <= 5; i++) {
+      const valeur = Math.round((axisMax / 5) * i);
+      const y = hauteur - (i / 5) * hauteur;
+      axeY += `<text x="${largeurAxe - 8}" y="${y + 3}" text-anchor="end" font-size="10.5" font-weight="600" fill="#B8C2D9">${valeur}</text>`;
+      axeY += `<line x1="${largeurAxe}" y1="${y}" x2="${largeurAxe + largeur}" y2="${y}" stroke="rgba(255,255,255,.05)" stroke-width="1" />`;
+    }
 
     svg.innerHTML = `
       <defs>
@@ -635,6 +815,7 @@
           <stop offset="100%" stop-color="#F59E0B" stop-opacity="0" />
         </linearGradient>
       </defs>
+      ${axeY}
       <path d="${zone}" fill="url(#fillGrad)" />
       <path d="${chemin}" fill="none" stroke="#F59E0B" stroke-width="2.5" />
       ${cercles}
@@ -643,7 +824,7 @@
     svg.querySelectorAll('circle').forEach(c => {
       c.addEventListener('mouseenter', (e) => {
         const rect = svg.getBoundingClientRect();
-        const x = (parseFloat(c.getAttribute('cx')) / largeur) * rect.width;
+        const x = (parseFloat(c.getAttribute('cx')) / largeurTotale) * rect.width;
         const y = (parseFloat(c.getAttribute('cy')) / hauteur) * rect.height;
         tip.style.display = 'block';
         tip.style.left = x + 'px';
@@ -663,6 +844,15 @@
     // NOTE : génération réelle du PDF à brancher à une étape suivante du projet
     alert('Attestation à générer (fonctionnalité PDF à venir)');
   });
+
+  /* ===================== HORLOGE EN DIRECT ===================== */
+  function majHorloge() {
+    const maintenant = new Date();
+    document.getElementById('horlogeHeure').textContent = maintenant.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('horlogeDate').textContent = maintenant.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  majHorloge();
+  setInterval(majHorloge, 30000);
 </script>
 </body>
 </html>
