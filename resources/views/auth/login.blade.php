@@ -82,12 +82,12 @@
                 </button>
             </form>
 
-            {{-- lien vers l'inscription RH --}}
+            {{-- lien vers l'inscription (employé ou RH, au choix sur la page suivante) --}}
             @if (Route::has('register'))
                 <p class="text-center text-sm text-gray-500 mt-6">
                     Nouveau ici ?
                     <a href="{{ route('register') }}" class="text-blue-600 font-medium hover:underline">
-                        Inscription RH
+                        Créer un compte
                     </a>
                 </p>
             @endif

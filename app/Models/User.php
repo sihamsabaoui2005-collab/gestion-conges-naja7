@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'role',
         'poste',
+        'departement',
         'solde_conges_annuel',
         'photo_path',
         'telephone',

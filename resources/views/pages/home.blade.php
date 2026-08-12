@@ -284,7 +284,7 @@
 
         <div class="signup-row">
           <p>Nouveau ici ? Créez votre compte et rejoignez votre équipe dès maintenant.</p>
-          <button class="btn btn-primary" id="openLoginCta">S'inscrire</button>
+          <button type="button" class="btn btn-primary" id="openRegisterCta">S'inscrire</button>
         </div>
       </div>
 
@@ -382,15 +382,15 @@
 
 <footer>&copy; 2026 Naja7host — Hébergement &amp; développement web — Tous droits réservés</footer>
 
-<!-- MODAL fidele a la reference -->
+<!-- MODAL CONNEXION -->
 <div class="modal-overlay" id="loginModal">
   <div class="modal-card">
-    <button class="modal-close" id="closeModal"><i data-lucide="x" style="width:14px;height:14px;"></i></button>
+    <button class="modal-close" id="closeLoginModal"><i data-lucide="x" style="width:14px;height:14px;"></i></button>
     <div class="modal-icon"><i data-lucide="shield" style="width:22px;height:22px;"></i></div>
     <h2>Connexion à votre compte</h2>
     <p class="sub">Accédez à votre espace personnel</p>
 
-    @if ($errors->any())
+    @if ($errors->any() && !old('name'))
       <div style="background:#FEE2E2; color:#991B1B; font-size:12.5px; font-weight:600; padding:10px 14px; border-radius:10px; margin-bottom:16px; text-align:left;">
         @foreach ($errors->all() as $error)
           {{ $error }}
@@ -423,13 +423,84 @@
       <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Se connecter</button>
     </form>
 
-    <p class="divider-text">ou continuer avec</p>
-    <div class="modal-options">
-      <button class="active" data-role="employe"><i data-lucide="user" style="width:14px;height:14px;"></i> Employé</button>
-      <button data-role="rh"><i data-lucide="user-check" style="width:14px;height:14px;"></i> Responsable RH</button>
-    </div>
+    <p class="divider-text">Pas encore de compte ?</p>
+    <button type="button" class="btn btn-outline-pill" id="switchToRegister" style="width:100%; justify-content:center; color:#075985; border-color:rgba(7,89,133,.35); margin-bottom:14px;">Créer un compte</button>
 
     <p class="legal-text">En vous connectant, vous acceptez nos <a href="#">Conditions d'utilisation</a> et <a href="#">Politique de confidentialité</a>.</p>
+  </div>
+</div>
+
+<!-- MODAL INSCRIPTION -->
+<div class="modal-overlay" id="registerModal">
+  <div class="modal-card" style="max-width:380px;">
+    <button class="modal-close" id="closeRegisterModal"><i data-lucide="x" style="width:14px;height:14px;"></i></button>
+    <div class="modal-icon"><i data-lucide="user-plus" style="width:22px;height:22px;"></i></div>
+    <h2>Créer votre compte</h2>
+    <p class="sub">Rejoignez NAJA7HOST et simplifiez la gestion des congés</p>
+
+    @if ($errors->any() && old('name'))
+      <div style="background:#FEE2E2; color:#991B1B; font-size:12.5px; font-weight:600; padding:10px 14px; border-radius:10px; margin-bottom:16px; text-align:left;">
+        @foreach ($errors->all() as $error)
+          {{ $error }}
+        @endforeach
+      </div>
+    @endif
+
+    <form method="POST" action="{{ route('register') }}">
+      @csrf
+      <div class="field">
+        <label>Nom complet</label>
+        <div class="input-wrap">
+          <input type="text" name="name" value="{{ old('name') }}" placeholder="Entrez votre nom complet" required>
+          <i data-lucide="user" class="field-ico"></i>
+        </div>
+      </div>
+      <div class="field">
+        <label>Email professionnel</label>
+        <div class="input-wrap">
+          <input type="email" name="email" value="{{ old('email') }}" placeholder="Entrez votre email professionnel" required>
+          <i data-lucide="mail" class="field-ico"></i>
+        </div>
+      </div>
+      <div class="field">
+        <label>Mot de passe</label>
+        <div class="input-wrap">
+          <input type="password" name="password" id="registerPassword" placeholder="Créez un mot de passe" required>
+          <i data-lucide="eye" class="field-ico" id="toggleRegisterPassword" style="cursor:pointer;"></i>
+        </div>
+      </div>
+      <div class="field">
+        <label>Confirmer le mot de passe</label>
+        <div class="input-wrap">
+          <input type="password" name="password_confirmation" id="registerPasswordConfirm" placeholder="Confirmez votre mot de passe" required>
+          <i data-lucide="eye" class="field-ico" id="toggleRegisterPasswordConfirm" style="cursor:pointer;"></i>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Vous êtes</label>
+        <div class="modal-options" style="margin-top:6px;">
+          <label style="flex:1; cursor:pointer;">
+            <input type="radio" name="role" value="employe" {{ old('role', 'employe') === 'employe' ? 'checked' : '' }} style="display:none;" class="role-radio">
+            <div class="role-choice active" data-role="employe">
+              <i data-lucide="user" style="width:14px;height:14px;"></i> Employé
+            </div>
+          </label>
+          <label style="flex:1; cursor:pointer;">
+            <input type="radio" name="role" value="rh" {{ old('role') === 'rh' ? 'checked' : '' }} style="display:none;" class="role-radio">
+            <div class="role-choice" data-role="rh">
+              <i data-lucide="user-check" style="width:14px;height:14px;"></i> Responsable RH
+            </div>
+          </label>
+        </div>
+        @error('role') <div style="color:#DC2626; font-size:11px; margin-top:4px;">{{ $message }}</div> @enderror
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:14px;">S'inscrire</button>
+    </form>
+
+    <p class="divider-text">Vous avez déjà un compte ?</p>
+    <button type="button" class="btn btn-outline-pill" id="switchToLogin" style="width:100%; justify-content:center; color:#075985; border-color:rgba(7,89,133,.35);">Se connecter</button>
   </div>
 </div>
 
@@ -451,26 +522,58 @@
 
   const toggleBtn = document.getElementById('togglePassword');
   const pwdInput = document.getElementById('loginPassword');
-  toggleBtn.addEventListener('click', () => {
-    const showing = pwdInput.type === 'text';
-    pwdInput.type = showing ? 'password' : 'text';
-    toggleBtn.setAttribute('data-lucide', showing ? 'eye' : 'eye-off');
-    toggleBtn.innerHTML = '';
-    lucide.createIcons();
+  toggleBtn.addEventListener('click', () => { pwdInput.type = pwdInput.type === 'text' ? 'password' : 'text'; });
+
+  document.getElementById('toggleRegisterPassword').addEventListener('click', () => {
+    const i = document.getElementById('registerPassword');
+    i.type = i.type === 'text' ? 'password' : 'text';
+  });
+  document.getElementById('toggleRegisterPasswordConfirm').addEventListener('click', () => {
+    const i = document.getElementById('registerPasswordConfirm');
+    i.type = i.type === 'text' ? 'password' : 'text';
   });
 
-  const modal = document.getElementById('loginModal');
-  function openModal(){ modal.classList.add('open'); requestAnimationFrame(() => modal.classList.add('show')); }
-  @if ($errors->any())
-    openModal();
-  @endif
-  function closeModal(){ modal.classList.remove('show'); setTimeout(() => modal.classList.remove('open'), 300); }
-  ['openLogin','openLoginCta'].forEach(id => { const btn = document.getElementById(id); if(btn) btn.addEventListener('click', openModal); });
-  document.getElementById('closeModal').addEventListener('click', closeModal);
-  modal.addEventListener('click', e => { if(e.target === modal) closeModal(); });
-  document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
-  document.querySelectorAll('.modal-options button').forEach(btn => btn.addEventListener('click', () => { document.querySelectorAll('.modal-options button').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }));
+  // Choix du rôle (visuel)
+  document.querySelectorAll('.role-radio').forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.querySelectorAll('.role-choice').forEach(c => c.classList.remove('active'));
+      document.querySelector(`.role-choice[data-role="${radio.value}"]`).classList.add('active');
+    });
+  });
 
+  // ===== Ouverture / fermeture des 2 modales =====
+  const loginModal = document.getElementById('loginModal');
+  const registerModal = document.getElementById('registerModal');
+
+  function openLoginModal(){ registerModal.classList.remove('open','show'); loginModal.classList.add('open'); requestAnimationFrame(() => loginModal.classList.add('show')); }
+  function openRegisterModal(){ loginModal.classList.remove('open','show'); registerModal.classList.add('open'); requestAnimationFrame(() => registerModal.classList.add('show')); }
+  function closeModals(){
+    loginModal.classList.remove('show'); registerModal.classList.remove('show');
+    setTimeout(() => { loginModal.classList.remove('open'); registerModal.classList.remove('open'); }, 300);
+  }
+
+  @if ($errors->any())
+    @if (old('name'))
+      openRegisterModal();
+    @else
+      openLoginModal();
+    @endif
+  @endif
+
+  document.getElementById('openLogin').addEventListener('click', openLoginModal);
+  document.getElementById('openRegisterCta').addEventListener('click', openRegisterModal);
+  document.getElementById('switchToRegister').addEventListener('click', openRegisterModal);
+  document.getElementById('switchToLogin').addEventListener('click', openLoginModal);
+  document.getElementById('closeLoginModal').addEventListener('click', closeModals);
+  document.getElementById('closeRegisterModal').addEventListener('click', closeModals);
+  loginModal.addEventListener('click', e => { if(e.target === loginModal) closeModals(); });
+  registerModal.addEventListener('click', e => { if(e.target === registerModal) closeModals(); });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModals(); });
 </script>
+
+<style>
+  .role-choice{display:flex; align-items:center; justify-content:center; gap:6px; padding:9px; border-radius:12px; border:1.5px solid rgba(148,163,184,.35); font-size:12px; font-weight:600; background:rgba(255,255,255,.6); color:#334155;}
+  .role-choice.active{border-color:#0EA5E9; color:#0284C7; background:#E6F6FE;}
+</style>
 </body>
 </html>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LeaveRequest;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -10,9 +11,17 @@ class DashboardController extends Controller
     public function index()
     {
         if (Auth::user()->role === 'rh') {
-            return view('dashboard-rh');
+            return $this->dashboardRh();
         }
 
+        return $this->dashboardEmploye();
+    }
+
+    // ==========================================================
+    // TABLEAU DE BORD EMPLOYÉ
+    // ==========================================================
+    private function dashboardEmploye()
+    {
         $userId = Auth::id();
         $anneeActuelle = now()->year;
 
@@ -53,7 +62,6 @@ class DashboardController extends Controller
             ->take(2)
             ->get();
 
-        // Toutes les demandes (approuvées + en attente), envoyées telles quelles au calendrier JS
         $demandesCalendrier = LeaveRequest::where('user_id', $userId)
             ->whereIn('statut', ['approuve', 'en_attente'])
             ->get(['type', 'date_debut', 'date_fin', 'statut'])
@@ -64,9 +72,6 @@ class DashboardController extends Controller
                 'type' => $d->type,
             ]);
 
-        // Le sélecteur d'année du graphique propose toute la plage 2001 → 2030.
-        // On récupère les vraies demandes en une seule requête, puis on remplit
-        // chaque année de la plage (0 partout si l'utilisateur n'a rien cette année-là).
         $toutesLesDemandesApprouvees = LeaveRequest::where('user_id', $userId)
             ->where('statut', 'approuve')
             ->get()
@@ -75,18 +80,15 @@ class DashboardController extends Controller
         $congesParMoisParAnnee = [];
         for ($annee = 2030; $annee >= 2001; $annee--) {
             $valeurs = array_fill(1, 12, 0);
-
             if ($toutesLesDemandesApprouvees->has($annee)) {
                 $groupes = $toutesLesDemandesApprouvees->get($annee)->groupBy(fn ($d) => $d->date_debut->month);
                 foreach ($groupes as $mois => $groupe) {
                     $valeurs[$mois] = $groupe->sum('jours');
                 }
             }
-
             $congesParMoisParAnnee[$annee] = array_values($valeurs);
         }
 
-        // Petites notifications : demandes en attente + décisions récentes (14 derniers jours)
         $notifications = LeaveRequest::where('user_id', $userId)
             ->whereIn('statut', ['approuve', 'refuse'])
             ->where('updated_at', '>=', now()->subDays(14))
@@ -108,6 +110,145 @@ class DashboardController extends Controller
             'congesParMoisParAnnee',
             'anneeActuelle',
             'notifications'
+        ));
+    }
+
+    // ==========================================================
+    // TABLEAU DE BORD RH
+    // ==========================================================
+    private function dashboardRh()
+    {
+        $anneeActuelle = now()->year;
+        $debutMois = now()->startOfMonth();
+        $finMois = now()->endOfMonth();
+
+        // ---------- KPI ----------
+        $totalEmployes = User::where('role', 'employe')->count();
+
+        $demandesEnAttente = LeaveRequest::where('statut', 'en_attente')->count();
+
+        $absencesAujourdhui = LeaveRequest::where('statut', 'approuve')
+            ->whereDate('date_debut', '<=', now())
+            ->whereDate('date_fin', '>=', now())
+            ->distinct('user_id')
+            ->count('user_id');
+
+        $joursPrisCeMois = LeaveRequest::where('statut', 'approuve')
+            ->whereBetween('date_debut', [$debutMois, $finMois])
+            ->sum('jours');
+
+        // ---------- Activité récente de l'équipe ----------
+        $activiteRecente = LeaveRequest::with('user')
+            ->latest('created_at')
+            ->take(5)
+            ->get();
+
+        // ---------- Calendrier RH (congés + événements d'équipe) ----------
+        $demandesCalendrier = LeaveRequest::with('user:id,name')
+            ->whereIn('statut', ['approuve', 'en_attente'])
+            ->get(['id', 'user_id', 'type', 'date_debut', 'date_fin', 'statut'])
+            ->map(fn ($d) => [
+                'debut' => $d->date_debut->format('Y-m-d'),
+                'fin' => $d->date_fin->format('Y-m-d'),
+                'statut' => $d->statut,
+                'type' => $d->type,
+                'employe' => $d->user->name ?? '',
+            ]);
+
+        // ---------- Résumé des employés (statut aujourd'hui) ----------
+        $absentsAujourdhui = LeaveRequest::where('statut', 'approuve')
+            ->where('type', 'maladie')
+            ->whereDate('date_debut', '<=', now())
+            ->whereDate('date_fin', '>=', now())
+            ->distinct('user_id')
+            ->count('user_id');
+
+        $congeAujourdhui = LeaveRequest::where('statut', 'approuve')
+            ->whereIn('type', ['paye', 'sans_solde'])
+            ->whereDate('date_debut', '<=', now())
+            ->whereDate('date_fin', '>=', now())
+            ->distinct('user_id')
+            ->count('user_id');
+
+        $actifsAujourdhui = max(0, $totalEmployes - $absentsAujourdhui - $congeAujourdhui);
+
+        // ---------- Prochaines absences (équipe) ----------
+        $prochainesAbsences = LeaveRequest::with('user')
+            ->where('statut', 'approuve')
+            ->where('date_debut', '>=', now())
+            ->orderBy('date_debut')
+            ->take(2)
+            ->get();
+
+        // ---------- Évolution des congés utilisés (toute l'équipe) ----------
+        $toutesLesDemandesApprouvees = LeaveRequest::where('statut', 'approuve')
+            ->get()
+            ->groupBy(fn ($d) => $d->date_debut->year);
+
+        $congesParMoisParAnnee = [];
+        for ($annee = 2030; $annee >= 2001; $annee--) {
+            $valeurs = array_fill(1, 12, 0);
+            if ($toutesLesDemandesApprouvees->has($annee)) {
+                $groupes = $toutesLesDemandesApprouvees->get($annee)->groupBy(fn ($d) => $d->date_debut->month);
+                foreach ($groupes as $mois => $groupe) {
+                    $valeurs[$mois] = $groupe->sum('jours');
+                }
+            }
+            $congesParMoisParAnnee[$annee] = array_values($valeurs);
+        }
+
+        // ---------- Insights intelligents ----------
+        $demandesCeMois = LeaveRequest::whereBetween('created_at', [$debutMois, $finMois])->count();
+        $demandesMoisDernier = LeaveRequest::whereBetween('created_at', [
+            now()->subMonthNoOverflow()->startOfMonth(),
+            now()->subMonthNoOverflow()->endOfMonth(),
+        ])->count();
+        $variationDemandes = $demandesMoisDernier > 0
+            ? (int) round((($demandesCeMois - $demandesMoisDernier) / $demandesMoisDernier) * 100)
+            : null;
+
+        $jourLePlusDemande = LeaveRequest::all(['date_debut'])
+            ->groupBy(fn ($d) => $d->date_debut->format('d/m'))
+            ->sortByDesc(fn ($g) => $g->count())
+            ->map(fn ($g, $date) => ['date' => $date, 'nombre' => $g->count()])
+            ->first();
+
+        $departementPlusAbsences = LeaveRequest::where('statut', 'approuve')
+            ->with('user:id,departement')
+            ->get()
+            ->filter(fn ($d) => $d->user && $d->user->departement)
+            ->groupBy(fn ($d) => $d->user->departement)
+            ->map(fn ($g) => $g->sum('jours'))
+            ->sortDesc()
+            ->take(1);
+
+        // ---------- Top départements (jours d'absence) ----------
+        $topDepartements = LeaveRequest::where('statut', 'approuve')
+            ->with('user:id,departement')
+            ->get()
+            ->filter(fn ($d) => $d->user && $d->user->departement)
+            ->groupBy(fn ($d) => $d->user->departement)
+            ->map(fn ($g) => $g->sum('jours'))
+            ->sortDesc()
+            ->take(4);
+
+        return view('dashboard-rh', compact(
+            'totalEmployes',
+            'demandesEnAttente',
+            'absencesAujourdhui',
+            'joursPrisCeMois',
+            'activiteRecente',
+            'demandesCalendrier',
+            'actifsAujourdhui',
+            'congeAujourdhui',
+            'absentsAujourdhui',
+            'prochainesAbsences',
+            'congesParMoisParAnnee',
+            'anneeActuelle',
+            'variationDemandes',
+            'jourLePlusDemande',
+            'departementPlusAbsences',
+            'topDepartements'
         ));
     }
 }

@@ -13,7 +13,7 @@
     --orange:#F59E0B; --green:#10B981; --red:#EF4444; --purple:#8B5CF6;
     --bg:#05070F; --panel:rgba(18,24,42,.55); --panel-2:rgba(255,255,255,.06);
     --border:rgba(255,255,255,.12);
-    --text:#F1F4FA; --text-dim:#9AA5BD;
+    --text:#F1F4FA; --text-dim:#C3CCE0;
     --radius:22px;
     --glass-blur:22px;
   }
@@ -33,7 +33,7 @@
 
   /* ===== SIDEBAR (icônes seules, petite pilule flottante, comme la maquette) ===== */
   .sidebar{width:64px; flex:none; align-self:center; position:relative; z-index:100; background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:999px; padding:16px 0; display:flex; flex-direction:column; align-items:center; box-shadow:0 8px 32px rgba(0,0,0,.35); max-height:82vh;}
-  .side-logo{width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,var(--orange),#DC2626); display:flex; align-items:center; justify-content:center; margin-bottom:18px; font-weight:700; overflow:hidden;}
+  .side-logo{width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,var(--orange),#DC2626); display:flex; align-items:center; justify-content:center; margin-bottom:18px; font-weight:700; overflow:hidden; flex:none;}
   .side-logo img{width:100%; height:100%; object-fit:cover;}
   .side-nav{display:flex; flex-direction:column; gap:6px; flex:1;}
   .side-link{position:relative; width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:var(--text-dim);}
@@ -54,18 +54,19 @@
   .brand-lockup .brand-text b span{color:var(--orange);}
   .brand-lockup .brand-text small{display:block; font-size:9.5px; color:var(--text-dim); line-height:1.2;}
   .topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:30px;}
-  .search{position:relative; width:360px;}
-  .search input{width:100%; background:var(--panel); backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:16px; padding:11px 44px 11px 16px; color:#fff; font-size:13.5px;}
-  .search input::placeholder{color:var(--text-dim);}
-  .search i{position:absolute; left:14px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--text-dim);}
-  .search .kbd{position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:10.5px; color:var(--text-dim); background:rgba(255,255,255,.08); padding:3px 7px; border-radius:6px;}
+
+  /* ===== RECHERCHE (rectangle sombre + bloc blanc + icône, style simple demandé) ===== */
+  .search-box{width:340px; height:44px; display:flex; align-items:stretch; background:#0F2A47; border-radius:8px; padding:5px; gap:8px;}
+  .search-box input{flex:1; border:none; outline:none; background:#fff; border-radius:4px; color:#0F2A47; font-size:13.5px; padding:0 14px; font-family:inherit;}
+  .search-box input::placeholder{color:#8896A8;}
+  .search-btn{width:34px; border:none; background:transparent; color:#CFE0F0; cursor:pointer; display:flex; align-items:center; justify-content:center; flex:none;}
 
   .top-right{display:flex; align-items:center; gap:14px; position:relative;}
   .icon-btn{position:relative; width:40px; height:40px; border-radius:14px; background:var(--panel); backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); display:flex; align-items:center; justify-content:center;}
   .icon-btn .dot{position:absolute; top:-3px; right:-3px; background:var(--red); color:#fff; font-size:9.5px; font-weight:700; width:17px; height:17px; border-radius:50%; display:flex; align-items:center; justify-content:center;}
   .user-chip{display:flex; align-items:center; gap:10px; cursor:pointer; background:var(--panel); backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:16px; padding:6px 14px 6px 6px;}
   .avatar{width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--orange),#DC2626); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; overflow:hidden;}
-  .avatar img{width:100%; height:100%; object-fit:cover;}
+  .avatar img{width:100%; height:100%; object-fit:cover; object-position:center top;}
   .user-chip p{font-size:13px; font-weight:600;}
   .user-chip span{font-size:11px; color:var(--text-dim);}
 
@@ -85,41 +86,27 @@
   /* ===== GREETING ===== */
   .greeting{margin-bottom:26px; position:relative;}
   .greeting h1{font-size:27px; font-weight:700; text-shadow:0 2px 12px rgba(0,0,0,.5);}
-  .greeting p{color:var(--text-dim); font-size:13.5px; margin-top:4px; text-shadow:0 2px 8px rgba(0,0,0,.5); max-width:520px;}
+  .greeting p{color:var(--text-dim); font-size:13.5px; margin-top:4px; text-shadow:0 2px 10px rgba(0,0,0,.7), 0 1px 2px rgba(0,0,0,.9); max-width:520px;}
   .kpi-row{display:grid; grid-template-columns:3fr 1.1fr; gap:16px; margin-bottom:16px; align-items:stretch;}
   .kpi-image-card{background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:20px; box-shadow:0 8px 24px rgba(0,0,0,.25); display:flex; align-items:center; justify-content:center; overflow:hidden; min-height:100%;}
   .kpi-image-card img{width:100%; height:100%; object-fit:cover;}
 
-  /* ===== STAT CARDS ===== */
-  .stats-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px;}
-  .stat-card{background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:var(--radius); padding:20px; position:relative; box-shadow:0 8px 24px rgba(0,0,0,.25);}
-  .stat-card .top{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
-  .stat-card .ico{width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center;}
-  .stat-card .dots{color:var(--text-dim); font-size:16px; letter-spacing:2px;}
-  .stat-card b{display:block; font-size:26px; font-weight:700;}
-  .stat-card b small{font-size:13px; font-weight:400; color:var(--text-dim);}
-  .stat-card .label{font-size:12px; color:var(--text-dim); margin-top:2px;}
-  .stat-card svg.spark{margin-top:12px; width:100%; height:26px; display:block;}
-  .stat-card .foot{display:block; margin-top:10px; font-size:11.5px; font-weight:600;}
-  .ico-blue{background:rgba(59,130,246,.2); color:var(--blue-2);}
-  .ico-orange{background:rgba(245,158,11,.2); color:var(--orange);}
-  .ico-green{background:rgba(16,185,129,.2); color:var(--green);}
-  .ico-purple{background:rgba(139,92,246,.2); color:var(--purple);}
-  .foot-blue{color:var(--blue-2);} .foot-orange{color:var(--orange);} .foot-green{color:var(--green);} .foot-purple{color:var(--purple);}
-
   /* ===== GRID LAYOUT ===== */
-  .grid-2{display:grid; grid-template-columns:1.7fr 1fr; gap:16px; margin-bottom:12px; height:250px;}
-  .row2-grid{display:grid; grid-template-columns:0.9fr 1.5fr 0.8fr; gap:16px; margin-bottom:12px; height:180px;}
-  .row2-grid > .panel, .grid-2 > .panel{height:100%; padding:14px 16px; overflow:hidden; display:flex; flex-direction:column;}
+  .row2-grid{display:grid; grid-template-columns:0.9fr 1.5fr 0.8fr; gap:16px; margin-bottom:12px; height:210px;}
+  .row2-grid > .panel{height:100%; padding:16px; overflow:visible; display:flex; flex-direction:column;}
   @media (max-width:1100px){
     .row2-grid{grid-template-columns:1fr;}
   }
-  .grid-2b{display:grid; grid-template-columns:1fr 1.4fr; gap:16px; margin-bottom:16px;}
 
-  .card{background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:var(--radius); padding:22px; box-shadow:0 8px 24px rgba(0,0,0,.25);}
-  .card-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
-  .card-head h2{font-size:15.5px; font-weight:700;}
-  .card-head a{font-size:12.5px; color:var(--blue-2); font-weight:600;}
+  /* ===== TITRES DE SECTION (pilule bleu glossy) ===== */
+  .card-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px;}
+  .card-head h2{position:relative; font-size:13px; font-weight:800; color:#fff; display:inline-flex; align-items:center; gap:8px; flex:none; line-height:1.4;
+    padding:9px 18px; background:linear-gradient(180deg,#3D7BFF 0%,#1E4FC4 55%,#123591 100%); border-radius:999px; white-space:nowrap;
+    box-shadow:0 6px 14px rgba(23,73,176,.5), inset 0 2px 0 rgba(255,255,255,.4), inset 0 -4px 8px rgba(0,0,0,.3);}
+  .card-head a{font-size:11.5px; font-weight:700; color:#fff; display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:999px; white-space:nowrap;
+    background: radial-gradient(130% 200% at 30% -30%, rgba(255,255,255,.3), rgba(255,255,255,0) 45%), linear-gradient(160deg, #F59E0B, #C2410C 75%);
+    box-shadow:0 6px 16px rgba(194,65,12,.4), inset 0 1px 0 rgba(255,255,255,.25);}
+  .card-head a:hover{transform:translateY(-1px);}
 
   /* ===== TABLE ===== */
   table{width:100%; border-collapse:collapse;}
@@ -163,8 +150,6 @@
   .donut-legend{display:flex; flex-direction:column; gap:11px;}
   .donut-legend .row{display:flex; align-items:center; gap:8px; font-size:12.5px;}
   .donut-legend .row b{font-weight:600;}
-  .donut-foot{margin-top:18px; background:var(--panel-2); border-radius:13px; padding:12px 14px; font-size:11.5px; color:var(--text-dim); display:flex; align-items:center; gap:10px;}
-  .donut-foot i{color:var(--green); flex:none;}
 
   /* ===== LINE CHART ===== */
   .chart-select{background:#1a2338; border:1px solid var(--border); color:#fff; font-size:12px; padding:5px 10px; border-radius:8px;}
@@ -179,14 +164,7 @@
   .absence-row span{font-size:11.5px; color:var(--text-dim);}
   .badge-days{background:rgba(16,185,129,.15); color:var(--green); font-size:11px; font-weight:600; padding:5px 12px; border-radius:20px; white-space:nowrap;}
 
-  /* ===== DOC CARD ===== */
-  .doc-card{background:linear-gradient(155deg,var(--orange),#B45309); border-radius:var(--radius); padding:18px; display:flex; flex-direction:column; gap:8px; position:relative; overflow:hidden; border:1px solid var(--border); box-shadow:0 8px 24px rgba(0,0,0,.25); height:250px; justify-content:center;}
-  .doc-card .doc-ico{width:46px; height:46px; border-radius:13px; background:rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center;}
-  .doc-card h3{font-size:15px; font-weight:700;}
-  .doc-card p{font-size:12px; opacity:.85; max-width:220px;}
-  .btn-doc{background:#fff; color:#B45309; font-weight:700; font-size:13px; padding:10px 16px; border-radius:12px; display:inline-flex; align-items:center; gap:8px; width:fit-content;}
-
-  /* ===== MISE EN PAGE FUSIONNÉE (panneaux avec séparateurs internes, façon maquette) ===== */
+  /* ===== MISE EN PAGE ===== */
   .dash-left{display:flex; flex-direction:column; gap:16px;}
   .triple-grid{display:grid; grid-template-columns:1.7fr 1.2fr 1fr; gap:12px; margin-bottom:12px; align-items:stretch;}
   @media (max-width:1100px){
@@ -207,40 +185,27 @@
   .ring-center .ring-sub1{font-size:12px; color:#fff; opacity:.9; margin-top:1px;}
   .ring-center .ring-sub2{font-size:10.5px; color:rgba(255,255,255,.65); margin-top:1px;}
   .ring-badge{width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:9px; margin-top:6px; box-shadow:0 0 10px var(--ring-c);}
-  .stat-cell .foot-btn{display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600;}
 
-  /* Panneau divisé en deux (demandes+calendrier, ou donut+courbe) — UN seul panneau, un séparateur interne */
-  .split-panel{display:flex; padding:22px;}
-  .split-left{flex:1.6; padding-right:24px;}
-  .split-divider{width:1px; background:var(--border); flex:none;}
-  .split-right{flex:1; padding-left:24px;}
+  /* ===== BOUTONS SOUS LES ANNEAUX (pilule orange glossy, sans flèche) ===== */
+  .stat-cell .foot-btn{display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700; color:#fff !important; padding:8px 16px; border-radius:999px;
+    background: radial-gradient(130% 200% at 30% -30%, rgba(255,255,255,.3), rgba(255,255,255,0) 45%), linear-gradient(160deg, #F59E0B, #C2410C 75%);
+    box-shadow:0 6px 16px rgba(194,65,12,.4), inset 0 1px 0 rgba(255,255,255,.25);}
+  .stat-cell .foot-btn:hover{transform:translateY(-1px);}
 
-  /* Colonne de droite : UN panneau unique avec sections séparées */
-  .side-panel{padding:24px; display:flex; flex-direction:column;}
-  .side-panel .divider{height:1px; background:var(--border); margin:20px 0;}
-  .clock-block .time{font-size:26px; font-weight:700;}
-  .clock-block .date{font-size:12px; color:var(--text-dim); margin-top:2px;}
-  .agenda-title{font-size:12.5px; font-weight:700; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em; margin:18px 0 10px;}
-
-  .actions-grid{display:grid; grid-template-columns:repeat(2, 140px); grid-template-rows:repeat(2, 75px); gap:12px; margin-top:10px;}
-  .action-tile{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; width:140px; height:75px; border-radius:14px; font-size:11px; font-weight:600; text-align:center;}
-  .action-tile .ico{width:34px; height:34px; border-radius:11px; display:flex; align-items:center; justify-content:center;}
-  .tile-orange{background:rgba(245,158,11,.15);} .tile-orange .ico{background:var(--orange); color:#fff;}
-  .tile-blue{background:rgba(59,130,246,.15);} .tile-blue .ico{background:var(--blue); color:#fff;}
-  .tile-green{background:rgba(16,185,129,.15);} .tile-green .ico{background:var(--green); color:#fff;}
-  .tile-purple{background:rgba(139,92,246,.15);} .tile-purple .ico{background:var(--purple); color:#fff;}
+  /* ===== ACTIONS RAPIDES (pilule orange glossy) ===== */
+  .action-tile{position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; height:70px; border-radius:20px; font-size:11px; font-weight:700; text-align:center; flex:1; color:#fff;
+    background: radial-gradient(130% 200% at 30% -30%, rgba(255,255,255,.3), rgba(255,255,255,0) 45%), linear-gradient(160deg, #F59E0B, #C2410C 75%);
+    box-shadow:0 8px 20px rgba(194,65,12,.4), inset 0 1px 0 rgba(255,255,255,.25);}
+  .action-tile:hover{transform:translateY(-1px);}
+  .action-tile .ico{width:26px; height:26px; border-radius:9px; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.2); color:#fff;}
 
   @media (max-width:1100px){
-    .dash-layout{grid-template-columns:1fr;}
     .stats-panel{flex-wrap:wrap;}
     .stat-cell{flex:1 1 50%; margin-bottom:16px;}
-    .split-panel{flex-direction:column;}
-    .split-divider{display:none;}
-    .split-left, .split-right{padding:0;}
   }
   @media (max-width:800px){
     .sidebar{display:none;}
-    .search{width:220px;}
+    .search-box{width:220px;}
   }
 </style>
 </head>
@@ -279,10 +244,9 @@
 
     <!-- ===== TOPBAR ===== -->
     <div class="topbar">
-      <div class="search">
-        <i data-lucide="search"></i>
+      <div class="search-box">
         <input type="text" id="rechercheInput" placeholder="Rechercher une demande...">
-        <span class="kbd">⌘K</span>
+        <button type="button" class="search-btn"><i data-lucide="search" style="width:18px;height:18px;"></i></button>
       </div>
       <div class="top-right">
         <button class="icon-btn" id="notifBtn"><i data-lucide="bell" style="width:17px;height:17px;"></i>
@@ -352,7 +316,6 @@
         <div class="kpi-row">
         <div class="panel stats-panel">
           @php
-            // Chaque couleur a une fonction précise : bleu = info, orange = alerte/action, vert = positif, violet = secondaire
             $anneaux = [
                 ['couleur' => '#2F8CFF', 'icone' => 'wallet'],
                 ['couleur' => '#FF9F1C', 'icone' => 'hourglass'],
@@ -360,7 +323,6 @@
                 ['couleur' => '#A855F7', 'icone' => 'plane'],
             ];
             $circonf = 2 * pi() * 74;
-            // Anneau en 2 segments séparés par 2 petits espaces (haut et bas), comme la maquette
             $segment = $circonf * 0.44;
             $espace = $circonf * 0.06;
             $motif = $segment.' '.$espace.' '.$segment.' '.$espace;
@@ -380,7 +342,7 @@
                 <div class="ring-sub2">de congés restants</div>
               </div>
             </div>
-            <a class="foot-btn" href="#" style="color:{{ $anneaux[0]['couleur'] }};">Voir mon solde <i data-lucide="arrow-right" style="width:11px;height:11px;"></i></a>
+            <a class="foot-btn" href="#">Voir mon solde</a>
           </div>
 
           <div class="stat-cell">
@@ -397,7 +359,7 @@
                 <div class="ring-sub2">en cours</div>
               </div>
             </div>
-            <a class="foot-btn" href="#" style="color:{{ $anneaux[1]['couleur'] }};">Voir mes demandes <i data-lucide="arrow-right" style="width:11px;height:11px;"></i></a>
+            <a class="foot-btn" href="#">Voir mes demandes</a>
           </div>
 
           <div class="stat-cell">
@@ -414,7 +376,7 @@
                 <div class="ring-sub2">cette année</div>
               </div>
             </div>
-            <a class="foot-btn" href="#" style="color:{{ $anneaux[2]['couleur'] }};">Voir l'historique <i data-lucide="arrow-right" style="width:11px;height:11px;"></i></a>
+            <a class="foot-btn" href="#">Voir l'historique</a>
           </div>
 
           <div class="stat-cell">
@@ -435,7 +397,7 @@
                 @endif
               </div>
             </div>
-            <a class="foot-btn" href="#" style="color:{{ $anneaux[3]['couleur'] }};">Voir le calendrier <i data-lucide="arrow-right" style="width:11px;height:11px;"></i></a>
+            <a class="foot-btn" href="#">Voir le calendrier</a>
           </div>
         </div>
 
@@ -449,7 +411,7 @@
           <div class="panel">
             <div class="card-head">
               <h2>Mes demandes récentes</h2>
-              <a href="#">Voir tout →</a>
+              <a href="#">Voir tout</a>
             </div>
             <table id="demandesTable">
               <thead>
@@ -495,7 +457,7 @@
 
           <div class="panel">
             <div class="cal-head">
-              <h2 style="font-size:15.5px; font-weight:700;">Mon calendrier</h2>
+              <h2 style="font-size:15.5px; font-weight:700; background:none; box-shadow:none; padding:0; border-radius:0; color:var(--text);">Mon calendrier</h2>
               <div class="cal-nav">
                 <button id="calPrev"><i data-lucide="chevron-left" style="width:14px;height:14px;"></i></button>
                 <span id="calLabel"></span>
@@ -550,8 +512,8 @@
             <div class="panel">
               <div class="card-head"><h2>Actions rapides</h2></div>
               <div style="display:flex; gap:10px;">
-                <a href="#" class="action-tile tile-orange" style="width:auto; flex:1;"><span class="ico"><i data-lucide="plus" style="width:16px;height:16px;"></i></span> Nouvelle demande</a>
-                <button type="button" id="genererDoc" class="action-tile tile-blue" style="width:auto; flex:1;"><span class="ico"><i data-lucide="download" style="width:16px;height:16px;"></i></span> Exporter rapport</button>
+                <a href="#" class="action-tile" style="width:auto; flex:1;"><span class="ico"><i data-lucide="plus" style="width:16px;height:16px;"></i></span> Nouvelle demande</a>
+                <button type="button" id="genererDoc" class="action-tile" style="width:auto; flex:1;"><span class="ico"><i data-lucide="download" style="width:16px;height:16px;"></i></span> Exporter rapport</button>
               </div>
             </div>
           </div>
@@ -605,7 +567,7 @@
           </div>
 
           <div class="panel" style="display:flex; flex-direction:column; justify-content:center;">
-            <div class="card-head"><h2>Prochaines absences</h2><a href="#">Voir tout →</a></div>
+            <div class="card-head"><h2>Prochaines absences</h2><a href="#">Voir tout</a></div>
             @forelse ($prochainesAbsences as $absence)
               <div class="absence-row">
                 <div class="left">
@@ -635,14 +597,11 @@
 <script>
   lucide.createIcons();
 
-  // Les liens de la sidebar qui ne mènent nulle part pour l'instant (href="#")
-  // ne doivent pas faire sauter la page ; l'étiquette reste visible après un clic (:focus).
   document.querySelectorAll('.sidebar a[href="#"]').forEach(lien => {
     lien.addEventListener('click', (e) => e.preventDefault());
   });
 
   /* ===================== CALENDRIER NAVIGABLE ===================== */
-  // Toutes les demandes de l'utilisateur, envoyées par le contrôleur.
   const demandes = {{ Js::from($demandesCalendrier) }};
 
   const calGrid = document.getElementById('calGrid');
@@ -650,7 +609,7 @@
   const moisNoms = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 
   let vueAnnee = new Date().getFullYear();
-  let vueMois = new Date().getMonth(); // 0 = janvier
+  let vueMois = new Date().getMonth();
 
   function statutDuJour(dateStr) {
     for (const d of demandes) {
@@ -663,7 +622,6 @@
     return null;
   }
 
-  // Sélecteurs rapides mois / année (en plus des flèches ‹ ›)
   const calMoisSelect = document.getElementById('calMoisSelect');
   const calAnneeSelect = document.getElementById('calAnneeSelect');
 
@@ -674,7 +632,6 @@
     calMoisSelect.appendChild(opt);
   });
 
-  // Toutes les années, de 2001 à 2030
   for (let a = 2001; a <= 2030; a++) {
     const opt = document.createElement('option');
     opt.value = a;
@@ -695,7 +652,7 @@
       calGrid.appendChild(el);
     });
 
-    const premierJour = (new Date(vueAnnee, vueMois, 1).getDay() + 6) % 7; // lundi = 0
+    const premierJour = (new Date(vueAnnee, vueMois, 1).getDay() + 6) % 7;
     const joursDansMois = new Date(vueAnnee, vueMois + 1, 0).getDate();
     const aujourdHui = new Date();
 
@@ -787,7 +744,7 @@
 
   function dessinerGraphique(annee) {
     const valeurs = donneesParAnnee[annee] || new Array(12).fill(0);
-    const axisMax = Math.max(...valeurs, 5); // l'axe démarre toujours au moins jusqu'à 5, et s'adapte si les valeurs dépassent
+    const axisMax = Math.max(...valeurs, 5);
     const largeurTotale = 600, largeurAxe = 26, largeur = largeurTotale - largeurAxe, hauteur = 110, pas = largeur / 11;
 
     const points = valeurs.map((v, i) => [largeurAxe + i * pas, hauteur - (v / axisMax) * hauteur]);
@@ -799,7 +756,6 @@
       cercles += `<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#F59E0B" data-mois="${moisAbrev[i]}" data-valeur="${valeurs[i]}" style="cursor:pointer;" />`;
     });
 
-    // Axe des ordonnées : 6 graduations de 0 à axisMax (ex. 0,1,2,3,4,5)
     let axeY = '';
     for (let i = 0; i <= 5; i++) {
       const valeur = Math.round((axisMax / 5) * i);
@@ -844,15 +800,6 @@
     // NOTE : génération réelle du PDF à brancher à une étape suivante du projet
     alert('Attestation à générer (fonctionnalité PDF à venir)');
   });
-
-  /* ===================== HORLOGE EN DIRECT ===================== */
-  function majHorloge() {
-    const maintenant = new Date();
-    document.getElementById('horlogeHeure').textContent = maintenant.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-    document.getElementById('horlogeDate').textContent = maintenant.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  }
-  majHorloge();
-  setInterval(majHorloge, 30000);
 </script>
 </body>
 </html>
