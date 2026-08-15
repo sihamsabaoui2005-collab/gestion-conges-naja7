@@ -213,10 +213,10 @@
     <nav class="side-nav">
       <a href="{{ route('dashboard') }}" class="side-link active"><i data-lucide="home" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
       <a href="#" class="side-link"><i data-lucide="calendar-heart" style="width:17px;height:17px;"></i><span class="tip">Congés &amp; Absences</span></a>
-      <a href="#" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Demandes @if($demandesEnAttente>0)({{ $demandesEnAttente }})@endif</span></a>
+      <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Demandes @if($demandesEnAttente>0)({{ $demandesEnAttente }})@endif</span></a>
       <a href="#" class="side-link"><i data-lucide="users" style="width:17px;height:17px;"></i><span class="tip">Employés</span></a>
       <a href="#" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier équipe</span></a>
-      <a href="#" class="side-link"><i data-lucide="check-square" style="width:17px;height:17px;"></i><span class="tip">Validation @if($demandesEnAttente>0)({{ $demandesEnAttente }})@endif</span></a>
+      <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="check-square" style="width:17px;height:17px;"></i><span class="tip">Validation @if($demandesEnAttente>0)({{ $demandesEnAttente }})@endif</span></a>
       <a href="#" class="side-link"><i data-lucide="file-bar-chart" style="width:17px;height:17px;"></i><span class="tip">Rapports</span></a>
       <a href="#" class="side-link"><i data-lucide="bar-chart-3" style="width:17px;height:17px;"></i><span class="tip">Statistiques</span></a>
       <a href="{{ route('profile.edit') }}" class="side-link"><i data-lucide="user" style="width:17px;height:17px;"></i><span class="tip">Mon profil</span></a>
@@ -335,7 +335,7 @@
               <div class="ring-sub1">en attente</div>
             </div>
           </div>
-          <a class="foot-btn" href="#">Voir les demandes</a>
+          <a class="foot-btn" href="{{ route('conges.index') }}">Voir les demandes</a>
         </div>
 
         <div class="stat-cell">
@@ -379,7 +379,7 @@
       <div class="panel panel-pad">
         <div class="card-head">
           <h2>Activité des employés</h2>
-          <a href="#">Voir tout</a>
+          <a href="{{ route('conges.index') }}">Voir tout</a>
         </div>
         <table>
           <thead>
@@ -480,7 +480,7 @@
           <div class="card-head"><h2>Actions rapides</h2></div>
           <div style="display:flex; gap:10px;">
             <button type="button" id="genererRapport" class="action-tile tile-orange"><span class="ico"><i data-lucide="file-down" style="width:14px;height:14px;"></i></span> Générer rapport</button>
-            <a href="#" class="action-tile tile-blue"><span class="ico"><i data-lucide="users" style="width:14px;height:14px;"></i></span> Voir les employés</a>
+            <a href="{{ route('conges.index') }}" class="action-tile tile-blue"><span class="ico"><i data-lucide="check-square" style="width:14px;height:14px;"></i></span> Valider les demandes</a>
           </div>
         </div>
       </div>

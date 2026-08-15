@@ -17,6 +17,7 @@ class LeaveRequest extends Model
         'jours',
         'statut',
         'motif',
+        'justificatif_path',
         'valide_par',
         'valide_le',
     ];
@@ -37,5 +38,11 @@ class LeaveRequest extends Model
     public function validateur()
     {
         return $this->belongsTo(User::class, 'valide_par');
+    }
+
+    // Les commentaires laissés sur cette demande (employé + RH)
+    public function comments()
+    {
+        return $this->hasMany(LeaveComment::class)->latest();
     }
 }

@@ -221,8 +221,8 @@
 
     <nav class="side-nav">
       <a href="{{ route('dashboard') }}" class="side-link active"><i data-lucide="layout-dashboard" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
-      <a href="#" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Mes demandes</span></a>
-      <a href="#" class="side-link"><i data-lucide="plus-circle" style="width:17px;height:17px;"></i><span class="tip">Nouvelle demande</span></a>
+      <a href="{{ route('conges.create') }}" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Mes demandes</span></a>
+      <a href="{{ route('conges.create') }}" class="side-link"><i data-lucide="plus-circle" style="width:17px;height:17px;"></i><span class="tip">Nouvelle demande</span></a>
       <a href="#" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier</span></a>
       <a href="#" class="side-link"><i data-lucide="wallet" style="width:17px;height:17px;"></i><span class="tip">Mon solde</span></a>
       <a href="#" class="side-link"><i data-lucide="history" style="width:17px;height:17px;"></i><span class="tip">Historique</span></a>
@@ -512,7 +512,7 @@
             <div class="panel">
               <div class="card-head"><h2>Actions rapides</h2></div>
               <div style="display:flex; gap:10px;">
-                <a href="#" class="action-tile" style="width:auto; flex:1;"><span class="ico"><i data-lucide="plus" style="width:16px;height:16px;"></i></span> Nouvelle demande</a>
+                <a href="{{ route('conges.create') }}" class="action-tile" style="width:auto; flex:1;"><span class="ico"><i data-lucide="plus" style="width:16px;height:16px;"></i></span> Nouvelle demande</a>
                 <button type="button" id="genererDoc" class="action-tile" style="width:auto; flex:1;"><span class="ico"><i data-lucide="download" style="width:16px;height:16px;"></i></span> Exporter rapport</button>
               </div>
             </div>
