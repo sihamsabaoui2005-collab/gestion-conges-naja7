@@ -25,6 +25,9 @@ class DashboardController extends Controller
         $userId = Auth::id();
         $anneeActuelle = now()->year;
 
+        // solde_conges_annuel est un solde "vivant" : approve() le décrémente déjà
+        // au moment de la validation d'une demande. Il ne faut donc PAS soustraire
+        // à nouveau les jours utilisés ici, sinon chaque congé approuvé est compté deux fois.
         $soldeAnnuel = Auth::user()->solde_conges_annuel ?? 30;
 
         $joursUtilises = LeaveRequest::where('user_id', $userId)
@@ -32,10 +35,13 @@ class DashboardController extends Controller
             ->whereYear('date_debut', $anneeActuelle)
             ->sum('jours');
 
-        $soldeDisponible = max(0, $soldeAnnuel - $joursUtilises);
+        $soldeDisponible = $soldeAnnuel;
 
-        $pourcentageUtilise = $soldeAnnuel > 0
-            ? (int) round(($joursUtilises / $soldeAnnuel) * 100)
+        // NB : ce pourcentage compare l'usage de l'année au solde restant (pas à un solde
+        // initial fixe, qui n'existe pas encore comme colonne séparée) — c'est une
+        // approximation à corriger si un champ "solde_conges_initial" est ajouté plus tard.
+        $pourcentageUtilise = ($soldeAnnuel + $joursUtilises) > 0
+            ? (int) round(($joursUtilises / ($soldeAnnuel + $joursUtilises)) * 100)
             : 0;
 
         $demandesEnAttente = LeaveRequest::where('user_id', $userId)

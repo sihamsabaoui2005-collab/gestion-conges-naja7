@@ -30,7 +30,6 @@
 
   .app{display:flex; align-items:flex-start; min-height:100vh; padding:16px 24px; gap:16px; max-width:1500px; margin:0 auto; overflow-x:hidden;}
 
-  /* ===== SIDEBAR (identique au reste de l'app) ===== */
   .sidebar{width:64px; flex:none; align-self:flex-start; position:sticky; top:16px; z-index:100; background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:32px; padding:14px 0 16px; display:flex; flex-direction:column; align-items:center; box-shadow:0 8px 32px rgba(0,0,0,.35); max-height:94vh;}
   .side-logo{width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,var(--orange),#DC2626); display:flex; align-items:center; justify-content:center; margin-bottom:12px; font-weight:700; font-size:15px; color:#fff; overflow:hidden; flex:none;}
   .side-logo img{width:100%; height:100%; object-fit:cover;}
@@ -43,16 +42,15 @@
   .side-link:focus .tip{opacity:1;}
   .side-bottom{display:flex; flex-direction:column; gap:4px; padding-top:8px; margin-top:6px; border-top:1px solid var(--border); align-items:center; flex:none;}
 
-  /* ===== MAIN ===== */
   .main{flex:1; align-self:stretch; padding:6px 6px 40px; max-width:100%; overflow-x:hidden;}
 
-  /* ===== HEADER ===== */
   .header{display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:14px;}
   .header-left h1{position:relative; font-size:16px; font-weight:800; color:#fff; display:inline-flex; align-items:center; gap:8px;
     padding:12px 28px; background:linear-gradient(180deg,#3D7BFF 0%,#1E4FC4 55%,#123591 100%); border-radius:999px;
     box-shadow:0 6px 14px rgba(23,73,176,.5), inset 0 2px 0 rgba(255,255,255,.4), inset 0 -4px 8px rgba(0,0,0,.3);}
   .header-left p{color:var(--text-dim); font-size:13.5px; margin-top:4px; text-shadow:0 2px 8px rgba(0,0,0,.5); max-width:520px;}
-  .header-right{display:flex; align-items:center; gap:12px;}
+  /* FIX : position:relative pour ancrer le panneau de notifications */
+  .header-right{display:flex; align-items:center; gap:12px; position:relative;}
 
   .search-box{width:260px; height:40px; display:flex; align-items:center; gap:8px; background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:0 12px;}
   .search-box input{flex:1; border:none; outline:none; background:transparent; color:#fff; font-size:14px;}
@@ -63,14 +61,21 @@
   .avatar{width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--orange),#DC2626); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; overflow:hidden; flex:none;}
   .avatar img{width:100%; height:100%; object-fit:cover; object-position:center top;}
 
-  /* ===== LAYOUT ===== */
+  /* FIX : styles du panneau de notifications (absents du fichier d'origine) */
+  .notif-panel{position:absolute; top:52px; right:0; background:rgba(18,24,42,.85); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:16px; padding:10px; width:290px; box-shadow:0 12px 30px rgba(0,0,0,.4); display:none; z-index:80;}
+  .notif-panel.open{display:block;}
+  .notif-panel h4{font-size:12.5px; padding:6px 8px 10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em;}
+  .notif-item{display:flex; align-items:flex-start; gap:10px; padding:9px 8px; border-radius:11px; font-size:12.5px;}
+  .notif-item:hover{background:rgba(255,255,255,.05);}
+  .notif-item .n-ico{width:28px; height:28px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex:none;}
+  .notif-empty{padding:14px 8px; font-size:12.5px; color:var(--text-dim); text-align:center;}
+
   .layout{display:grid; grid-template-columns:1fr 320px; gap:18px; align-items:start;}
   .layout > .panel{min-width:0;}
   @media (max-width:1050px){ .layout{grid-template-columns:1fr;} }
 
   .panel{background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 8px 24px rgba(0,0,0,.25);}
 
-  /* ===== TABS ===== */
   .tabs{display:flex; gap:8px; padding:22px 22px 8px; flex-wrap:nowrap;}
   .hex-item{position:relative; display:flex; align-items:center; text-decoration:none; flex:1; min-width:0;}
   .hex-num{width:32px; height:32px; border-radius:50%; background:var(--c); color:#fff; font-weight:800; font-size:13px;
@@ -86,7 +91,6 @@
   .hex-item.active .hex-card .txt b, .hex-item.active .hex-card .txt span{color:#fff;}
   .hex-item:hover .hex-card{filter:brightness(1.12);}
 
-  /* ===== FILTRES ===== */
   .filters{display:flex; gap:8px; padding:16px 18px 12px; flex-wrap:nowrap; align-items:center;}
   .filters select{background:#141b30; border:1px solid var(--border); color:#fff; font-size:14px; padding:9px 10px; border-radius:10px; flex:1; min-width:0;}
   .sort-wrap{position:relative; flex:1.3; min-width:0;}
@@ -97,7 +101,6 @@
     box-shadow:0 6px 16px rgba(194,65,12,.4), inset 0 1px 0 rgba(255,255,255,.25);}
   .filters .reset:hover{transform:translateY(-1px);}
 
-  /* ===== TRI (pilule + menu déroulant) ===== */
   .sort-wrap{position:relative;}
   .sort-trigger{background:#141b30; border:1px solid var(--border); color:#fff; font-size:13.5px; font-weight:600; display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:999px;}
   .sort-trigger:hover{background:#182140;}
@@ -112,7 +115,6 @@
   .sort-item.active .ico{color:var(--purple);}
   .sort-item .check{margin-left:auto; color:var(--purple); flex:none;}
 
-  /* ===== GROUPES DE DEMANDES ===== */
   .group{padding:6px 18px 18px;}
   .group-title{display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; margin:16px 0 10px;}
   .group-title .tag{width:8px; height:8px; border-radius:50%;}
@@ -123,7 +125,8 @@
 
   .demande-row{display:flex; align-items:center; gap:14px; padding:13px 14px; border-radius:16px; margin-bottom:8px; background:var(--panel-2); flex-wrap:wrap;}
   .demande-row .emp{display:flex; align-items:center; gap:10px; width:190px; flex:none;}
-  .emp-avatar{width:34px; height:34px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex:none;}
+  .emp-avatar{width:34px; height:34px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex:none; overflow:hidden;}
+  .emp-avatar img{width:100%; height:100%; object-fit:cover; object-position:center top;}
   .emp-info b{display:block; font-size:16px;}
   .emp-info span{font-size:13.5px; color:var(--text-dim);}
 
@@ -150,7 +153,6 @@
   .empty-state{text-align:center; padding:40px 0; color:var(--text-dim);}
   .empty-state .ico{width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,.06); display:flex; align-items:center; justify-content:center; margin:0 auto 10px;}
 
-  /* ===== SIDEBAR DROITE ===== */
   .side-panel{padding:20px;}
   .side-panel h3{position:relative; font-size:14px; font-weight:800; color:#fff; display:inline-flex; align-items:center; gap:8px;
     padding:11px 22px; background:linear-gradient(180deg,#3D7BFF 0%,#1E4FC4 55%,#123591 100%); border-radius:999px;
@@ -161,7 +163,6 @@
     box-shadow:0 5px 13px rgba(194,65,12,.4), inset 0 1px 0 rgba(255,255,255,.25);}
   .side-panel .head-row a:hover{transform:translateY(-1px);}
 
-  /* ===== APERÇU RADIAL (anneau + 4 badges aux coins) ===== */
   .apercu-wrap{position:relative; width:100%; max-width:330px; aspect-ratio:1 / 1; margin:12px auto 8px;}
   .apercu-center{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:44%; height:44%; border-radius:50%;
     display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; pointer-events:none;
@@ -189,7 +190,6 @@
   .stat-mini b{display:block; font-size:16px; font-weight:700;}
   .stat-mini span{font-size:9.5px; color:var(--text-dim);}
 
-  /* ===== ALERTES ===== */
   .alert-item{display:flex; align-items:flex-start; gap:10px; padding:12px 0; border-bottom:1px solid var(--border);}
   .alert-item:last-child{border-bottom:none;}
   .alert-item .ico{width:32px; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex:none;}
@@ -207,7 +207,6 @@
 
 <div class="app">
 
-  <!-- ===== SIDEBAR ===== -->
   <aside class="sidebar">
     <div class="side-logo">
       <img src="{{ asset('images/logo-naja7host.png') }}" alt="NAJA7HOST">
@@ -215,10 +214,10 @@
 
     <nav class="side-nav">
       <a href="{{ route('dashboard') }}" class="side-link"><i data-lucide="home" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
-      <a href="#" class="side-link"><i data-lucide="calendar-heart" style="width:17px;height:17px;"></i><span class="tip">Congés &amp; Absences</span></a>
+      <a href="{{ route('conges.apercu') }}" class="side-link"><i data-lucide="calendar-heart" style="width:17px;height:17px;"></i><span class="tip">Congés &amp; Absences</span></a>
       <a href="{{ route('conges.index') }}" class="side-link active"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Demandes</span></a>
-      <a href="#" class="side-link"><i data-lucide="users" style="width:17px;height:17px;"></i><span class="tip">Employés</span></a>
-      <a href="#" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier équipe</span></a>
+      <a href="{{ route('employes.index') }}" class="side-link"><i data-lucide="users" style="width:17px;height:17px;"></i><span class="tip">Employés</span></a>
+      <a href="{{ route('calendrier.index') }}" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier équipe</span></a>
       <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="check-square" style="width:17px;height:17px;"></i><span class="tip">Validation</span></a>
       <a href="#" class="side-link"><i data-lucide="file-bar-chart" style="width:17px;height:17px;"></i><span class="tip">Rapports</span></a>
       <a href="#" class="side-link"><i data-lucide="bar-chart-3" style="width:17px;height:17px;"></i><span class="tip">Statistiques</span></a>
@@ -235,10 +234,8 @@
     </div>
   </aside>
 
-  <!-- ===== MAIN ===== -->
   <main class="main">
 
-    <!-- ===== HEADER ===== -->
     <div class="header">
       <div class="header-left">
         <h1>Demandes de congé</h1>
@@ -251,22 +248,37 @@
             <input type="text" name="q" value="{{ $recherche }}" placeholder="Rechercher un employé...">
           </form>
         </div>
-        <button class="icon-btn"><i data-lucide="bell" style="width:16px;height:16px;"></i>
+
+        <!-- FIX : id ajouté pour brancher le JS -->
+        <button class="icon-btn" id="notifBtn"><i data-lucide="bell" style="width:16px;height:16px;"></i>
           @if ($countAValider > 0)<span class="dot">{{ $countAValider }}</span>@endif
         </button>
-        <div class="avatar">
+
+        <!-- FIX : panneau de notifications ajouté (branché sur la vraie donnée $countAValider) -->
+        <div class="notif-panel" id="notifPanel">
+          <h4>Notifications</h4>
+          @if ($countAValider > 0)
+            <div class="notif-item">
+              <span class="n-ico" style="background:rgba(245,158,11,.15); color:var(--orange);"><i data-lucide="hourglass" style="width:14px;height:14px;"></i></span>
+              <div>{{ $countAValider }} demande(s) à valider</div>
+            </div>
+          @else
+            <div class="notif-empty">Aucune notification récente.</div>
+          @endif
+        </div>
+
+        <a href="{{ route('profile.edit') }}" class="avatar">
           @if (auth()->user()->photo_path)
             <img src="{{ asset('storage/'.auth()->user()->photo_path) }}" alt="">
           @else
             {{ strtoupper(substr(auth()->user()->name,0,1)) }}
           @endif
-        </div>
+        </a>
       </div>
     </div>
 
     <div class="layout">
 
-      <!-- ===== COLONNE PRINCIPALE ===== -->
       <div class="panel">
 
         <div class="tabs">
@@ -314,9 +326,12 @@
 
           <select name="type" onchange="this.form.submit()">
             <option value="">Tous les types</option>
-            <option value="paye" @selected($type === 'paye')>Congé payé</option>
+            <option value="paye" @selected($type === 'paye')>Congé annuel</option>
             <option value="maladie" @selected($type === 'maladie')>Congé maladie</option>
             <option value="sans_solde" @selected($type === 'sans_solde')>Congé sans solde</option>
+            <option value="exceptionnel" @selected($type === 'exceptionnel')>Congé exceptionnel</option>
+            <option value="rtt" @selected($type === 'rtt')>RTT / Récupération</option>
+            <option value="autre" @selected($type === 'autre')>Autre congé</option>
           </select>
 
           <div class="sort-wrap" id="sortWrap">
@@ -353,7 +368,7 @@
         @endif
 
         @php
-          $libelles = ['paye' => 'Congé payé', 'maladie' => 'Congé maladie', 'sans_solde' => 'Congé sans solde'];
+          $libelles = ['paye' => 'Congé annuel', 'maladie' => 'Congé maladie', 'sans_solde' => 'Congé sans solde', 'exceptionnel' => 'Congé exceptionnel', 'rtt' => 'RTT / Récupération', 'autre' => 'Autre congé'];
           $sections = [
             'en_attente' => ['label' => 'En attente', 'title' => 'title-attente', 'tag' => 'tag-attente', 'badge' => 'badge-pending', 'statutLabel' => 'En attente'],
             'a_valider'  => ['label' => 'À valider', 'title' => 'title-avalider', 'tag' => 'tag-avalider', 'badge' => 'badge-avalider', 'statutLabel' => 'À valider'],
@@ -370,7 +385,13 @@
               @foreach ($demandes[$cle] as $demande)
                 <div class="demande-row">
                   <div class="emp">
-                    <span class="emp-avatar">{{ strtoupper(substr($demande->user->name ?? '?',0,1)) }}</span>
+                    <span class="emp-avatar">
+                      @if ($demande->user && $demande->user->photo_path)
+                        <img src="{{ asset('storage/'.$demande->user->photo_path) }}" alt="">
+                      @else
+                        {{ strtoupper(substr($demande->user->name ?? '?',0,1)) }}
+                      @endif
+                    </span>
                     <div class="emp-info">
                       <b>{{ $demande->user->name ?? 'Employé supprimé' }}</b>
                       <span>{{ $demande->user->poste ?? '' }}</span>
@@ -417,10 +438,8 @@
         </div>
       </div>
 
-      <!-- ===== SIDEBAR DROITE ===== -->
       <div style="display:flex; flex-direction:column; gap:16px;">
 
-        <!-- ===== Aperçu des congés (style radial) ===== -->
         <div class="panel side-panel">
           <div class="head-row"><h3>Aperçu des congés</h3></div>
 
@@ -428,10 +447,6 @@
             $totalPourPourcentage = max($toutes, 1);
             $rayon = 110;
             $circonf = 2 * pi() * $rayon;
-            $pctEnAttente = $countEnAttente / $totalPourPourcentage;
-            $pctAValider  = $countAValider / $totalPourPourcentage;
-            $pctApprouve  = $countApprouvees / $totalPourPourcentage;
-            $pctRefuse    = $countRefusees / $totalPourPourcentage;
           @endphp
 
           <div class="apercu-wrap">
@@ -450,20 +465,16 @@
                 </radialGradient>
               </defs>
 
-              <!-- halo de fond -->
               <circle cx="160" cy="160" r="150" fill="url(#apercuBg)" />
 
-              <!-- lignes de connexion vers les badges (orange uniquement) -->
               <line x1="85" y1="85" x2="45" y2="42" stroke="rgba(245,158,11,.4)" stroke-width="1.5" filter="url(#apercuGlow)" />
               <line x1="235" y1="85" x2="275" y2="42" stroke="rgba(245,158,11,.4)" stroke-width="1.5" filter="url(#apercuGlow)" />
               <line x1="85" y1="235" x2="45" y2="278" stroke="rgba(245,158,11,.4)" stroke-width="1.5" filter="url(#apercuGlow)" />
               <line x1="235" y1="235" x2="275" y2="278" stroke="rgba(245,158,11,.4)" stroke-width="1.5" filter="url(#apercuGlow)" />
 
-              <!-- piste de fond de l'anneau, bien visible même sans données -->
               <circle cx="160" cy="160" r="{{ $rayon }}" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="18" />
               <circle cx="160" cy="160" r="{{ $rayon }}" fill="none" stroke="rgba(245,158,11,.18)" stroke-width="18" stroke-dasharray="2 10" stroke-linecap="round" />
 
-              <!-- anneau (segments réels, uniquement si valeur > 0, tous en orange) -->
               <g transform="rotate(-90 160 160)">
                 @if ($toutes > 0)
                   <circle cx="160" cy="160" r="{{ $rayon }}" fill="none" stroke="var(--orange)" stroke-width="18" stroke-linecap="round"
@@ -471,7 +482,6 @@
                 @endif
               </g>
 
-              <!-- points sur l'anneau, avec halo et pulsation douce (orange uniquement) -->
               <circle cx="85" cy="85" r="6" fill="var(--orange)" filter="url(#apercuGlow)" style="animation:apercu-pulse 2.6s ease-in-out infinite;" />
               <circle cx="235" cy="85" r="6" fill="var(--orange)" filter="url(#apercuGlow)" style="animation:apercu-pulse 2.6s ease-in-out .3s infinite;" />
               <circle cx="85" cy="235" r="6" fill="var(--orange)" filter="url(#apercuGlow)" style="animation:apercu-pulse 2.6s ease-in-out .6s infinite;" />
@@ -499,9 +509,9 @@
           </div>
         </div>
 
-        <!-- ===== Alertes & conflits ===== -->
         <div class="panel side-panel">
-          <div class="head-row"><h3>Alertes &amp; conflits</h3><a href="#">Voir tout</a></div>
+          <!-- FIX : "Voir tout" pointait vers href="#". Renvoie maintenant vers la même page filtrée sur les alertes (conges.index). Adapte la route si tu as une page d'alertes dédiée. -->
+          <div class="head-row"><h3>Alertes &amp; conflits</h3><a href="{{ route('conges.index') }}">Voir tout</a></div>
 
           @if ($nombreConflits === 0 && $soldeFaibleCount === 0 && $congesLongsCount === 0)
             <div class="alert-empty">Aucune alerte pour le moment.</div>
@@ -549,9 +559,11 @@
 
 <script>
   lucide.createIcons();
+
+  // FIX : n'intercepte QUE les vrais liens décoratifs "#" restants (sidebar Rapports/Statistiques/Paramètres/Support),
+  // plus jamais le bouton notifications puisqu'il a maintenant un href réel / un id dédié.
   document.querySelectorAll('a[href="#"]').forEach(l => l.addEventListener('click', e => e.preventDefault()));
 
-  /* ===================== MENU DE TRI ===================== */
   const sortWrap = document.getElementById('sortWrap');
   const sortTrigger = document.getElementById('sortTrigger');
   if (sortWrap && sortTrigger) {
@@ -561,7 +573,18 @@
     });
     document.addEventListener('click', () => sortWrap.classList.remove('open'));
   }
+
+  // FIX : ouverture/fermeture du panneau de notifications
+  const notifBtn = document.getElementById('notifBtn');
+  const notifPanel = document.getElementById('notifPanel');
+  if (notifBtn && notifPanel) {
+    notifBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      notifPanel.classList.toggle('open');
+    });
+    document.addEventListener('click', () => notifPanel.classList.remove('open'));
+    notifPanel.addEventListener('click', (e) => e.stopPropagation());
+  }
 </script>
-@livewireScripts
 </body>
 </html>

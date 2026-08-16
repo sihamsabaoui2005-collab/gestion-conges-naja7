@@ -44,7 +44,7 @@
   .main{flex:1; align-self:stretch; padding:6px 6px 40px; max-width:100%; overflow-x:hidden;}
 
   /* ===== TOPBAR (identique à Mon profil) ===== */
-  .topbar{display:flex; align-items:center; justify-content:flex-end; margin-bottom:22px; gap:14px;}
+  .topbar{display:flex; align-items:center; justify-content:flex-end; margin-bottom:22px; gap:14px; position:relative;}
   .icon-btn{position:relative; width:40px; height:40px; border-radius:999px; display:flex; align-items:center; justify-content:center; color:#fff;
     background: radial-gradient(130% 200% at 30% -30%, rgba(255,255,255,.15), rgba(255,255,255,0) 45%), linear-gradient(160deg, #2A3350, #12141F 75%);
     box-shadow:0 6px 16px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.1);}
@@ -166,6 +166,15 @@
   .bon-a-savoir .ico{width:32px; height:32px; border-radius:10px; background:rgba(245,158,11,.15); color:var(--orange); display:flex; align-items:center; justify-content:center; flex:none;}
   .bon-a-savoir p{font-size:13px; color:var(--text-dim); line-height:1.5;}
 
+  /* FIX : styles du panneau de notifications, absents du fichier d'origine */
+  .notif-panel{position:absolute; top:52px; right:96px; background:rgba(18,24,42,.85); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:16px; padding:10px; width:290px; box-shadow:0 12px 30px rgba(0,0,0,.4); display:none; z-index:80;}
+  .notif-panel.open{display:block;}
+  .notif-panel h4{font-size:12.5px; padding:6px 8px 10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em;}
+  .notif-item{display:flex; align-items:flex-start; gap:10px; padding:9px 8px; border-radius:11px; font-size:12.5px;}
+  .notif-item:hover{background:rgba(255,255,255,.05);}
+  .notif-item .n-ico{width:28px; height:28px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex:none;}
+  .notif-empty{padding:14px 8px; font-size:12.5px; color:var(--text-dim); text-align:center;}
+
   @media (max-width:800px){ .sidebar{display:none;} }
 </style>
 @livewireStyles
@@ -193,12 +202,11 @@
         <a href="#" class="side-link"><i data-lucide="settings" style="width:17px;height:17px;"></i><span class="tip">Paramètres</span></a>
       @else
         <a href="{{ route('dashboard') }}" class="side-link"><i data-lucide="layout-dashboard" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
-        {{-- FIX : pointait vers href="#", donc le clic était bloqué par le script en bas de page. conges.index liste déjà les demandes. --}}
-        <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Mes demandes</span></a>
+        {{-- FIX : pointait vers route('conges.index'), qui est réservée aux RH (403 pour un employé). Pointe désormais vers la route dédiée conges.mesDemandes. --}}
+        <a href="{{ route('conges.mesDemandes') }}" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Mes demandes</span></a>
         <a href="{{ route('conges.create') }}" class="side-link active"><i data-lucide="plus-circle" style="width:17px;height:17px;"></i><span class="tip">Nouvelle demande</span></a>
-        {{-- FIX : réutilise la route calendrier.index existante (vue équipe RH) ; si tu veux une vue calendrier dédiée à l'employé, dis-moi le nom de la route et je la remplace. --}}
         <a href="{{ route('calendrier.index') }}" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier</span></a>
-        {{-- Ces 3 liens n'ont pas de route connue côté employé pour l'instant : donne-moi leurs noms de route (ex. conges.solde, conges.historique) et je les branche. --}}
+        {{-- Pas de route connue côté employé pour ces 2 liens : donne les noms de route si elles existent, sinon je les construis. --}}
         <a href="#" class="side-link"><i data-lucide="wallet" style="width:17px;height:17px;"></i><span class="tip">Mon solde</span></a>
         <a href="#" class="side-link"><i data-lucide="history" style="width:17px;height:17px;"></i><span class="tip">Historique</span></a>
         <a href="{{ route('profile.edit') }}" class="side-link"><i data-lucide="user" style="width:17px;height:17px;"></i><span class="tip">Mon profil</span></a>
@@ -253,8 +261,8 @@
     </div>
 
     <div class="fil">
-      {{-- FIX : "Congés & Absences" en tête de fil d'ariane était du texte brut, non cliquable. Renvoie maintenant vers conges.apercu (RH) ou conges.index (employé). --}}
-      <a href="{{ auth()->user()->role === 'rh' ? route('conges.apercu') : route('conges.index') }}">Congés &amp; Absences</a>
+      {{-- FIX : "Congés & Absences" en tête de fil d'ariane était du texte brut, non cliquable. Renvoie maintenant vers conges.apercu (RH) ou conges.mesDemandes (employé). --}}
+      <a href="{{ auth()->user()->role === 'rh' ? route('conges.apercu') : route('conges.mesDemandes') }}">Congés &amp; Absences</a>
       &nbsp;›&nbsp; <b>Nouvelle demande</b>
     </div>
 
@@ -267,18 +275,6 @@
 
   </main>
 </div>
-
-<style>
-  /* FIX : styles du panneau de notifications, absents du fichier d'origine (copiés du même composant sur les autres pages) */
-  .topbar{position:relative;}
-  .notif-panel{position:absolute; top:52px; right:96px; background:rgba(18,24,42,.85); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:16px; padding:10px; width:290px; box-shadow:0 12px 30px rgba(0,0,0,.4); display:none; z-index:80;}
-  .notif-panel.open{display:block;}
-  .notif-panel h4{font-size:12.5px; padding:6px 8px 10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em;}
-  .notif-item{display:flex; align-items:flex-start; gap:10px; padding:9px 8px; border-radius:11px; font-size:12.5px;}
-  .notif-item:hover{background:rgba(255,255,255,.05);}
-  .notif-item .n-ico{width:28px; height:28px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex:none;}
-  .notif-empty{padding:14px 8px; font-size:12.5px; color:var(--text-dim); text-align:center;}
-</style>
 
 <script>
   lucide.createIcons();

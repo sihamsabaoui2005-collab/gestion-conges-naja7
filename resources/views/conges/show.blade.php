@@ -76,7 +76,8 @@
   /* ===== AUTRES DEMANDES (carrousel) ===== */
   .autres-scroll{display:flex; gap:12px; overflow-x:auto; padding-bottom:4px;}
   .autre-card{flex:none; width:190px; background:var(--panel-2); border-radius:16px; padding:14px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px;}
-  .autre-card .av{width:44px; height:44px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px;}
+  .autre-card .av{width:44px; height:44px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; overflow:hidden;}
+  .autre-card .av img{width:100%; height:100%; object-fit:cover; object-position:center top;}
   .autre-card b{font-size:12.5px;}
   .autre-card span{font-size:11px; color:var(--text-dim);}
   .autre-card .badge-pending{margin-top:2px;}
@@ -84,7 +85,7 @@
   /* ===== DÉTAILS DEMANDE ===== */
   .employe-card{display:flex; align-items:center; gap:14px; padding:16px; background:var(--panel-2); border-radius:16px; margin-bottom:16px;}
   .employe-card .av{width:56px; height:56px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:20px; flex:none; overflow:hidden;}
-  .employe-card .av img{width:100%; height:100%; object-fit:cover;}
+  .employe-card .av img{width:100%; height:100%; object-fit:cover; object-position:center 15%;}
   .employe-card b{display:block; font-size:15px;}
   .employe-card span{font-size:12px; color:var(--text-dim); display:block;}
 
@@ -101,6 +102,7 @@
   .fichier-row .ico{color:var(--red); flex:none;}
   .fichier-row .name{flex:1;}
   .fichier-row span{color:var(--text-dim); font-size:11px;}
+  .fichier-row a.btn-voir-fichier{color:var(--blue-2); font-weight:600; display:inline-flex; align-items:center; gap:4px;}
 
   /* ===== HISTORIQUE ===== */
   .timeline{display:flex; flex-direction:column; gap:0;}
@@ -114,7 +116,8 @@
 
   /* ===== COMMENTAIRES ===== */
   .comment-item{display:flex; gap:10px; margin-bottom:14px;}
-  .comment-item .av{width:32px; height:32px; border-radius:50%; background:var(--purple); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex:none;}
+  .comment-item .av{width:32px; height:32px; border-radius:50%; background:var(--purple); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex:none; overflow:hidden;}
+  .comment-item .av img{width:100%; height:100%; object-fit:cover; object-position:center top;}
   .comment-bubble{background:var(--panel-2); border-radius:12px; padding:10px 12px; flex:1;}
   .comment-bubble .top{display:flex; align-items:center; justify-content:space-between; margin-bottom:3px;}
   .comment-bubble b{font-size:12px;}
@@ -131,7 +134,8 @@
   /* ===== ÉQUIPE ===== */
   .equipe-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(120px, 1fr)); gap:12px;}
   .equipe-card{background:var(--panel-2); border-radius:14px; padding:14px; text-align:center;}
-  .equipe-card .av{width:40px; height:40px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; margin:0 auto 8px;}
+  .equipe-card .av{width:40px; height:40px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; margin:0 auto 8px; overflow:hidden;}
+  .equipe-card .av img{width:100%; height:100%; object-fit:cover; object-position:center top;}
   .equipe-card b{display:block; font-size:12px;}
   .equipe-card span{font-size:10.5px; color:var(--text-dim);}
 
@@ -182,10 +186,10 @@
     <div class="side-logo"><img src="{{ asset('images/logo-naja7host.png') }}" alt="NAJA7HOST"></div>
     <nav class="side-nav">
       <a href="{{ route('dashboard') }}" class="side-link"><i data-lucide="home" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
-      <a href="#" class="side-link"><i data-lucide="calendar-heart" style="width:17px;height:17px;"></i><span class="tip">Congés &amp; Absences</span></a>
+      <a href="{{ route('conges.apercu') }}" class="side-link"><i data-lucide="calendar-heart" style="width:17px;height:17px;"></i><span class="tip">Congés &amp; Absences</span></a>
       <a href="{{ route('conges.index') }}" class="side-link active"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Demandes</span></a>
-      <a href="#" class="side-link"><i data-lucide="users" style="width:17px;height:17px;"></i><span class="tip">Employés</span></a>
-      <a href="#" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier équipe</span></a>
+      <a href="{{ route('employes.index') }}" class="side-link"><i data-lucide="users" style="width:17px;height:17px;"></i><span class="tip">Employés</span></a>
+      <a href="{{ route('calendrier.index') }}" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier équipe</span></a>
       <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="check-square" style="width:17px;height:17px;"></i><span class="tip">Validation</span></a>
       <a href="#" class="side-link"><i data-lucide="file-bar-chart" style="width:17px;height:17px;"></i><span class="tip">Rapports</span></a>
       <a href="#" class="side-link"><i data-lucide="bar-chart-3" style="width:17px;height:17px;"></i><span class="tip">Statistiques</span></a>
@@ -245,7 +249,13 @@
         <div class="autres-scroll">
           @foreach ($autresDemandesEnAttente as $autre)
             <a href="{{ route('conges.show', $autre->id) }}" class="autre-card">
-              <span class="av">{{ strtoupper(substr($autre->user->name ?? '?',0,1)) }}</span>
+              <span class="av">
+                @if ($autre->user && $autre->user->photo_path)
+                  <img src="{{ asset('storage/'.$autre->user->photo_path) }}" alt="">
+                @else
+                  {{ strtoupper(substr($autre->user->name ?? '?',0,1)) }}
+                @endif
+              </span>
               <b>{{ $autre->user->name ?? '—' }}</b>
               <span>{{ $libelles[$autre->type] ?? $autre->type }}</span>
               <span class="badge badge-pending">En attente</span>
@@ -322,8 +332,15 @@
 
           <div class="fichier-row">
             <i data-lucide="paperclip" class="ico" style="width:15px;height:15px;"></i>
-            <span class="name">Aucune pièce jointe</span>
-            <span>Upload de fichiers à venir</span>
+            @if ($leaveRequest->justificatif_path)
+              <span class="name">{{ basename($leaveRequest->justificatif_path) }}</span>
+              <a href="{{ asset('storage/'.$leaveRequest->justificatif_path) }}" target="_blank" class="btn-voir-fichier">
+                <i data-lucide="external-link" style="width:12px;height:12px;"></i> Voir le fichier
+              </a>
+            @else
+              <span class="name">Aucune pièce jointe</span>
+              <span>—</span>
+            @endif
           </div>
         </div>
 
@@ -367,7 +384,13 @@
           @forelse ($leaveRequest->comments as $commentaire)
             @if ($commentaire->visibilite === 'employe' || auth()->user()->role === 'rh')
               <div class="comment-item">
-                <span class="av">{{ strtoupper(substr($commentaire->user->name ?? '?',0,1)) }}</span>
+                <span class="av">
+                  @if ($commentaire->user && $commentaire->user->photo_path)
+                    <img src="{{ asset('storage/'.$commentaire->user->photo_path) }}" alt="">
+                  @else
+                    {{ strtoupper(substr($commentaire->user->name ?? '?',0,1)) }}
+                  @endif
+                </span>
                 <div class="comment-bubble">
                   <div class="top">
                     <b>{{ $commentaire->user->name ?? '—' }}
@@ -403,7 +426,13 @@
             <div class="equipe-grid">
               @foreach ($equipe as $membre)
                 <div class="equipe-card">
-                  <div class="av">{{ strtoupper(substr($membre->name,0,1)) }}</div>
+                  <div class="av">
+                    @if ($membre->photo_path)
+                      <img src="{{ asset('storage/'.$membre->photo_path) }}" alt="">
+                    @else
+                      {{ strtoupper(substr($membre->name,0,1)) }}
+                    @endif
+                  </div>
                   <b>{{ $membre->name }}</b>
                   <span>{{ $membre->poste ?? 'Employé' }}</span>
                 </div>
@@ -424,6 +453,15 @@
             <b>{{ $employe->solde_conges_annuel }}</b>
             <span>jours — solde actuel de {{ explode(' ', $employe->name)[0] }}</span>
           </div>
+          @php
+            // Le libellé de cette case reflète le vrai statut de la demande,
+            // au lieu d'afficher "Demande en cours" même quand elle est déjà tranchée.
+            $infoJours = match ($leaveRequest->statut) {
+                'approuve' => ['label' => 'Jours approuvés', 'icone' => 'check-circle-2', 'bg' => 'rgba(16,185,129,.15)', 'couleur' => 'var(--green)'],
+                'refuse'   => ['label' => 'Jours refusés',   'icone' => 'x-circle',       'bg' => 'rgba(239,68,68,.15)',  'couleur' => 'var(--red)'],
+                default    => ['label' => 'Demande en cours', 'icone' => 'hourglass',      'bg' => 'rgba(245,158,11,.15)', 'couleur' => 'var(--orange)'],
+            };
+          @endphp
           <div class="indic-grid">
             <div class="indic-cell">
               <span class="ico" style="background:rgba(139,92,246,.15); color:var(--purple);"><i data-lucide="wallet" style="width:15px;height:15px;"></i></span>
@@ -431,14 +469,14 @@
               <span>Solde disponible</span>
             </div>
             <div class="indic-cell">
-              <span class="ico" style="background:rgba(245,158,11,.15); color:var(--orange);"><i data-lucide="hourglass" style="width:15px;height:15px;"></i></span>
+              <span class="ico" style="background:{{ $infoJours['bg'] }}; color:{{ $infoJours['couleur'] }};"><i data-lucide="{{ $infoJours['icone'] }}" style="width:15px;height:15px;"></i></span>
               <b>{{ $leaveRequest->jours }}</b>
-              <span>Demande en cours</span>
+              <span>{{ $infoJours['label'] }}</span>
             </div>
             <div class="indic-cell">
               <span class="ico" style="background:rgba(59,130,246,.15); color:var(--blue-2);"><i data-lucide="calendar-check" style="width:15px;height:15px;"></i></span>
               <b>{{ $apresValidation }}</b>
-              <span>Après validation</span>
+              <span>{{ $leaveRequest->statut === 'en_attente' ? 'Après validation' : 'Solde après décision' }}</span>
             </div>
             <div class="indic-cell">
               <span class="ico" style="background:rgba(16,185,129,.15); color:var(--green);"><i data-lucide="check-circle-2" style="width:15px;height:15px;"></i></span>

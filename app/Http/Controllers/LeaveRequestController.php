@@ -51,6 +51,45 @@ class LeaveRequestController extends Controller
     }
 
     /**
+     * Page employé : liste de ses propres demandes, avec stats et filtres
+     * (statut, période) — alimente la vue conges.mes-demandes.
+     */
+    public function mesDemandes(Request $request)
+    {
+        $user = auth()->user();
+
+        $statut = $request->query('statut'); // 'en_attente' | 'approuve' | 'refuse' | null (toutes)
+        $du     = $request->query('du');
+        $au     = $request->query('au');
+
+        $requete = LeaveRequest::where('user_id', $user->id);
+
+        if ($statut) {
+            $requete->where('statut', $statut);
+        }
+        if ($du) {
+            $requete->where('date_debut', '>=', $du);
+        }
+        if ($au) {
+            $requete->where('date_fin', '<=', $au);
+        }
+
+        $demandes = $requete->orderBy('date_debut', 'desc')->get();
+
+        // Compteurs globaux (non filtrés) pour les cartes stats et le panneau de filtres
+        $toutesLesDemandes = LeaveRequest::where('user_id', $user->id)->get();
+
+        return view('conges.mes-demandes', [
+            'demandes'   => $demandes,
+            'total'      => $toutesLesDemandes->count(),
+            'approuvees' => $toutesLesDemandes->where('statut', 'approuve')->count(),
+            'enAttente'  => $toutesLesDemandes->where('statut', 'en_attente')->count(),
+            'refusees'   => $toutesLesDemandes->where('statut', 'refuse')->count(),
+            'statut'     => $statut,
+        ]);
+    }
+
+    /**
      * Page RH : liste des demandes avec filtres, onglets, statistiques et alertes
      */
     public function index(Request $request)
@@ -182,6 +221,166 @@ class LeaveRequestController extends Controller
             'congesLongsCount',
             'tri',
             'triOptions'
+        ));
+    }
+
+    /**
+     * Page RH : vue d'ensemble des congés & absences, regroupée par département
+     */
+    public function apercu(Request $request)
+    {
+        if (auth()->user()->role !== 'rh') {
+            abort(403);
+        }
+
+        $debut = $request->filled('debut') ? \Carbon\Carbon::parse($request->debut) : now()->startOfYear();
+        $fin   = $request->filled('fin')   ? \Carbon\Carbon::parse($request->fin)   : now()->endOfYear();
+        $departementFiltre = $request->input('departement');
+
+        // Congés = absences planifiées à l'avance | Absences = subies / non planifiées
+        $typesConges   = ['paye', 'rtt', 'exceptionnel', 'autre'];
+        $typesAbsences = ['maladie', 'sans_solde'];
+
+        $listeDepartements = User::whereNotNull('departement')
+            ->distinct()
+            ->pluck('departement')
+            ->map(fn ($d) => trim($d))
+            ->unique()
+            ->reject(fn ($d) => mb_strtolower($d) === 'ressources humaines')
+            ->sort()
+            ->values();
+
+        $departementsData = [];
+
+        foreach ($listeDepartements as $dep) {
+            if ($departementFiltre && mb_strtolower(trim($departementFiltre)) !== mb_strtolower($dep)) {
+                continue;
+            }
+
+            $employesIds = User::whereRaw('LOWER(TRIM(departement)) = ?', [mb_strtolower($dep)])->pluck('id');
+
+            $demandes = LeaveRequest::whereIn('user_id', $employesIds)
+                ->where('statut', 'approuve')
+                ->where('date_debut', '<=', $fin)
+                ->where('date_fin', '>=', $debut)
+                ->with('user')
+                ->get();
+
+            $conges   = $demandes->whereIn('type', $typesConges)->sortBy('date_debut')->values();
+            $absences = $demandes->whereIn('type', $typesAbsences)->sortBy('date_debut')->values();
+
+            $departementsData[] = [
+                'nom'             => $dep,
+                'nb_employes'     => $employesIds->count(),
+                'conges_jours'    => $conges->sum('jours'),
+                'conges_liste'    => $conges,
+                'absences_jours'  => $absences->sum('jours'),
+                'absences_liste'  => $absences,
+            ];
+        }
+
+        // Répartition par type sur la période, toutes équipes confondues (pour le donut "Aperçu du mois")
+        $demandesMois = LeaveRequest::where('statut', 'approuve')
+            ->where('date_debut', '<=', $fin)
+            ->where('date_fin', '>=', $debut)
+            ->get();
+
+        $totalJoursMois     = $demandesMois->sum('jours');
+        $repartitionParType = $demandesMois->groupBy('type')->map(fn ($g) => $g->sum('jours'));
+
+        // Congés/absences en cours aujourd'hui, toutes équipes
+        $absencesAujourdhui = LeaveRequest::where('statut', 'approuve')
+            ->whereDate('date_debut', '<=', now())
+            ->whereDate('date_fin', '>=', now())
+            ->with('user')
+            ->get();
+
+        return view('conges.apercu', compact(
+            'departementsData',
+            'listeDepartements',
+            'departementFiltre',
+            'debut',
+            'fin',
+            'totalJoursMois',
+            'repartitionParType',
+            'absencesAujourdhui'
+        ));
+    }
+
+    /**
+     * Page RH : détail des congés & absences d'UN département (liste employé par employé)
+     */
+    public function departementDetail(Request $request, string $departement)
+    {
+        if (auth()->user()->role !== 'rh') {
+            abort(403);
+        }
+
+        $debut = $request->filled('debut') ? \Carbon\Carbon::parse($request->debut) : now()->startOfYear();
+        $fin   = $request->filled('fin')   ? \Carbon\Carbon::parse($request->fin)   : now()->endOfYear();
+
+        $typesConges   = ['paye', 'rtt', 'exceptionnel', 'autre'];
+        $typesAbsences = ['maladie', 'sans_solde'];
+
+        $listeDepartements = User::whereNotNull('departement')
+            ->distinct()
+            ->pluck('departement')
+            ->map(fn ($d) => trim($d))
+            ->unique()
+            ->reject(fn ($d) => mb_strtolower($d) === 'ressources humaines')
+            ->sort()
+            ->values();
+
+        $departement = trim($departement);
+
+        if (mb_strtolower($departement) === 'ressources humaines') {
+            abort(404);
+        }
+
+        $employesIds = User::whereRaw('LOWER(TRIM(departement)) = ?', [mb_strtolower($departement)])->pluck('id');
+        $nbEmployes  = $employesIds->count();
+
+        // Congés et absences mélangés, triés par date, pour le tableau détaillé de ce département
+        $demandes = LeaveRequest::whereIn('user_id', $employesIds)
+            ->where('statut', 'approuve')
+            ->where('date_debut', '<=', $fin)
+            ->where('date_fin', '>=', $debut)
+            ->with('user')
+            ->orderBy('date_debut')
+            ->get();
+
+        $congesJours   = $demandes->whereIn('type', $typesConges)->sum('jours');
+        $absencesJours = $demandes->whereIn('type', $typesAbsences)->sum('jours');
+
+        // Aperçu du mois + absences aujourd'hui : mêmes indicateurs globaux que sur la page d'ensemble
+        $demandesMois = LeaveRequest::where('statut', 'approuve')
+            ->where('date_debut', '<=', $fin)
+            ->where('date_fin', '>=', $debut)
+            ->get();
+
+        $totalJoursMois     = $demandesMois->sum('jours');
+        $repartitionParType = $demandesMois->groupBy('type')->map(fn ($g) => $g->sum('jours'));
+
+        $absencesAujourdhui = LeaveRequest::where('statut', 'approuve')
+            ->whereDate('date_debut', '<=', now())
+            ->whereDate('date_fin', '>=', now())
+            ->with('user')
+            ->get();
+
+        return view('conges.departement', compact(
+            'departement',
+            'listeDepartements',
+            'nbEmployes',
+            'demandes',
+            'congesJours',
+            'absencesJours',
+            'debut',
+            'fin',
+            'totalJoursMois',
+            'repartitionParType',
+            'absencesAujourdhui',
+            'typesConges',
+            'typesAbsences'
         ));
     }
 

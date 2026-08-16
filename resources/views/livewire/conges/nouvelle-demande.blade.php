@@ -98,15 +98,18 @@
         <div class="section">
             <div class="section-title"><span class="num">04</span> Justificatif <span class="optionnel">(optionnel)</span></div>
 
-            <div class="dropzone" x-data x-on:click="$refs.fichierInput.click()">
+            {{-- Un seul mécanisme de clic : l'input recouvre déjà toute la zone
+                 (.input-fichier-cache = position:absolute; inset:0;), donc pas besoin
+                 d'Alpine.js par-dessus pour déclencher un second clic programmé. --}}
+            <label class="dropzone" style="display:flex;">
                 <i data-lucide="upload-cloud" style="width:20px;height:20px;"></i>
                 <div>
                     <span>{{ $justificatif ? $justificatif->getClientOriginalName() : 'Glissez votre fichier ici ou cliquez pour parcourir' }}</span>
                     <small>PDF, JPG, PNG (max. 5Mo)</small>
                 </div>
-                <button type="button" class="btn-parcourir">Parcourir</button>
-                <input type="file" x-ref="fichierInput" wire:model="justificatif" class="input-fichier-cache">
-            </div>
+                <span class="btn-parcourir">Parcourir</span>
+                <input type="file" wire:model="justificatif" class="input-fichier-cache" accept=".pdf,.jpg,.jpeg,.png">
+            </label>
             <div wire:loading wire:target="justificatif" class="upload-loading">Envoi en cours...</div>
             @error('justificatif') <div class="err">{{ $message }}</div> @enderror
         </div>

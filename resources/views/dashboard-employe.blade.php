@@ -221,9 +221,11 @@
 
     <nav class="side-nav">
       <a href="{{ route('dashboard') }}" class="side-link active"><i data-lucide="layout-dashboard" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
-      <a href="{{ route('conges.create') }}" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Mes demandes</span></a>
+      {{-- FIX : pointait par erreur vers conges.create (même route que "Nouvelle demande" juste en dessous) au lieu de la liste des demandes de l'employé. --}}
+      <a href="{{ route('conges.mesDemandes') }}" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Mes demandes</span></a>
       <a href="{{ route('conges.create') }}" class="side-link"><i data-lucide="plus-circle" style="width:17px;height:17px;"></i><span class="tip">Nouvelle demande</span></a>
-      <a href="#" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier</span></a>
+      <a href="{{ route('calendrier.index') }}" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier</span></a>
+      {{-- Pas de route connue côté employé pour ces 2 liens : donne les noms de route si elles existent, sinon je les construis. --}}
       <a href="#" class="side-link"><i data-lucide="wallet" style="width:17px;height:17px;"></i><span class="tip">Mon solde</span></a>
       <a href="#" class="side-link"><i data-lucide="history" style="width:17px;height:17px;"></i><span class="tip">Historique</span></a>
       <a href="{{ route('profile.edit') }}" class="side-link"><i data-lucide="user" style="width:17px;height:17px;"></i><span class="tip">Mon profil</span></a>
@@ -359,7 +361,7 @@
                 <div class="ring-sub2">en cours</div>
               </div>
             </div>
-            <a class="foot-btn" href="#">Voir mes demandes</a>
+            <a class="foot-btn" href="{{ route('conges.mesDemandes') }}">Voir mes demandes</a>
           </div>
 
           <div class="stat-cell">
@@ -376,7 +378,7 @@
                 <div class="ring-sub2">cette année</div>
               </div>
             </div>
-            <a class="foot-btn" href="#">Voir l'historique</a>
+            <a class="foot-btn" href="{{ route('conges.mesDemandes', ['statut' => 'approuve']) }}">Voir l'historique</a>
           </div>
 
           <div class="stat-cell">
@@ -397,7 +399,7 @@
                 @endif
               </div>
             </div>
-            <a class="foot-btn" href="#">Voir le calendrier</a>
+            <a class="foot-btn" href="{{ route('calendrier.index') }}">Voir le calendrier</a>
           </div>
         </div>
 
@@ -411,7 +413,7 @@
           <div class="panel">
             <div class="card-head">
               <h2>Mes demandes récentes</h2>
-              <a href="#">Voir tout</a>
+              <a href="{{ route('conges.mesDemandes') }}">Voir tout</a>
             </div>
             <table id="demandesTable">
               <thead>
@@ -419,8 +421,22 @@
               </thead>
               <tbody>
                 @php
-                  $icones = ['paye' => ['plane', 'ico-blue'], 'maladie' => ['plus', 'ico-green'], 'sans_solde' => ['calendar-x', 'ico-orange']];
-                  $libelles = ['paye' => 'Congé payé', 'maladie' => 'Congé maladie', 'sans_solde' => 'Congé sans solde'];
+                  $icones = [
+                    'paye' => ['calendar', 'ico-blue'],
+                    'maladie' => ['heart-pulse', 'ico-green'],
+                    'sans_solde' => ['calendar-x', 'ico-orange'],
+                    'exceptionnel' => ['star', 'ico-blue'],
+                    'rtt' => ['clock', 'ico-orange'],
+                    'autre' => ['ellipsis', 'ico-green'],
+                  ];
+                  $libelles = [
+                    'paye' => 'Congé annuel',
+                    'maladie' => 'Congé maladie',
+                    'sans_solde' => 'Congé sans solde',
+                    'exceptionnel' => 'Congé exceptionnel',
+                    'rtt' => 'RTT / Récupération',
+                    'autre' => 'Autre congé',
+                  ];
                 @endphp
                 @forelse ($demandesRecentes as $demande)
                   @php
@@ -567,7 +583,7 @@
           </div>
 
           <div class="panel" style="display:flex; flex-direction:column; justify-content:center;">
-            <div class="card-head"><h2>Prochaines absences</h2><a href="#">Voir tout</a></div>
+            <div class="card-head"><h2>Prochaines absences</h2><a href="{{ route('conges.mesDemandes', ['statut' => 'approuve']) }}">Voir tout</a></div>
             @forelse ($prochainesAbsences as $absence)
               <div class="absence-row">
                 <div class="left">
@@ -577,7 +593,7 @@
                     <span>{{ $absence->date_debut->format('d M') }} - {{ $absence->date_fin->format('d M') }} · {{ $absence->jours }} jours</span>
                   </div>
                 </div>
-                <span class="badge-days">Dans {{ now()->diffInDays($absence->date_debut) }} j</span>
+                <span class="badge-days">Dans {{ now()->startOfDay()->diffInDays($absence->date_debut->copy()->startOfDay()) }} j</span>
               </div>
             @empty
               <p style="color:var(--text-dim); font-size:13px; text-align:center; padding:16px 0; margin:0;">

@@ -31,7 +31,6 @@
 
   .app{display:flex; align-items:flex-start; min-height:100vh; padding:16px 24px; gap:16px; max-width:1500px; margin:0 auto;}
 
-  /* ===== SIDEBAR (icônes seules, petite pilule flottante — identique à l'employé) ===== */
   .sidebar{width:64px; flex:none; align-self:flex-start; position:sticky; top:16px; z-index:100; background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:32px; padding:14px 0 16px; display:flex; flex-direction:column; align-items:center; box-shadow:0 8px 32px rgba(0,0,0,.35); max-height:94vh;}
   .side-logo{width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,var(--orange),#DC2626); display:flex; align-items:center; justify-content:center; margin-bottom:12px; font-weight:700; font-size:15px; color:#fff; overflow:hidden; flex:none;}
   .side-logo img{width:100%; height:100%; object-fit:cover;}
@@ -44,10 +43,8 @@
   .side-link:focus .tip{opacity:1;}
   .side-bottom{display:flex; flex-direction:column; gap:4px; padding-top:8px; margin-top:6px; border-top:1px solid var(--border); align-items:center; flex:none;}
 
-  /* ===== MAIN ===== */
   .main{flex:1; align-self:stretch; padding:6px 6px 40px; max-width:100%; overflow-x:hidden; position:relative;}
 
-  /* ===== TOPBAR ===== */
   .topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:30px;}
   .search-box{width:340px; height:44px; display:flex; align-items:stretch; background:#0F2A47; border-radius:8px; padding:5px; gap:8px;}
   .search-box input{flex:1; border:none; outline:none; background:#fff; border-radius:4px; color:#0F2A47; font-size:13.5px; padding:0 14px; font-family:inherit;}
@@ -63,7 +60,6 @@
   .user-chip p{font-size:13px; font-weight:600;}
   .user-chip span{font-size:11px; color:var(--text-dim);}
 
-  /* ===== DROPDOWNS (profil + notifications) ===== */
   .dropdown{position:absolute; top:52px; right:0; background:rgba(18,24,42,.85); backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:16px; padding:8px; width:230px; box-shadow:0 12px 30px rgba(0,0,0,.4); display:none; z-index:50;}
   .dropdown.open{display:block;}
   .dropdown-item{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:11px; font-size:13px; width:100%; text-align:left;}
@@ -76,12 +72,10 @@
   .notif-item .n-ico{width:28px; height:28px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex:none;}
   .notif-empty{padding:14px 8px; font-size:12.5px; color:var(--text-dim); text-align:center;}
 
-  /* ===== GREETING ===== */
   .greeting{margin-bottom:26px; position:relative;}
   .greeting h1{font-size:27px; font-weight:700; text-shadow:0 2px 12px rgba(0,0,0,.5);}
   .greeting p{color:var(--text-dim); font-size:13.5px; margin-top:4px; text-shadow:0 2px 8px rgba(0,0,0,.5); max-width:520px;}
 
-  /* ===== KPI + IMAGE ===== */
   .kpi-row{display:grid; grid-template-columns:3fr 1.1fr; gap:16px; margin-bottom:16px; align-items:stretch;}
   .panel{background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 8px 24px rgba(0,0,0,.25);}
   .kpi-image-card{background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:20px; box-shadow:0 8px 24px rgba(0,0,0,.25); display:flex; align-items:center; justify-content:center; overflow:hidden; min-height:100%;}
@@ -101,7 +95,6 @@
     box-shadow:0 6px 16px rgba(194,65,12,.4), inset 0 1px 0 rgba(255,255,255,.25);}
   .stat-cell .foot-btn:hover{transform:translateY(-1px);}
 
-  /* ===== Grilles ===== */
   .triple-grid{display:grid; grid-template-columns:1.7fr 1.2fr 1fr; gap:12px; margin-bottom:12px; align-items:stretch;}
   .row2-grid{display:grid; grid-template-columns:0.9fr 1.5fr 0.8fr; gap:16px; margin-bottom:12px; height:180px;}
   .row2-grid > .panel{height:100%; padding:14px 16px; overflow:hidden; display:flex; flex-direction:column;}
@@ -127,7 +120,8 @@
   th{text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.03em; color:var(--text-dim); padding:0 8px 10px; font-weight:600;}
   td{padding:11px 8px; font-size:13px; border-top:1px solid var(--border); vertical-align:middle;}
   .emp-cell{display:flex; align-items:center; gap:9px;}
-  .emp-avatar{width:30px; height:30px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex:none;}
+  .emp-avatar{width:30px; height:30px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex:none; overflow:hidden;}
+  .emp-avatar img{width:100%; height:100%; object-fit:cover; object-position:center top;}
   .emp-cell b{display:block; font-size:12.5px;}
   .emp-cell span{font-size:10.5px; color:var(--text-dim);}
   .badge{display:inline-flex; align-items:center; gap:5px; padding:4px 11px; border-radius:20px; font-size:11px; font-weight:600;}
@@ -204,7 +198,6 @@
 
 <div class="app">
 
-  <!-- ===== SIDEBAR (icônes seules, identique au dashboard employé) ===== -->
   <aside class="sidebar">
     <div class="side-logo">
       <img src="{{ asset('images/logo-naja7host.png') }}" alt="NAJA7HOST">
@@ -212,10 +205,10 @@
 
     <nav class="side-nav">
       <a href="{{ route('dashboard') }}" class="side-link active"><i data-lucide="home" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
-      <a href="#" class="side-link"><i data-lucide="calendar-heart" style="width:17px;height:17px;"></i><span class="tip">Congés &amp; Absences</span></a>
+      <a href="{{ route('conges.apercu') }}" class="side-link"><i data-lucide="calendar-heart" style="width:17px;height:17px;"></i><span class="tip">Congés &amp; Absences</span></a>
       <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Demandes @if($demandesEnAttente>0)({{ $demandesEnAttente }})@endif</span></a>
-      <a href="#" class="side-link"><i data-lucide="users" style="width:17px;height:17px;"></i><span class="tip">Employés</span></a>
-      <a href="#" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier équipe</span></a>
+      <a href="{{ route('employes.index') }}" class="side-link"><i data-lucide="users" style="width:17px;height:17px;"></i><span class="tip">Employés</span></a>
+      <a href="{{ route('calendrier.index') }}" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier équipe</span></a>
       <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="check-square" style="width:17px;height:17px;"></i><span class="tip">Validation @if($demandesEnAttente>0)({{ $demandesEnAttente }})@endif</span></a>
       <a href="#" class="side-link"><i data-lucide="file-bar-chart" style="width:17px;height:17px;"></i><span class="tip">Rapports</span></a>
       <a href="#" class="side-link"><i data-lucide="bar-chart-3" style="width:17px;height:17px;"></i><span class="tip">Statistiques</span></a>
@@ -232,10 +225,8 @@
     </div>
   </aside>
 
-  <!-- ===== MAIN ===== -->
   <main class="main">
 
-    <!-- ===== TOPBAR ===== -->
     <div class="topbar">
       <div class="search-box">
         <input type="text" placeholder="Rechercher un employé, une demande...">
@@ -261,7 +252,6 @@
           <i data-lucide="chevron-down" style="width:14px;height:14px; color:var(--text-dim);"></i>
         </div>
 
-        <!-- ===== Panneau notifications ===== -->
         <div class="notif-panel" id="notifPanel">
           <h4>Notifications</h4>
           @if ($demandesEnAttente > 0)
@@ -274,7 +264,6 @@
           @endif
         </div>
 
-        <!-- ===== Menu profil ===== -->
         <div class="dropdown" id="userMenu">
           <a href="{{ route('profile.edit') }}" class="dropdown-item"><i data-lucide="user" style="width:15px;height:15px;"></i> Mon profil</a>
           <a href="#" class="dropdown-item"><i data-lucide="settings" style="width:15px;height:15px;"></i> Mes paramètres</a>
@@ -286,13 +275,11 @@
       </div>
     </div>
 
-    <!-- ===== GREETING ===== -->
     <div class="greeting">
       <h1>Bonjour, {{ explode(' ', auth()->user()->name)[0] }} !</h1>
       <p>Vue d'ensemble de l'activité de vos employés.</p>
     </div>
 
-    <!-- ===== KPI + IMAGE ===== -->
     <div class="kpi-row">
       <div class="panel stats-panel">
         @php
@@ -320,7 +307,7 @@
               <div class="ring-sub1">employés</div>
             </div>
           </div>
-          <a class="foot-btn" href="#">Voir l'équipe</a>
+          <a class="foot-btn" href="{{ route('employes.index') }}">Voir l'équipe</a>
         </div>
 
         <div class="stat-cell">
@@ -350,7 +337,7 @@
               <div class="ring-sub1">absences aujourd'hui</div>
             </div>
           </div>
-          <a class="foot-btn" href="#">Voir le calendrier</a>
+          <a class="foot-btn" href="{{ route('calendrier.index') }}">Voir le calendrier</a>
         </div>
 
         <div class="stat-cell">
@@ -365,7 +352,7 @@
               <div class="ring-sub1">jours pris ce mois</div>
             </div>
           </div>
-          <a class="foot-btn" href="#">Voir les rapports</a>
+          <a class="foot-btn" href="{{ route('conges.apercu') }}">Voir les rapports</a>
         </div>
       </div>
 
@@ -374,7 +361,6 @@
       </div>
     </div>
 
-    <!-- ===== RANGÉE 1 : Activité équipe / Calendrier RH / Résumé + Actions ===== -->
     <div class="triple-grid">
       <div class="panel panel-pad">
         <div class="card-head">
@@ -387,7 +373,7 @@
           </thead>
           <tbody>
             @php
-              $libellesType = ['paye' => 'Congé payé', 'maladie' => 'Congé maladie', 'sans_solde' => 'Congé sans solde'];
+              $libellesType = ['paye' => 'Congé annuel', 'maladie' => 'Congé maladie', 'sans_solde' => 'Congé sans solde', 'exceptionnel' => 'Congé exceptionnel', 'rtt' => 'RTT / Récupération', 'autre' => 'Autre congé'];
               $badgeStatut = ['approuve' => 'badge-approved', 'en_attente' => 'badge-pending', 'refuse' => 'badge-rejected'];
               $labelStatut = ['approuve' => 'Approuvé', 'en_attente' => 'En attente', 'refuse' => 'Refusé'];
             @endphp
@@ -395,7 +381,13 @@
               <tr>
                 <td>
                   <div class="emp-cell">
-                    <span class="emp-avatar">{{ strtoupper(substr($demande->user->name ?? '?',0,1)) }}</span>
+                    <span class="emp-avatar">
+                      @if ($demande->user && $demande->user->photo_path)
+                        <img src="{{ asset('storage/'.$demande->user->photo_path) }}" alt="">
+                      @else
+                        {{ strtoupper(substr($demande->user->name ?? '?',0,1)) }}
+                      @endif
+                    </span>
                     <div>
                       <b>{{ $demande->user->name ?? 'Employé supprimé' }}</b>
                       <span>{{ $demande->user->poste ?? '' }}</span>
@@ -486,7 +478,6 @@
       </div>
     </div>
 
-    <!-- ===== RANGÉE 2 : Statut équipe / Évolution / Prochaines absences ===== -->
     <div class="row2-grid">
       <div class="panel">
         <div class="card-head"><h2>Statut de l'équipe</h2></div>
@@ -524,17 +515,25 @@
       </div>
 
       <div class="panel">
-        <div class="card-head"><h2>Prochaines absences</h2><a href="#">Voir tout</a></div>
+        <!-- FIX 2 : lien "Voir tout" pointait vers href="#" (aucune destination). Il pointe maintenant vers la route conges.apercu. -->
+        <div class="card-head"><h2>Prochaines absences</h2><a href="{{ route('conges.apercu') }}">Voir tout</a></div>
         @forelse ($prochainesAbsences as $absence)
           <div class="absence-row">
             <div class="left">
-              <span class="emp-avatar">{{ strtoupper(substr($absence->user->name ?? '?',0,1)) }}</span>
+              <span class="emp-avatar">
+                @if ($absence->user && $absence->user->photo_path)
+                  <img src="{{ asset('storage/'.$absence->user->photo_path) }}" alt="">
+                @else
+                  {{ strtoupper(substr($absence->user->name ?? '?',0,1)) }}
+                @endif
+              </span>
               <div>
                 <p>{{ $absence->user->name ?? '—' }}</p>
                 <span>{{ $absence->date_debut->format('d M') }} - {{ $absence->date_fin->format('d M') }}</span>
               </div>
             </div>
-            <span class="badge-days">Dans {{ now()->diffInDays($absence->date_debut) }} j</span>
+            <!-- FIX 1 : diffInDays() seul renvoie un float (ex. 0.5957...). startOfDay() sur les deux dates force un résultat entier. -->
+            <span class="badge-days">Dans {{ now()->startOfDay()->diffInDays($absence->date_debut->copy()->startOfDay()) }} j</span>
           </div>
         @empty
           <p style="color:var(--text-dim); font-size:12px; text-align:center; padding:20px 0;">Aucune absence prévue.</p>
@@ -542,7 +541,6 @@
       </div>
     </div>
 
-    <!-- ===== RANGÉE 3 : Insights / Top départements / Aperçu rapide ===== -->
     <div class="insights-grid">
       <div class="panel panel-pad">
         <div class="card-head"><h2>Insights intelligents <span class="beta">BETA</span></h2></div>
@@ -633,11 +631,9 @@
   });
 
   document.getElementById('genererRapport').addEventListener('click', () => {
-    // NOTE : génération réelle du rapport PDF (équipe) à brancher à une étape suivante du projet
     alert('Rapport RH à générer (fonctionnalité PDF à venir)');
   });
 
-  /* ===================== MENUS DÉROULANTS (profil + notifications) ===================== */
   const userChip = document.getElementById('userChip');
   const userMenu = document.getElementById('userMenu');
   const notifBtn = document.getElementById('notifBtn');
@@ -658,7 +654,6 @@
     notifPanel.classList.remove('open');
   });
 
-  /* ===================== CALENDRIER RH ===================== */
   const demandes = {{ Js::from($demandesCalendrier) }};
 
   const calGrid = document.getElementById('calGrid');
@@ -738,7 +733,6 @@
   calAnneeSelect.addEventListener('change', () => { vueAnnee = parseInt(calAnneeSelect.value); dessinerCalendrier(); });
   dessinerCalendrier();
 
-  /* ===================== GRAPHIQUE MENSUEL ===================== */
   const donneesParAnnee = {{ Js::from($congesParMoisParAnnee) }};
   const svg = document.getElementById('chartSvg');
   const tip = document.getElementById('chartTip');
