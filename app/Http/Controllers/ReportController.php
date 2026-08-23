@@ -227,7 +227,12 @@ class ReportController extends Controller
                 'periode_fin' => $request->input('periode_fin', now()->endOfYear()),
                 'departements' => $request->input('departements'),
                 'types_conge' => $request->input('types_conge'),
-                'statut' => $request->input('statut'),
+                // FIX : ce champ représente le statut du RAPPORT lui-même (ex: "généré"),
+                // pas le filtre de statut des demandes de congé (approuvé/en_attente/refusé)
+                // utilisé plus haut dans calculerDonnees(). Réutiliser $request->input('statut')
+                // ici insérait souvent NULL (le filtre étant optionnel), ce qui violait la
+                // contrainte NOT NULL de la colonne 'statut' en base.
+                'statut' => 'genere',
                 'regroupement' => $request->input('regroupement', 'mois'),
                 'indicateurs' => $request->input('indicateurs'),
                 'donnees' => $donnees,
