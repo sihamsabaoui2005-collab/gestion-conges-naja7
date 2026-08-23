@@ -45,11 +45,7 @@
 
   .main{flex:1; align-self:stretch; padding:6px 6px 40px; max-width:100%; overflow-x:hidden; position:relative;}
 
-  .topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:30px;}
-  .search-box{width:340px; height:44px; display:flex; align-items:stretch; background:#0F2A47; border-radius:8px; padding:5px; gap:8px;}
-  .search-box input{flex:1; border:none; outline:none; background:#fff; border-radius:4px; color:#0F2A47; font-size:13.5px; padding:0 14px; font-family:inherit;}
-  .search-box input::placeholder{color:#8896A8;}
-  .search-btn{width:34px; border:none; background:transparent; color:#CFE0F0; cursor:pointer; display:flex; align-items:center; justify-content:center; flex:none;}
+  .topbar{display:flex; align-items:center; justify-content:flex-end; margin-bottom:30px;}
 
   .top-right{display:flex; align-items:center; gap:14px; position:relative;}
   .icon-btn{position:relative; width:40px; height:40px; border-radius:14px; background:var(--panel); backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); display:flex; align-items:center; justify-content:center;}
@@ -210,14 +206,13 @@
       <a href="{{ route('employes.index') }}" class="side-link"><i data-lucide="users" style="width:17px;height:17px;"></i><span class="tip">Employés</span></a>
       <a href="{{ route('calendrier.index') }}" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier équipe</span></a>
       <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="check-square" style="width:17px;height:17px;"></i><span class="tip">Validation @if($demandesEnAttente>0)({{ $demandesEnAttente }})@endif</span></a>
-      <a href="#" class="side-link"><i data-lucide="file-bar-chart" style="width:17px;height:17px;"></i><span class="tip">Rapports</span></a>
+      <a href="{{ route('rapports.index') }}" class="side-link {{ request()->routeIs('rapports.*') ? 'active' : '' }}"><i data-lucide="file-bar-chart" style="width:17px;height:17px;"></i><span class="tip">Rapports</span></a>
       <a href="#" class="side-link"><i data-lucide="bar-chart-3" style="width:17px;height:17px;"></i><span class="tip">Statistiques</span></a>
       <a href="{{ route('profile.edit') }}" class="side-link"><i data-lucide="user" style="width:17px;height:17px;"></i><span class="tip">Mon profil</span></a>
-      <a href="#" class="side-link"><i data-lucide="settings" style="width:17px;height:17px;"></i><span class="tip">Paramètres</span></a>
+      <a href="{{ route('settings.index') }}" class="side-link {{ request()->routeIs('settings.*') ? 'active' : '' }}"><i data-lucide="settings" style="width:17px;height:17px;"></i><span class="tip">Paramètres & Support</span></a>
     </nav>
 
     <div class="side-bottom">
-      <a href="#" class="side-link"><i data-lucide="headphones" style="width:16px;height:16px;"></i><span class="tip">Support RH</span></a>
       <form method="POST" action="{{ route('logout') }}">
         @csrf
         <button type="submit" class="side-link"><i data-lucide="log-out" style="width:16px;height:16px;"></i><span class="tip">Déconnexion</span></button>
@@ -228,15 +223,10 @@
   <main class="main">
 
     <div class="topbar">
-      <div class="search-box">
-        <input type="text" placeholder="Rechercher un employé, une demande...">
-        <button type="button" class="search-btn"><i data-lucide="search" style="width:22px; height:22px;"></i></button>
-      </div>
       <div class="top-right">
         <button class="icon-btn" id="notifBtn"><i data-lucide="bell" style="width:17px;height:17px;"></i>
           @if ($demandesEnAttente > 0)<span class="dot">{{ $demandesEnAttente }}</span>@endif
         </button>
-        <button class="icon-btn"><i data-lucide="mail" style="width:17px;height:17px;"></i></button>
         <div class="user-chip" id="userChip">
           <div class="avatar">
             @if (auth()->user()->photo_path)
@@ -266,7 +256,7 @@
 
         <div class="dropdown" id="userMenu">
           <a href="{{ route('profile.edit') }}" class="dropdown-item"><i data-lucide="user" style="width:15px;height:15px;"></i> Mon profil</a>
-          <a href="#" class="dropdown-item"><i data-lucide="settings" style="width:15px;height:15px;"></i> Mes paramètres</a>
+          <a href="{{ route('settings.index') }}" class="dropdown-item"><i data-lucide="settings" style="width:15px;height:15px;"></i> Paramètres & Support</a>
           <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="dropdown-item"><i data-lucide="log-out" style="width:15px;height:15px;"></i> Se déconnecter</button>
@@ -352,7 +342,7 @@
               <div class="ring-sub1">jours pris ce mois</div>
             </div>
           </div>
-          <a class="foot-btn" href="{{ route('conges.apercu') }}">Voir les rapports</a>
+          <a class="foot-btn" href="{{ route('rapports.index') }}">Voir les rapports</a>
         </div>
       </div>
 
@@ -515,7 +505,6 @@
       </div>
 
       <div class="panel">
-        <!-- FIX 2 : lien "Voir tout" pointait vers href="#" (aucune destination). Il pointe maintenant vers la route conges.apercu. -->
         <div class="card-head"><h2>Prochaines absences</h2><a href="{{ route('conges.apercu') }}">Voir tout</a></div>
         @forelse ($prochainesAbsences as $absence)
           <div class="absence-row">
@@ -532,7 +521,6 @@
                 <span>{{ $absence->date_debut->format('d M') }} - {{ $absence->date_fin->format('d M') }}</span>
               </div>
             </div>
-            <!-- FIX 1 : diffInDays() seul renvoie un float (ex. 0.5957...). startOfDay() sur les deux dates force un résultat entier. -->
             <span class="badge-days">Dans {{ now()->startOfDay()->diffInDays($absence->date_debut->copy()->startOfDay()) }} j</span>
           </div>
         @empty

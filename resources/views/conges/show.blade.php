@@ -30,7 +30,6 @@
 
   .app{display:flex; align-items:flex-start; min-height:100vh; padding:16px 24px; gap:16px; max-width:1500px; margin:0 auto; overflow-x:hidden;}
 
-  /* ===== SIDEBAR (identique au reste de l'app) ===== */
   .sidebar{width:64px; flex:none; align-self:flex-start; position:sticky; top:16px; z-index:100; background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:32px; padding:14px 0 16px; display:flex; flex-direction:column; align-items:center; box-shadow:0 8px 32px rgba(0,0,0,.35); max-height:94vh;}
   .side-logo{width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,var(--orange),#DC2626); display:flex; align-items:center; justify-content:center; margin-bottom:12px; font-weight:700; font-size:15px; color:#fff; overflow:hidden; flex:none;}
   .side-logo img{width:100%; height:100%; object-fit:cover;}
@@ -40,21 +39,23 @@
   .side-link.active{background:var(--orange); color:#fff;}
   .side-link .tip{position:absolute; left:48px; top:50%; transform:translateY(-50%); background:rgba(20,26,46,.92); backdrop-filter:blur(10px); padding:6px 12px; border-radius:8px; font-size:12px; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .15s; z-index:30; border:1px solid var(--border);}
   .side-link:hover .tip{opacity:1;}
+  .side-link:focus .tip{opacity:1;}
   .side-bottom{display:flex; flex-direction:column; gap:4px; padding-top:8px; margin-top:6px; border-top:1px solid var(--border); align-items:center; flex:none;}
 
-  /* ===== MAIN ===== */
   .main{flex:1; align-self:stretch; padding:6px 6px 40px; max-width:100%; overflow-x:hidden;}
 
-  .back-link{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--text-dim); margin-bottom:14px;}
-  .back-link:hover{color:#fff;}
+  .back-link{
+    display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:700; color:#fff;
+    margin-bottom:14px; padding:9px 18px; border-radius:11px;
+    background: radial-gradient(130% 200% at 30% -30%, rgba(255,255,255,.3), rgba(255,255,255,0) 45%), linear-gradient(160deg, #F59E0B, #C2410C 75%);
+    box-shadow:0 6px 16px rgba(194,65,12,.4), inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .back-link:hover{filter:brightness(1.1);}
 
-  /* ===== HEADER ===== */
   .header{display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:14px;}
   .header-left h1{font-size:24px; font-weight:700; text-shadow:0 2px 12px rgba(0,0,0,.5);}
   .header-left p{color:var(--text-dim); font-size:13.5px; margin-top:4px; text-shadow:0 2px 8px rgba(0,0,0,.5); max-width:520px;}
   .header-right{display:flex; align-items:center; gap:12px;}
-  .search-box{width:220px; height:40px; display:flex; align-items:center; gap:8px; background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:0 12px;}
-  .search-box input{flex:1; border:none; outline:none; background:transparent; color:#fff; font-size:13px;}
   .icon-btn{position:relative; width:38px; height:38px; border-radius:12px; background:var(--panel); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex:none;}
   .avatar{width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--orange),#DC2626); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; overflow:hidden; flex:none;}
   .avatar img{width:100%; height:100%; object-fit:cover; object-position:center top;}
@@ -73,7 +74,6 @@
     background: radial-gradient(130% 200% at 30% -30%, rgba(255,255,255,.3), rgba(255,255,255,0) 45%), linear-gradient(160deg, #F59E0B, #C2410C 75%);
     box-shadow:0 6px 16px rgba(194,65,12,.4), inset 0 1px 0 rgba(255,255,255,.25);}
 
-  /* ===== AUTRES DEMANDES (carrousel) ===== */
   .autres-scroll{display:flex; gap:12px; overflow-x:auto; padding-bottom:4px;}
   .autre-card{flex:none; width:190px; background:var(--panel-2); border-radius:16px; padding:14px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px;}
   .autre-card .av{width:44px; height:44px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; overflow:hidden;}
@@ -82,7 +82,6 @@
   .autre-card span{font-size:11px; color:var(--text-dim);}
   .autre-card .badge-pending{margin-top:2px;}
 
-  /* ===== DÉTAILS DEMANDE ===== */
   .employe-card{display:flex; align-items:center; gap:14px; padding:16px; background:var(--panel-2); border-radius:16px; margin-bottom:16px;}
   .employe-card .av{width:56px; height:56px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:20px; flex:none; overflow:hidden;}
   .employe-card .av img{width:100%; height:100%; object-fit:cover; object-position:center 15%;}
@@ -104,7 +103,6 @@
   .fichier-row span{color:var(--text-dim); font-size:11px;}
   .fichier-row a.btn-voir-fichier{color:var(--blue-2); font-weight:600; display:inline-flex; align-items:center; gap:4px;}
 
-  /* ===== HISTORIQUE ===== */
   .timeline{display:flex; flex-direction:column; gap:0;}
   .timeline-item{display:flex; gap:12px; position:relative; padding-bottom:20px;}
   .timeline-item:last-child{padding-bottom:0;}
@@ -114,7 +112,6 @@
   .timeline-content b{display:block; font-size:12.5px;}
   .timeline-content span{font-size:11px; color:var(--text-dim);}
 
-  /* ===== COMMENTAIRES ===== */
   .comment-item{display:flex; gap:10px; margin-bottom:14px;}
   .comment-item .av{width:32px; height:32px; border-radius:50%; background:var(--purple); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex:none; overflow:hidden;}
   .comment-item .av img{width:100%; height:100%; object-fit:cover; object-position:center top;}
@@ -131,7 +128,6 @@
   .visi-toggle label{display:flex; align-items:center; gap:4px; cursor:pointer;}
   .btn-send{background:var(--blue); color:#fff; font-size:12px; font-weight:700; padding:8px 16px; border-radius:999px; display:inline-flex; align-items:center; gap:6px;}
 
-  /* ===== ÉQUIPE ===== */
   .equipe-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(120px, 1fr)); gap:12px;}
   .equipe-card{background:var(--panel-2); border-radius:14px; padding:14px; text-align:center;}
   .equipe-card .av{width:40px; height:40px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; margin:0 auto 8px; overflow:hidden;}
@@ -139,7 +135,6 @@
   .equipe-card b{display:block; font-size:12px;}
   .equipe-card span{font-size:10.5px; color:var(--text-dim);}
 
-  /* ===== INDICATEURS (côté droit) ===== */
   .indic-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
   .indic-cell{background:var(--panel-2); border-radius:14px; padding:14px; text-align:center;}
   .indic-cell .ico{width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; margin:0 auto 8px;}
@@ -149,7 +144,6 @@
   .indic-center b{font-size:30px; font-weight:800; display:block;}
   .indic-center span{font-size:11px; color:var(--text-dim);}
 
-  /* ===== DÉCISION RH ===== */
   .decision-btns{display:flex; gap:10px; margin-bottom:14px;}
   .btn-decision{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; padding:14px 8px; border-radius:16px; font-size:12.5px; font-weight:700; color:#fff; border:2px solid transparent;}
   .btn-valider{background:rgba(16,185,129,.15); border-color:rgba(16,185,129,.4); color:var(--green);}
@@ -181,47 +175,18 @@
 
 <div class="app">
 
-  <!-- ===== SIDEBAR ===== -->
-  <aside class="sidebar">
-    <div class="side-logo"><img src="{{ asset('images/logo-naja7host.png') }}" alt="NAJA7HOST"></div>
-    <nav class="side-nav">
-      <a href="{{ route('dashboard') }}" class="side-link"><i data-lucide="home" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
-      <a href="{{ route('conges.apercu') }}" class="side-link"><i data-lucide="calendar-heart" style="width:17px;height:17px;"></i><span class="tip">Congés &amp; Absences</span></a>
-      <a href="{{ route('conges.index') }}" class="side-link active"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Demandes</span></a>
-      <a href="{{ route('employes.index') }}" class="side-link"><i data-lucide="users" style="width:17px;height:17px;"></i><span class="tip">Employés</span></a>
-      <a href="{{ route('calendrier.index') }}" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier équipe</span></a>
-      <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="check-square" style="width:17px;height:17px;"></i><span class="tip">Validation</span></a>
-      <a href="#" class="side-link"><i data-lucide="file-bar-chart" style="width:17px;height:17px;"></i><span class="tip">Rapports</span></a>
-      <a href="#" class="side-link"><i data-lucide="bar-chart-3" style="width:17px;height:17px;"></i><span class="tip">Statistiques</span></a>
-      <a href="{{ route('profile.edit') }}" class="side-link"><i data-lucide="user" style="width:17px;height:17px;"></i><span class="tip">Mon profil</span></a>
-      <a href="#" class="side-link"><i data-lucide="settings" style="width:17px;height:17px;"></i><span class="tip">Paramètres</span></a>
-    </nav>
-    <div class="side-bottom">
-      <a href="#" class="side-link"><i data-lucide="headphones" style="width:16px;height:16px;"></i><span class="tip">Support RH</span></a>
-      <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="side-link"><i data-lucide="log-out" style="width:16px;height:16px;"></i><span class="tip">Déconnexion</span></button>
-      </form>
-    </div>
-  </aside>
+  @include('partials.sidebar')
 
-  <!-- ===== MAIN ===== -->
   <main class="main">
 
     <a href="{{ route('conges.index') }}" class="back-link"><i data-lucide="arrow-left" style="width:14px;height:14px;"></i> Retour aux demandes</a>
 
-    <!-- ===== HEADER ===== -->
     <div class="header">
       <div class="header-left">
         <h1>Demande de {{ $employe->name }}</h1>
         <p>Voici le détail de la demande de congé à traiter.</p>
       </div>
       <div class="header-right">
-        <div class="search-box">
-          <i data-lucide="search" style="width:15px;height:15px; color:var(--text-dim);"></i>
-          <input type="text" placeholder="Rechercher...">
-        </div>
-        <button class="icon-btn"><i data-lucide="bell" style="width:16px;height:16px;"></i></button>
         <div class="user-mini-wrap">
           <div class="avatar">
             @if (auth()->user()->photo_path)
@@ -242,7 +207,6 @@
       <div style="margin-bottom:14px; padding:10px 14px; border-radius:10px; background:rgba(239,68,68,.15); color:var(--red); font-size:12.5px;">{{ $errors->first() }}</div>
     @endif
 
-    <!-- ===== AUTRES DEMANDES EN ATTENTE ===== -->
     @if ($autresDemandesEnAttente->isNotEmpty())
       <div class="panel panel-pad" style="margin-bottom:16px;">
         <div class="card-head" style="margin-bottom:12px;"><h2>Autres demandes en attente</h2></div>
@@ -267,10 +231,8 @@
 
     <div class="content-grid" style="display:grid; grid-template-columns:1fr 320px; gap:16px; align-items:start;">
 
-      <!-- ===== COLONNE GAUCHE ===== -->
       <div style="display:flex; flex-direction:column; gap:16px; min-width:0;">
 
-        <!-- Détails de la demande -->
         <div class="panel panel-pad">
           <div class="card-head"><h2>Détails de la demande</h2></div>
 
@@ -344,7 +306,6 @@
           </div>
         </div>
 
-        <!-- Historique -->
         <div class="panel panel-pad">
           <div class="card-head"><h2>Historique de la demande</h2></div>
           <div class="timeline">
@@ -377,7 +338,6 @@
           </div>
         </div>
 
-        <!-- Commentaires -->
         <div class="panel panel-pad">
           <div class="card-head"><h2>Commentaires</h2></div>
 
@@ -419,7 +379,6 @@
           </form>
         </div>
 
-        <!-- Équipe -->
         @if ($equipe->isNotEmpty())
           <div class="panel panel-pad">
             <div class="card-head"><h2>Équipe — {{ $employe->departement ?? 'Département' }}</h2></div>
@@ -443,10 +402,8 @@
 
       </div>
 
-      <!-- ===== COLONNE DROITE ===== -->
       <div style="display:flex; flex-direction:column; gap:16px;">
 
-        <!-- Indicateurs de congés -->
         <div class="panel panel-pad">
           <div class="card-head"><h2>Indicateurs de congés</h2></div>
           <div class="indic-center">
@@ -454,8 +411,6 @@
             <span>jours — solde actuel de {{ explode(' ', $employe->name)[0] }}</span>
           </div>
           @php
-            // Le libellé de cette case reflète le vrai statut de la demande,
-            // au lieu d'afficher "Demande en cours" même quand elle est déjà tranchée.
             $infoJours = match ($leaveRequest->statut) {
                 'approuve' => ['label' => 'Jours approuvés', 'icone' => 'check-circle-2', 'bg' => 'rgba(16,185,129,.15)', 'couleur' => 'var(--green)'],
                 'refuse'   => ['label' => 'Jours refusés',   'icone' => 'x-circle',       'bg' => 'rgba(239,68,68,.15)',  'couleur' => 'var(--red)'],
@@ -486,7 +441,6 @@
           </div>
         </div>
 
-        <!-- Décision RH -->
         <div class="panel panel-pad">
           <div class="card-head"><h2>Décision RH</h2></div>
 
@@ -542,7 +496,6 @@
   lucide.createIcons();
   document.querySelectorAll('a[href="#"]').forEach(l => l.addEventListener('click', e => e.preventDefault()));
 
-  /* ===================== DÉCISION RH ===================== */
   const form = document.getElementById('decisionForm');
   const btnValider = document.getElementById('btnValider');
   const btnRefuser = document.getElementById('btnRefuser');

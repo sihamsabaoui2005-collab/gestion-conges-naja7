@@ -28,7 +28,6 @@
 
   .app{display:flex; align-items:flex-start; min-height:100vh; padding:16px 24px; gap:16px; max-width:1500px; margin:0 auto; overflow-x:hidden;}
 
-  /* ===== SIDEBAR (identique à Mon profil / dashboards) ===== */
   .sidebar{width:64px; flex:none; align-self:flex-start; position:sticky; top:16px; z-index:100; background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:32px; padding:14px 0 16px; display:flex; flex-direction:column; align-items:center; box-shadow:0 8px 32px rgba(0,0,0,.35); max-height:94vh;}
   .side-logo{width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,var(--orange),#DC2626); display:flex; align-items:center; justify-content:center; margin-bottom:12px; font-weight:700; overflow:hidden; flex:none;}
   .side-logo img{width:100%; height:100%; object-fit:cover;}
@@ -43,8 +42,7 @@
 
   .main{flex:1; align-self:stretch; padding:6px 6px 40px; max-width:100%; overflow-x:hidden;}
 
-  /* ===== TOPBAR (identique à Mon profil) ===== */
-  .topbar{display:flex; align-items:center; justify-content:flex-end; margin-bottom:22px; gap:14px;}
+  .topbar{display:flex; align-items:center; justify-content:flex-end; margin-bottom:22px; gap:14px; position:relative;}
   .icon-btn{position:relative; width:40px; height:40px; border-radius:999px; display:flex; align-items:center; justify-content:center; color:#fff;
     background: radial-gradient(130% 200% at 30% -30%, rgba(255,255,255,.15), rgba(255,255,255,0) 45%), linear-gradient(160deg, #2A3350, #12141F 75%);
     box-shadow:0 6px 16px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.1);}
@@ -66,14 +64,12 @@
   .header h1{font-size:26px; font-weight:800; color:#fff;}
   .header p{color:var(--text-dim); font-size:14px; margin-top:4px;}
 
-  /* ===== LAYOUT (rendu par le composant Livewire) ===== */
   .layout{display:grid; grid-template-columns:1fr 320px; gap:18px; align-items:start;}
   .layout > .panel{min-width:0;}
   @media (max-width:1050px){ .layout{grid-template-columns:1fr;} }
 
   .panel{background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 8px 24px rgba(0,0,0,.25);}
 
-  /* ===== FORMULAIRE (colonne principale) ===== */
   .form-panel{padding:22px;}
 
   .banniere{position:relative; display:flex; align-items:center; gap:24px; padding:22px; border-radius:18px; margin-bottom:24px; flex-wrap:wrap;
@@ -138,7 +134,6 @@
   .btn-soumettre:hover, .btn-annuler:hover{filter:brightness(1.1);}
   .btn-soumettre[disabled]{opacity:.6; cursor:default;}
 
-  /* ===== SIDEBAR DROITE ===== */
   .side-panel{padding:20px;}
   .side-panel h3{font-size:15px; font-weight:800; color:#fff; margin-bottom:14px;}
 
@@ -166,6 +161,14 @@
   .bon-a-savoir .ico{width:32px; height:32px; border-radius:10px; background:rgba(245,158,11,.15); color:var(--orange); display:flex; align-items:center; justify-content:center; flex:none;}
   .bon-a-savoir p{font-size:13px; color:var(--text-dim); line-height:1.5;}
 
+  .notif-panel{position:absolute; top:52px; right:96px; background:rgba(18,24,42,.85); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:16px; padding:10px; width:290px; box-shadow:0 12px 30px rgba(0,0,0,.4); display:none; z-index:80;}
+  .notif-panel.open{display:block;}
+  .notif-panel h4{font-size:12.5px; padding:6px 8px 10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em;}
+  .notif-item{display:flex; align-items:flex-start; gap:10px; padding:9px 8px; border-radius:11px; font-size:12.5px;}
+  .notif-item:hover{background:rgba(255,255,255,.05);}
+  .notif-item .n-ico{width:28px; height:28px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex:none;}
+  .notif-empty{padding:14px 8px; font-size:12.5px; color:var(--text-dim); text-align:center;}
+
   @media (max-width:800px){ .sidebar{display:none;} }
 </style>
 @livewireStyles
@@ -174,52 +177,11 @@
 
 <div class="app">
 
-  <!-- ===== SIDEBAR (identique à Mon profil) ===== -->
-  <aside class="sidebar">
-    <div class="side-logo">
-      <img src="{{ asset('images/logo-naja7host.png') }}" alt="NAJA7HOST">
-    </div>
-    <nav class="side-nav">
-      @if (auth()->user()->role === 'rh')
-        <a href="{{ route('dashboard') }}" class="side-link"><i data-lucide="home" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
-        <a href="{{ route('conges.apercu') }}" class="side-link"><i data-lucide="calendar-heart" style="width:17px;height:17px;"></i><span class="tip">Congés &amp; Absences</span></a>
-        <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Demandes</span></a>
-        <a href="{{ route('employes.index') }}" class="side-link"><i data-lucide="users" style="width:17px;height:17px;"></i><span class="tip">Employés</span></a>
-        <a href="{{ route('calendrier.index') }}" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier équipe</span></a>
-        <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="check-square" style="width:17px;height:17px;"></i><span class="tip">Validation</span></a>
-        <a href="#" class="side-link"><i data-lucide="file-bar-chart" style="width:17px;height:17px;"></i><span class="tip">Rapports</span></a>
-        <a href="#" class="side-link"><i data-lucide="bar-chart-3" style="width:17px;height:17px;"></i><span class="tip">Statistiques</span></a>
-        <a href="{{ route('profile.edit') }}" class="side-link"><i data-lucide="user" style="width:17px;height:17px;"></i><span class="tip">Mon profil</span></a>
-        <a href="#" class="side-link"><i data-lucide="settings" style="width:17px;height:17px;"></i><span class="tip">Paramètres</span></a>
-      @else
-        <a href="{{ route('dashboard') }}" class="side-link"><i data-lucide="layout-dashboard" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
-        {{-- FIX : pointait vers href="#", donc le clic était bloqué par le script en bas de page. conges.index liste déjà les demandes. --}}
-        <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Mes demandes</span></a>
-        <a href="{{ route('conges.create') }}" class="side-link active"><i data-lucide="plus-circle" style="width:17px;height:17px;"></i><span class="tip">Nouvelle demande</span></a>
-        {{-- FIX : réutilise la route calendrier.index existante (vue équipe RH) ; si tu veux une vue calendrier dédiée à l'employé, dis-moi le nom de la route et je la remplace. --}}
-        <a href="{{ route('calendrier.index') }}" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier</span></a>
-        {{-- Ces 3 liens n'ont pas de route connue côté employé pour l'instant : donne-moi leurs noms de route (ex. conges.solde, conges.historique) et je les branche. --}}
-        <a href="#" class="side-link"><i data-lucide="wallet" style="width:17px;height:17px;"></i><span class="tip">Mon solde</span></a>
-        <a href="#" class="side-link"><i data-lucide="history" style="width:17px;height:17px;"></i><span class="tip">Historique</span></a>
-        <a href="{{ route('profile.edit') }}" class="side-link"><i data-lucide="user" style="width:17px;height:17px;"></i><span class="tip">Mon profil</span></a>
-        <a href="#" class="side-link"><i data-lucide="settings" style="width:17px;height:17px;"></i><span class="tip">Paramètres</span></a>
-      @endif
-    </nav>
-    <div class="side-bottom">
-      <a href="#" class="side-link"><i data-lucide="headphones" style="width:16px;height:16px;"></i><span class="tip">Support</span></a>
-      <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="side-link"><i data-lucide="log-out" style="width:16px;height:16px;"></i><span class="tip">Déconnexion</span></button>
-      </form>
-    </div>
-  </aside>
+  @include('partials.sidebar')
 
-  <!-- ===== MAIN ===== -->
   <main class="main">
 
-    <!-- ===== TOPBAR (identique à Mon profil) ===== -->
     <div class="topbar">
-      {{-- FIX : id ajouté + panneau de notifications branché (même mécanisme que sur le dashboard RH et conges.index) --}}
       <button class="icon-btn" id="notifBtn"><i data-lucide="bell" style="width:17px;height:17px;"></i><span class="dot">3</span></button>
       <div class="notif-panel" id="notifPanel">
         <h4>Notifications</h4>
@@ -253,8 +215,7 @@
     </div>
 
     <div class="fil">
-      {{-- FIX : "Congés & Absences" en tête de fil d'ariane était du texte brut, non cliquable. Renvoie maintenant vers conges.apercu (RH) ou conges.index (employé). --}}
-      <a href="{{ auth()->user()->role === 'rh' ? route('conges.apercu') : route('conges.index') }}">Congés &amp; Absences</a>
+      <a href="{{ auth()->user()->role === 'rh' ? route('conges.apercu') : route('conges.mesDemandes') }}">Congés &amp; Absences</a>
       &nbsp;›&nbsp; <b>Nouvelle demande</b>
     </div>
 
@@ -268,18 +229,6 @@
   </main>
 </div>
 
-<style>
-  /* FIX : styles du panneau de notifications, absents du fichier d'origine (copiés du même composant sur les autres pages) */
-  .topbar{position:relative;}
-  .notif-panel{position:absolute; top:52px; right:96px; background:rgba(18,24,42,.85); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:16px; padding:10px; width:290px; box-shadow:0 12px 30px rgba(0,0,0,.4); display:none; z-index:80;}
-  .notif-panel.open{display:block;}
-  .notif-panel h4{font-size:12.5px; padding:6px 8px 10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em;}
-  .notif-item{display:flex; align-items:flex-start; gap:10px; padding:9px 8px; border-radius:11px; font-size:12.5px;}
-  .notif-item:hover{background:rgba(255,255,255,.05);}
-  .notif-item .n-ico{width:28px; height:28px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex:none;}
-  .notif-empty{padding:14px 8px; font-size:12.5px; color:var(--text-dim); text-align:center;}
-</style>
-
 <script>
   lucide.createIcons();
 
@@ -287,7 +236,6 @@
     lien.addEventListener('click', (e) => e.preventDefault());
   });
 
-  /* ===== MENU DEROULANT PROFIL (topbar) ===== */
   const userChip = document.getElementById('userChip');
   const userDropdown = document.getElementById('userDropdown');
   userChip.addEventListener('click', (e) => {
@@ -297,7 +245,6 @@
   document.addEventListener('click', () => userDropdown.classList.remove('open'));
   userDropdown.addEventListener('click', (e) => e.stopPropagation());
 
-  /* FIX : ouverture/fermeture du panneau de notifications */
   const notifBtn = document.getElementById('notifBtn');
   const notifPanel = document.getElementById('notifPanel');
   if (notifBtn && notifPanel) {

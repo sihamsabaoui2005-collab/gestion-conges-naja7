@@ -94,7 +94,6 @@
   .legend .row{display:flex; align-items:center; gap:6px;}
   .legend .puce{width:9px; height:9px; border-radius:4px; flex:none;}
 
-  /* ===== Grille RH (puces par jour, inchangée) ===== */
   .cal-grid{display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); border-top:1px solid var(--border); border-left:1px solid var(--border); width:100%; overflow:hidden;}
   .cal-dow{font-size:11px; font-weight:700; color:var(--text-dim); text-align:center; padding:9px 0; border-right:1px solid var(--border); border-bottom:1px solid var(--border); text-transform:uppercase; letter-spacing:.03em;}
   .cal-cell{min-height:128px; min-width:0; border-right:1px solid var(--border); border-bottom:1px solid var(--border); padding:8px; display:flex; flex-direction:column; gap:6px; overflow:hidden;}
@@ -114,7 +113,6 @@
   .cal-item.autre{background:rgba(96,165,250,.16);} .cal-item.autre .txt span{color:var(--blue-2);}
   .cal-item-more{font-size:10px; color:var(--text-dim); padding-left:2px;}
 
-  /* ===== Grille employé (barres façon maquette) ===== */
   .week-dow-row{display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); border-top:1px solid var(--border); border-left:1px solid var(--border);}
   .week-row{position:relative; display:grid; grid-template-columns:repeat(7, minmax(0, 1fr)); border-left:1px solid var(--border);}
   .week-daycell{min-height:96px; border-right:1px solid var(--border); border-bottom:1px solid var(--border); padding:8px;}
@@ -124,7 +122,6 @@
   .week-bars{position:absolute; left:0; right:0; top:32px; height:0; pointer-events:none;}
   .week-bar{position:absolute; height:24px; border-radius:8px; display:flex; align-items:center; padding:0 10px; font-size:11px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; box-shadow:0 4px 10px rgba(0,0,0,.25);}
 
-  /* ===== Panneau droit employé ===== */
   .side-stack{display:flex; flex-direction:column; gap:16px;}
   .stats-card{padding:20px;}
   .stats-card h3{font-size:14px; font-weight:800; color:#fff; margin-bottom:14px;}
@@ -156,39 +153,7 @@
 
 <div class="app">
 
-  <aside class="sidebar">
-    <div class="side-logo"><img src="{{ asset('images/logo-naja7host.png') }}" alt="NAJA7HOST"></div>
-    <nav class="side-nav">
-      @if ($estRh)
-        <a href="{{ route('dashboard') }}" class="side-link"><i data-lucide="home" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
-        <a href="{{ route('conges.apercu') }}" class="side-link"><i data-lucide="calendar-heart" style="width:17px;height:17px;"></i><span class="tip">Congés &amp; Absences</span></a>
-        <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Demandes</span></a>
-        <a href="{{ route('employes.index') }}" class="side-link"><i data-lucide="users" style="width:17px;height:17px;"></i><span class="tip">Employés</span></a>
-        <a href="{{ route('calendrier.index') }}" class="side-link active"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier équipe</span></a>
-        <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="check-square" style="width:17px;height:17px;"></i><span class="tip">Validation</span></a>
-        <a href="#" class="side-link"><i data-lucide="file-bar-chart" style="width:17px;height:17px;"></i><span class="tip">Rapports</span></a>
-        <a href="#" class="side-link"><i data-lucide="bar-chart-3" style="width:17px;height:17px;"></i><span class="tip">Statistiques</span></a>
-        <a href="{{ route('profile.edit') }}" class="side-link"><i data-lucide="user" style="width:17px;height:17px;"></i><span class="tip">Mon profil</span></a>
-        <a href="#" class="side-link"><i data-lucide="settings" style="width:17px;height:17px;"></i><span class="tip">Paramètres</span></a>
-      @else
-        <a href="{{ route('dashboard') }}" class="side-link"><i data-lucide="layout-dashboard" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
-        <a href="{{ route('conges.mesDemandes') }}" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Mes demandes</span></a>
-        <a href="{{ route('conges.create') }}" class="side-link"><i data-lucide="plus-circle" style="width:17px;height:17px;"></i><span class="tip">Nouvelle demande</span></a>
-        <a href="{{ route('calendrier.index') }}" class="side-link active"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier</span></a>
-        <a href="#" class="side-link"><i data-lucide="wallet" style="width:17px;height:17px;"></i><span class="tip">Mon solde</span></a>
-        <a href="#" class="side-link"><i data-lucide="history" style="width:17px;height:17px;"></i><span class="tip">Historique</span></a>
-        <a href="{{ route('profile.edit') }}" class="side-link"><i data-lucide="user" style="width:17px;height:17px;"></i><span class="tip">Mon profil</span></a>
-        <a href="#" class="side-link"><i data-lucide="settings" style="width:17px;height:17px;"></i><span class="tip">Paramètres</span></a>
-      @endif
-    </nav>
-    <div class="side-bottom">
-      <a href="#" class="side-link"><i data-lucide="headphones" style="width:16px;height:16px;"></i><span class="tip">Support{{ $estRh ? ' RH' : '' }}</span></a>
-      <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="side-link"><i data-lucide="log-out" style="width:16px;height:16px;"></i><span class="tip">Déconnexion</span></button>
-      </form>
-    </div>
-  </aside>
+  @include('partials.sidebar')
 
   <main class="main">
 
@@ -203,7 +168,6 @@
     <div class="layout {{ $estRh ? '' : 'employe-layout' }}">
 
       @if ($estRh)
-      <!-- ===== COLONNE GAUCHE : départements + aperçu rapide (RH uniquement) ===== -->
       <div style="display:flex; flex-direction:column; gap:16px;">
 
         <div class="panel" style="padding:20px;">
@@ -259,7 +223,6 @@
       </div>
       @endif
 
-      <!-- ===== CALENDRIER ===== -->
       <div class="panel">
 
         <div class="cal-toolbar">
@@ -300,7 +263,6 @@
         </div>
 
         @if ($estRh)
-          <!-- ===== Grille RH : puces par jour (inchangée) ===== -->
           <div class="legend">
             <span class="row"><span class="puce" style="background:var(--green);"></span> Congé annuel</span>
             <span class="row"><span class="puce" style="background:var(--red);"></span> Congé maladie</span>
@@ -340,7 +302,6 @@
             @endforeach
           </div>
         @else
-          <!-- ===== Grille employé : barres façon maquette ===== -->
           <div class="week-dow-row">
             @foreach (['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'] as $nomJour)
               <div class="cal-dow">{{ $nomJour }}</div>
@@ -378,7 +339,6 @@
       </div>
 
       @if (!$estRh)
-      <!-- ===== COLONNE DROITE employé : stats + prochains congés ===== -->
       <div class="side-stack">
 
         <div class="panel stats-card">

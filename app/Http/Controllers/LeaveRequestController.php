@@ -178,8 +178,16 @@ class LeaveRequestController extends Controller
         $countApprouvees = LeaveRequest::where('statut', 'approuve')->count();
         $countRefusees    = LeaveRequest::where('statut', 'refuse')->count();
 
-        // ===== Départements pour le filtre =====
-        $departements = User::whereNotNull('departement')->distinct()->pluck('departement');
+        // ===== Départements pour le filtre (on exclut "Ressources Humaines", même logique
+        // que sur les pages Aperçu et Détail département) =====
+        $departements = User::whereNotNull('departement')
+            ->distinct()
+            ->pluck('departement')
+            ->map(fn ($d) => trim($d))
+            ->unique()
+            ->reject(fn ($d) => mb_strtolower($d) === 'ressources humaines')
+            ->sort()
+            ->values();
 
         // ===== Alertes & conflits (calculées sur les vraies données) =====
         $conflitsParDepartement = [];

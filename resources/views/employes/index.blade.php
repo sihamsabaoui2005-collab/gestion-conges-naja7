@@ -64,7 +64,6 @@
   .layout{display:grid; grid-template-columns:220px 1fr 300px; gap:16px; align-items:start;}
   @media (max-width:1150px){ .layout{grid-template-columns:1fr; } }
 
-  /* ===== Colonne gauche : départements ===== */
   .dept-list-item{display:flex; align-items:center; gap:9px; padding:9px 10px; border-radius:11px; font-size:13px; color:var(--text-dim); margin-bottom:2px;}
   .dept-list-item:hover{background:rgba(255,255,255,.06); color:#fff;}
   .dept-list-item.active{background:rgba(245,158,11,.15); color:var(--orange); font-weight:700;}
@@ -73,7 +72,6 @@
   .dept-list-item.active .count{color:var(--orange);}
   .dept-title{font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.04em; margin-bottom:10px; display:flex; justify-content:space-between;}
 
-  /* ===== Colonne centrale ===== */
   .search-box{width:100%; height:42px; display:flex; align-items:center; gap:8px; background:var(--panel-2); border:1px solid var(--border); border-radius:11px; padding:0 14px; margin-bottom:18px;}
   .search-box input{flex:1; border:none; outline:none; background:transparent; color:#fff; font-size:14px;}
   .search-box input::placeholder{color:var(--text-dim);}
@@ -96,10 +94,11 @@
   .employe-card .poste{display:block; font-size:10.5px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .employe-card .statut-label{display:block; font-size:10.5px; font-weight:600; margin-top:3px;}
   .employe-card .jusquau{display:block; font-size:9.5px; color:var(--text-dim); margin-top:1px;}
+  .employe-card .btn-supprimer{display:inline-flex; align-items:center; gap:3px; font-size:10px; color:var(--red); background:none; border:none; cursor:pointer; margin-top:8px; padding:2px 4px;}
+  .employe-card .btn-supprimer:hover{text-decoration:underline;}
 
   .empty-state{text-align:center; padding:40px 0; color:var(--text-dim); font-size:13.5px;}
 
-  /* ===== Colonne droite ===== */
   .side-panel h3{font-size:13.5px; font-weight:800; display:flex; align-items:center; gap:7px; margin-bottom:14px;}
   .anniv-item{display:flex; align-items:center; gap:10px; padding:8px 0;}
   .anniv-avatar{width:32px; height:32px; border-radius:50%; background:var(--pink); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex:none; overflow:hidden;}
@@ -127,28 +126,7 @@
 
 <div class="app">
 
-  <aside class="sidebar">
-    <div class="side-logo"><img src="{{ asset('images/logo-naja7host.png') }}" alt="NAJA7HOST"></div>
-    <nav class="side-nav">
-      <a href="{{ route('dashboard') }}" class="side-link"><i data-lucide="home" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
-      <a href="{{ route('conges.apercu') }}" class="side-link"><i data-lucide="calendar-heart" style="width:17px;height:17px;"></i><span class="tip">Congés &amp; Absences</span></a>
-      <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Demandes</span></a>
-      <a href="{{ route('employes.index') }}" class="side-link active"><i data-lucide="users" style="width:17px;height:17px;"></i><span class="tip">Employés</span></a>
-      <a href="{{ route('calendrier.index') }}" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier équipe</span></a>
-      <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="check-square" style="width:17px;height:17px;"></i><span class="tip">Validation</span></a>
-      <a href="#" class="side-link"><i data-lucide="file-bar-chart" style="width:17px;height:17px;"></i><span class="tip">Rapports</span></a>
-      <a href="#" class="side-link"><i data-lucide="bar-chart-3" style="width:17px;height:17px;"></i><span class="tip">Statistiques</span></a>
-      <a href="{{ route('profile.edit') }}" class="side-link"><i data-lucide="user" style="width:17px;height:17px;"></i><span class="tip">Mon profil</span></a>
-      <a href="#" class="side-link"><i data-lucide="settings" style="width:17px;height:17px;"></i><span class="tip">Paramètres</span></a>
-    </nav>
-    <div class="side-bottom">
-      <a href="#" class="side-link"><i data-lucide="headphones" style="width:16px;height:16px;"></i><span class="tip">Support RH</span></a>
-      <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="side-link"><i data-lucide="log-out" style="width:16px;height:16px;"></i><span class="tip">Déconnexion</span></button>
-      </form>
-    </div>
-  </aside>
+  @include('partials.sidebar')
 
   <main class="main">
 
@@ -170,8 +148,10 @@
       @if (session('success'))
         <div style="grid-column:1/-1; padding:11px 16px; border-radius:12px; background:rgba(16,185,129,.15); color:var(--green); font-size:12.5px;">{{ session('success') }}</div>
       @endif
+      @if (session('error'))
+        <div style="grid-column:1/-1; padding:11px 16px; border-radius:12px; background:rgba(239,68,68,.15); color:var(--red); font-size:12.5px;">{{ session('error') }}</div>
+      @endif
 
-      <!-- ===== COLONNE GAUCHE : départements ===== -->
       <div class="panel panel-pad">
         <div class="dept-title"><span>Départements</span><span>{{ $totalEmployes }}</span></div>
 
@@ -194,7 +174,6 @@
         @endforeach
       </div>
 
-      <!-- ===== COLONNE CENTRALE : liste des employés ===== -->
       <div class="panel panel-pad">
         <form method="GET" action="{{ route('employes.index') }}" class="search-box">
           @if ($departementFiltre) <input type="hidden" name="departement" value="{{ $departementFiltre }}"> @endif
@@ -241,6 +220,17 @@
                   @if ($e->jusquau)
                     <span class="jusquau">jusqu'au {{ $e->jusquau->format('d/m') }}</span>
                   @endif
+
+                  @if ($e->user->id !== auth()->id())
+                    <form method="POST" action="{{ route('employes.destroy', $e->user->id) }}"
+                          onsubmit="return confirm('Supprimer définitivement {{ $e->user->name }} ? Cette action est irréversible.');">
+                      @csrf
+                      @method('DELETE')
+                      <button type="submit" class="btn-supprimer">
+                        <i data-lucide="trash-2" style="width:11px;height:11px;"></i> Supprimer
+                      </button>
+                    </form>
+                  @endif
                 </div>
               @endforeach
             </div>
@@ -250,7 +240,6 @@
         @endforelse
       </div>
 
-      <!-- ===== COLONNE DROITE ===== -->
       <div style="display:flex; flex-direction:column; gap:16px;">
 
         <div class="panel panel-pad">

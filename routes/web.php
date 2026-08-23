@@ -7,6 +7,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\EmployeController;
 use App\Http\Controllers\CalendrierController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\StatistiqueController;
+use App\Http\Controllers\SettingsController;
 
 Route::get('/', function () {
     return view('pages.home');
@@ -21,6 +24,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Paramètres & Support (page fusionnée, un seul lien dans le sidebar)
+    Route::get('/parametres-support', [SettingsController::class, 'index'])->name('settings.index');
+    Route::patch('/parametres-support', [SettingsController::class, 'update'])->name('settings.update');
 
     // Employé : nouvelle demande de congé
     Route::get('/conges/nouvelle', [LeaveRequestController::class, 'create'])->name('conges.create');
@@ -38,11 +45,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/rh/employes', [EmployeController::class, 'index'])->name('employes.index');
     Route::get('/rh/employes/nouveau', [EmployeController::class, 'create'])->name('employes.create');
     Route::post('/rh/employes', [EmployeController::class, 'store'])->name('employes.store');
+    Route::delete('/rh/employes/{employe}', [EmployeController::class, 'destroy'])->name('employes.destroy');
     Route::get('/rh/calendrier', [CalendrierController::class, 'index'])->name('calendrier.index');
     Route::get('/rh/conges/{leaveRequest}', [LeaveRequestController::class, 'show'])->name('conges.show');
     Route::post('/rh/conges/{leaveRequest}/commentaire', [LeaveRequestController::class, 'storeComment'])->name('conges.comment');
     Route::post('/rh/conges/{leaveRequest}/approuver', [LeaveRequestController::class, 'approve'])->name('conges.approve');
     Route::post('/rh/conges/{leaveRequest}/refuser', [LeaveRequestController::class, 'reject'])->name('conges.reject');
+
+    // Rapports
+    Route::get('/rh/rapports', [ReportController::class, 'index'])->name('rapports.index');
+    Route::post('/rh/rapports/generer', [ReportController::class, 'generate'])->name('rapports.generate');
+    Route::patch('/rh/rapports/{rapport}', [ReportController::class, 'update'])->name('rapports.update');
+    Route::get('/rh/rapports/{rapport}/export', [ReportController::class, 'export'])->name('rapports.export');
+    Route::delete('/rh/rapports/{rapport}', [ReportController::class, 'destroy'])->name('rapports.destroy');
+
+    // Statistiques
+    Route::get('/rh/statistiques', [StatistiqueController::class, 'index'])->name('statistiques.index');
 });
 
 require __DIR__.'/auth.php';

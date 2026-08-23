@@ -24,17 +24,19 @@ class EmployeController extends Controller
         $typesAbsences = ['maladie', 'sans_solde'];
 
         // ===== Départements avec compteur d'employés (pour la colonne de gauche) =====
-        $departements = User::whereNotNull('departement')
+        // FIX : on excluait avant par département "Ressources Humaines", ce qui laissait
+        // passer un compte RH sans département renseigné. On exclut maintenant par rôle.
+        $departements = User::where('role', '!=', 'rh')
+            ->whereNotNull('departement')
             ->selectRaw('TRIM(departement) as departement, count(*) as total')
             ->groupBy('departement')
             ->pluck('total', 'departement')
-            ->reject(fn ($total, $dep) => mb_strtolower($dep) === 'ressources humaines')
             ->sortKeys();
 
-        $totalEmployes = User::whereRaw('LOWER(TRIM(departement)) != ? OR departement IS NULL', ['ressources humaines'])->count();
+        $totalEmployes = User::where('role', '!=', 'rh')->count();
 
         // ===== Liste des employés (filtrée par recherche / département), groupée par département =====
-        $requeteEmployes = User::whereRaw('LOWER(TRIM(departement)) != ? OR departement IS NULL', ['ressources humaines']);
+        $requeteEmployes = User::where('role', '!=', 'rh');
 
         if ($recherche) {
             $requeteEmployes->where('name', 'like', "%{$recherche}%");
@@ -85,7 +87,7 @@ class EmployeController extends Controller
 
         // ===== Statistiques du jour pour le panneau de droite : TOUJOURS sur l'ensemble de l'entreprise,
         // indépendamment de la recherche / du filtre département appliqué à la liste affichée =====
-        $statutsGlobaux = User::whereRaw('LOWER(TRIM(departement)) != ? OR departement IS NULL', ['ressources humaines'])
+        $statutsGlobaux = User::where('role', '!=', 'rh')
             ->get()
             ->map($calculerStatut);
 
@@ -94,8 +96,8 @@ class EmployeController extends Controller
         $presentsAujourdhui = $statutsGlobaux->where('statut', 'present')->count();
 
         // ===== Anniversaires du mois =====
-        $anniversaires = User::whereNotNull('date_naissance')
-            ->whereRaw('LOWER(TRIM(departement)) != ? OR departement IS NULL', ['ressources humaines'])
+        $anniversaires = User::where('role', '!=', 'rh')
+            ->whereNotNull('date_naissance')
             ->whereMonth('date_naissance', now()->month)
             ->get()
             ->sortBy(fn ($u) => $u->date_naissance->day)
@@ -187,5 +189,25 @@ class EmployeController extends Controller
         return redirect()
             ->route('employes.index')
             ->with('success', 'Employé ajouté avec succès.');
+    }
+
+    /**
+     * Supprimer définitivement un employé
+     */
+    public function destroy(User $employe)
+    {
+        if (auth()->user()->role !== 'rh') {
+            abort(403);
+        }
+
+        if ($employe->id === auth()->id()) {
+            return back()->with('error', 'Tu ne peux pas supprimer ton propre compte.');
+        }
+
+        $employe->delete();
+
+        return redirect()
+            ->route('employes.index')
+            ->with('success', 'Employé supprimé avec succès.');
     }
 }

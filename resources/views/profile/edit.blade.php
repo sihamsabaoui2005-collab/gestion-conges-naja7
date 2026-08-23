@@ -27,7 +27,6 @@
 
   .app{display:flex; align-items:flex-start; min-height:100vh; padding:16px 24px; gap:16px; max-width:1500px; margin:0 auto;}
 
-  /* ===== SIDEBAR (identique aux dashboards) ===== */
   .sidebar{width:64px; flex:none; align-self:flex-start; position:sticky; top:16px; z-index:100; background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:32px; padding:14px 0 16px; display:flex; flex-direction:column; align-items:center; box-shadow:0 8px 32px rgba(0,0,0,.35); max-height:94vh;}
   .side-logo{width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,var(--orange),#DC2626); display:flex; align-items:center; justify-content:center; margin-bottom:12px; font-weight:700; overflow:hidden; flex:none;}
   .side-logo img{width:100%; height:100%; object-fit:cover;}
@@ -42,7 +41,6 @@
 
   .main{flex:1; align-self:stretch; padding:6px 6px 40px; max-width:100%; overflow-x:hidden;}
 
-  /* ===== TOPBAR ===== */
   .topbar{display:flex; align-items:center; justify-content:flex-end; margin-bottom:22px; gap:14px;}
   .icon-btn{position:relative; width:40px; height:40px; border-radius:999px; display:flex; align-items:center; justify-content:center; color:#fff;
     background: radial-gradient(130% 200% at 30% -30%, rgba(255,255,255,.15), rgba(255,255,255,0) 45%), linear-gradient(160deg, #2A3350, #12141F 75%);
@@ -59,7 +57,6 @@
   .user-chip p{font-size:13px; font-weight:600;}
   .user-chip span{font-size:11px; color:var(--text-dim);}
 
-  /* ===== GREETING ===== */
   .page-head{margin-bottom:22px;}
   .page-head h1{position:relative; display:inline-flex; align-items:center; font-size:20px; font-weight:800; color:#0C2340;
     padding:12px 32px; margin-bottom:2px;
@@ -70,7 +67,6 @@
 
   .panel{background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 8px 24px rgba(0,0,0,.25);}
 
-  /* ===== CARTE PROFIL (haut) ===== */
   .profile-hero{display:grid; grid-template-columns:1.6fr 1fr; gap:16px; margin-bottom:18px;}
   .hero-left{display:flex; align-items:center; gap:20px; padding:26px;}
   .avatar-wrap{position:relative; width:140px; height:140px; flex:none;}
@@ -97,7 +93,6 @@
     box-shadow:0 6px 16px rgba(194,65,12,.4), inset 0 1px 0 rgba(255,255,255,.25);}
   .hero-right a:hover{transform:translateY(-1px);}
 
-  /* ===== INFOS / SECURITE (toujours affichées, plus d'onglets) ===== */
   .info-security-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
   .panel-pad{padding:22px;}
   .card-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
@@ -126,7 +121,6 @@
   .field-group input:focus{outline:none; border-color:var(--orange); box-shadow:0 0 0 3px rgba(245,158,11,.15);}
   .field-group input::placeholder{color:var(--text-dim);}
 
-  /* ===== MENU DEROULANT PERSONNALISE (reste sombre, contrairement au <select> natif) ===== */
   .custom-select{position:relative;}
   .custom-select-btn{width:100%; display:flex; align-items:center; justify-content:space-between; background:var(--panel-2); border:1.5px solid var(--border); border-radius:12px; padding:11px 14px; color:#fff; font-size:13.5px; font-family:inherit; text-align:left;}
   .custom-select-btn:hover, .custom-select-btn.open{border-color:var(--orange);}
@@ -163,7 +157,6 @@
   .danger-zone h3{font-size:13px; font-weight:700; color:var(--red); margin-bottom:4px;}
   .danger-zone p{font-size:11.5px; color:var(--text-dim); margin-bottom:12px;}
 
-
   .page-footer{display:flex; align-items:center; justify-content:space-between; margin-top:20px; font-size:11.5px; color:var(--text-dim);}
   .page-footer .badge-live{display:inline-flex; align-items:center; gap:6px; color:var(--orange); font-weight:600;}
   .page-footer .badge-live .dot-live{width:7px; height:7px; border-radius:50%; background:var(--orange);}
@@ -180,54 +173,14 @@
 
 <div class="app">
 
-  <!-- ===== SIDEBAR ===== -->
-  <aside class="sidebar">
-    <div class="side-logo">
-      <img src="{{ asset('images/logo-naja7host.png') }}" alt="NAJA7HOST">
-    </div>
-    <nav class="side-nav">
-      @if (auth()->user()->role === 'rh')
-        <a href="{{ route('dashboard') }}" class="side-link"><i data-lucide="home" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
-        <a href="{{ route('conges.apercu') }}" class="side-link"><i data-lucide="calendar-heart" style="width:17px;height:17px;"></i><span class="tip">Congés &amp; Absences</span></a>
-        {{-- FIX : pointait vers href="#", donc bloqué par le script en bas de page. Renvoie maintenant vers la vraie route RH. --}}
-        <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Demandes</span></a>
-        <a href="{{ route('employes.index') }}" class="side-link"><i data-lucide="users" style="width:17px;height:17px;"></i><span class="tip">Employés</span></a>
-        <a href="{{ route('calendrier.index') }}" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier équipe</span></a>
-        <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="check-square" style="width:17px;height:17px;"></i><span class="tip">Validation</span></a>
-        <a href="#" class="side-link"><i data-lucide="file-bar-chart" style="width:17px;height:17px;"></i><span class="tip">Rapports</span></a>
-        <a href="#" class="side-link"><i data-lucide="bar-chart-3" style="width:17px;height:17px;"></i><span class="tip">Statistiques</span></a>
-        <a href="{{ route('profile.edit') }}" class="side-link active"><i data-lucide="user" style="width:17px;height:17px;"></i><span class="tip">Mon profil</span></a>
-        <a href="#" class="side-link"><i data-lucide="settings" style="width:17px;height:17px;"></i><span class="tip">Paramètres</span></a>
-      @else
-        <a href="{{ route('dashboard') }}" class="side-link"><i data-lucide="layout-dashboard" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
-        {{-- FIX : pointait vers href="#", donc bloqué par le script en bas de page. Renvoie maintenant vers la route dédiée employé. --}}
-        <a href="{{ route('conges.mesDemandes') }}" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Mes demandes</span></a>
-        <a href="{{ route('conges.create') }}" class="side-link"><i data-lucide="plus-circle" style="width:17px;height:17px;"></i><span class="tip">Nouvelle demande</span></a>
-        <a href="{{ route('calendrier.index') }}" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier</span></a>
-        {{-- Pas de route connue côté employé pour ces 2 liens : donne les noms de route si elles existent, sinon je les construis. --}}
-        <a href="#" class="side-link"><i data-lucide="wallet" style="width:17px;height:17px;"></i><span class="tip">Mon solde</span></a>
-        <a href="#" class="side-link"><i data-lucide="history" style="width:17px;height:17px;"></i><span class="tip">Historique</span></a>
-        <a href="{{ route('profile.edit') }}" class="side-link active"><i data-lucide="user" style="width:17px;height:17px;"></i><span class="tip">Mon profil</span></a>
-        <a href="#" class="side-link"><i data-lucide="settings" style="width:17px;height:17px;"></i><span class="tip">Paramètres</span></a>
-      @endif
-    </nav>
-    <div class="side-bottom">
-      <a href="#" class="side-link"><i data-lucide="headphones" style="width:16px;height:16px;"></i><span class="tip">Support</span></a>
-      <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="side-link"><i data-lucide="log-out" style="width:16px;height:16px;"></i><span class="tip">Déconnexion</span></button>
-      </form>
-    </div>
-  </aside>
+  @include('partials.sidebar')
 
-  <!-- ===== MAIN ===== -->
   <main class="main">
 
     <div class="topbar">
       <button class="icon-btn"><i data-lucide="bell" style="width:17px;height:17px;"></i>
         @if (($demandesEnAttente ?? 0) > 0)<span class="dot">{{ $demandesEnAttente }}</span>@endif
       </button>
-      <button class="icon-btn"><i data-lucide="mail" style="width:17px;height:17px;"></i></button>
       <div class="user-chip" id="userChip">
         <div class="avatar-sm">
           @if (auth()->user()->photo_path)
@@ -244,7 +197,7 @@
 
         <div class="user-dropdown" id="userDropdown">
           <a href="{{ route('profile.edit') }}"><i data-lucide="user" style="width:15px;height:15px;"></i> Mon profil</a>
-          <a href="#"><i data-lucide="settings" style="width:15px;height:15px;"></i> Paramètres</a>
+          <a href="{{ route('settings.index') }}"><i data-lucide="settings" style="width:15px;height:15px;"></i> Paramètres</a>
           <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit"><i data-lucide="log-out" style="width:15px;height:15px;"></i> Déconnexion</button>
@@ -258,7 +211,6 @@
       <p>Gérez vos informations personnelles et votre compte.</p>
     </div>
 
-    <!-- ===== CARTE PROFIL ===== -->
     <div class="profile-hero">
       <div class="panel hero-left">
         <form id="photoForm" method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" style="display:contents;">
@@ -304,7 +256,6 @@
       </div>
     </div>
 
-    <!-- ===== INFORMATIONS + SECURITE (affichées en permanence, plus d'onglets) ===== -->
     <div class="info-security-grid">
       <div class="panel panel-pad">
         <div class="card-head">
@@ -312,7 +263,6 @@
           <button type="button" id="btnModifier"><i data-lucide="pencil" style="width:13px;height:13px;"></i> Modifier</button>
         </div>
 
-        <!-- ===== MODE AFFICHAGE ===== -->
         <div id="infosView">
           <div class="info-row"><i data-lucide="user"></i><span class="lbl">Nom complet</span><span class="val">{{ auth()->user()->name }}</span></div>
           <div class="info-row"><i data-lucide="mail"></i><span class="lbl">Email professionnel</span><span class="val">{{ auth()->user()->email }}</span></div>
@@ -327,7 +277,6 @@
           <div class="info-row"><i data-lucide="heart"></i><span class="lbl">Situation familiale</span><span class="val">{{ auth()->user()->situation_familiale ?? '—' }}</span></div>
         </div>
 
-        <!-- ===== MODE EDITION ===== -->
         <form id="infosEdit" method="POST" action="{{ route('profile.update') }}" style="display:none;">
           @csrf
           @method('patch')
@@ -427,7 +376,6 @@
     lien.addEventListener('click', (e) => e.preventDefault());
   });
 
-  /* ===== MENU DEROULANT PROFIL (topbar) ===== */
   const userChip = document.getElementById('userChip');
   const userDropdown = document.getElementById('userDropdown');
 
@@ -438,7 +386,6 @@
   document.addEventListener('click', () => userDropdown.classList.remove('open'));
   userDropdown.addEventListener('click', (e) => e.stopPropagation());
 
-  /* ===== MENU DEROULANT PERSONNALISE (situation familiale) ===== */
   const situationBtn = document.getElementById('situationBtn');
   const situationList = document.getElementById('situationList');
   const situationInput = document.getElementById('situationInput');
@@ -467,7 +414,6 @@
     situationBtn.classList.remove('open');
   });
 
-  /* ===== MODIFIER / ANNULER LES INFOS ===== */
   const infosView = document.getElementById('infosView');
   const infosEdit = document.getElementById('infosEdit');
   const btnModifier = document.getElementById('btnModifier');
@@ -482,7 +428,6 @@
     infosView.style.display = 'block';
   });
 
-  /* ===== UPLOAD PHOTO DE PROFIL ===== */
   const btnPhoto = document.getElementById('btnPhoto');
   const photoInput = document.getElementById('photoInput');
   const photoForm = document.getElementById('photoForm');
@@ -494,7 +439,6 @@
     }
   });
 
-  /* ===== AFFICHER / MASQUER LES MOTS DE PASSE ===== */
   document.querySelectorAll('.toggle-eye').forEach(wrap => {
     wrap.addEventListener('click', () => {
       const input = document.getElementById(wrap.dataset.target);

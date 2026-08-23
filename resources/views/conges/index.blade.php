@@ -49,7 +49,6 @@
     padding:12px 28px; background:linear-gradient(180deg,#3D7BFF 0%,#1E4FC4 55%,#123591 100%); border-radius:999px;
     box-shadow:0 6px 14px rgba(23,73,176,.5), inset 0 2px 0 rgba(255,255,255,.4), inset 0 -4px 8px rgba(0,0,0,.3);}
   .header-left p{color:var(--text-dim); font-size:13.5px; margin-top:4px; text-shadow:0 2px 8px rgba(0,0,0,.5); max-width:520px;}
-  /* FIX : position:relative pour ancrer le panneau de notifications */
   .header-right{display:flex; align-items:center; gap:12px; position:relative;}
 
   .search-box{width:260px; height:40px; display:flex; align-items:center; gap:8px; background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:0 12px;}
@@ -61,7 +60,6 @@
   .avatar{width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--orange),#DC2626); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; overflow:hidden; flex:none;}
   .avatar img{width:100%; height:100%; object-fit:cover; object-position:center top;}
 
-  /* FIX : styles du panneau de notifications (absents du fichier d'origine) */
   .notif-panel{position:absolute; top:52px; right:0; background:rgba(18,24,42,.85); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:16px; padding:10px; width:290px; box-shadow:0 12px 30px rgba(0,0,0,.4); display:none; z-index:80;}
   .notif-panel.open{display:block;}
   .notif-panel h4{font-size:12.5px; padding:6px 8px 10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em;}
@@ -207,32 +205,7 @@
 
 <div class="app">
 
-  <aside class="sidebar">
-    <div class="side-logo">
-      <img src="{{ asset('images/logo-naja7host.png') }}" alt="NAJA7HOST">
-    </div>
-
-    <nav class="side-nav">
-      <a href="{{ route('dashboard') }}" class="side-link"><i data-lucide="home" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
-      <a href="{{ route('conges.apercu') }}" class="side-link"><i data-lucide="calendar-heart" style="width:17px;height:17px;"></i><span class="tip">Congés &amp; Absences</span></a>
-      <a href="{{ route('conges.index') }}" class="side-link active"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Demandes</span></a>
-      <a href="{{ route('employes.index') }}" class="side-link"><i data-lucide="users" style="width:17px;height:17px;"></i><span class="tip">Employés</span></a>
-      <a href="{{ route('calendrier.index') }}" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier équipe</span></a>
-      <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="check-square" style="width:17px;height:17px;"></i><span class="tip">Validation</span></a>
-      <a href="#" class="side-link"><i data-lucide="file-bar-chart" style="width:17px;height:17px;"></i><span class="tip">Rapports</span></a>
-      <a href="#" class="side-link"><i data-lucide="bar-chart-3" style="width:17px;height:17px;"></i><span class="tip">Statistiques</span></a>
-      <a href="{{ route('profile.edit') }}" class="side-link"><i data-lucide="user" style="width:17px;height:17px;"></i><span class="tip">Mon profil</span></a>
-      <a href="#" class="side-link"><i data-lucide="settings" style="width:17px;height:17px;"></i><span class="tip">Paramètres</span></a>
-    </nav>
-
-    <div class="side-bottom">
-      <a href="#" class="side-link"><i data-lucide="headphones" style="width:16px;height:16px;"></i><span class="tip">Support RH</span></a>
-      <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="side-link"><i data-lucide="log-out" style="width:16px;height:16px;"></i><span class="tip">Déconnexion</span></button>
-      </form>
-    </div>
-  </aside>
+  @include('partials.sidebar')
 
   <main class="main">
 
@@ -249,12 +222,10 @@
           </form>
         </div>
 
-        <!-- FIX : id ajouté pour brancher le JS -->
         <button class="icon-btn" id="notifBtn"><i data-lucide="bell" style="width:16px;height:16px;"></i>
           @if ($countAValider > 0)<span class="dot">{{ $countAValider }}</span>@endif
         </button>
 
-        <!-- FIX : panneau de notifications ajouté (branché sur la vraie donnée $countAValider) -->
         <div class="notif-panel" id="notifPanel">
           <h4>Notifications</h4>
           @if ($countAValider > 0)
@@ -510,8 +481,7 @@
         </div>
 
         <div class="panel side-panel">
-          <!-- FIX : "Voir tout" pointait vers href="#". Renvoie maintenant vers la même page filtrée sur les alertes (conges.index). Adapte la route si tu as une page d'alertes dédiée. -->
-          <div class="head-row"><h3>Alertes &amp; conflits</h3><a href="{{ route('conges.index') }}">Voir tout</a></div>
+          <div class="head-row"><h3>Alertes &amp; conflits</h3></div>
 
           @if ($nombreConflits === 0 && $soldeFaibleCount === 0 && $congesLongsCount === 0)
             <div class="alert-empty">Aucune alerte pour le moment.</div>
@@ -560,8 +530,6 @@
 <script>
   lucide.createIcons();
 
-  // FIX : n'intercepte QUE les vrais liens décoratifs "#" restants (sidebar Rapports/Statistiques/Paramètres/Support),
-  // plus jamais le bouton notifications puisqu'il a maintenant un href réel / un id dédié.
   document.querySelectorAll('a[href="#"]').forEach(l => l.addEventListener('click', e => e.preventDefault()));
 
   const sortWrap = document.getElementById('sortWrap');
@@ -574,7 +542,6 @@
     document.addEventListener('click', () => sortWrap.classList.remove('open'));
   }
 
-  // FIX : ouverture/fermeture du panneau de notifications
   const notifBtn = document.getElementById('notifBtn');
   const notifPanel = document.getElementById('notifPanel');
   if (notifBtn && notifPanel) {

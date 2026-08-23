@@ -50,10 +50,6 @@
   .header-left p{color:var(--text-dim); font-size:13.5px; margin-top:4px; text-shadow:0 2px 8px rgba(0,0,0,.5); max-width:520px;}
   .header-right{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
 
-  .search-box{width:230px; height:40px; display:flex; align-items:center; gap:8px; background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:0 12px;}
-  .search-box input{flex:1; border:none; outline:none; background:transparent; color:#fff; font-size:14px;}
-  .search-box input::placeholder{color:var(--text-dim);}
-
   .date-box{display:flex; align-items:center; gap:8px; height:40px; background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:0 12px; font-size:13px; color:var(--text-dim);}
   .date-box input{background:transparent; border:none; color:#fff; font-size:13px; outline:none; width:110px;}
 
@@ -130,28 +126,7 @@
 
 <div class="app">
 
-  <aside class="sidebar">
-    <div class="side-logo"><img src="{{ asset('images/logo-naja7host.png') }}" alt="NAJA7HOST"></div>
-    <nav class="side-nav">
-      <a href="{{ route('dashboard') }}" class="side-link"><i data-lucide="home" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
-      <a href="{{ route('conges.apercu') }}" class="side-link active"><i data-lucide="calendar-heart" style="width:17px;height:17px;"></i><span class="tip">Congés &amp; Absences</span></a>
-      <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Demandes</span></a>
-      <a href="{{ route('employes.index') }}" class="side-link"><i data-lucide="users" style="width:17px;height:17px;"></i><span class="tip">Employés</span></a>
-      <a href="{{ route('calendrier.index') }}" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier équipe</span></a>
-      <a href="{{ route('conges.index') }}" class="side-link"><i data-lucide="check-square" style="width:17px;height:17px;"></i><span class="tip">Validation</span></a>
-      <a href="#" class="side-link"><i data-lucide="file-bar-chart" style="width:17px;height:17px;"></i><span class="tip">Rapports</span></a>
-      <a href="#" class="side-link"><i data-lucide="bar-chart-3" style="width:17px;height:17px;"></i><span class="tip">Statistiques</span></a>
-      <a href="{{ route('profile.edit') }}" class="side-link"><i data-lucide="user" style="width:17px;height:17px;"></i><span class="tip">Mon profil</span></a>
-      <a href="#" class="side-link"><i data-lucide="settings" style="width:17px;height:17px;"></i><span class="tip">Paramètres</span></a>
-    </nav>
-    <div class="side-bottom">
-      <a href="#" class="side-link"><i data-lucide="headphones" style="width:16px;height:16px;"></i><span class="tip">Support RH</span></a>
-      <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="side-link"><i data-lucide="log-out" style="width:16px;height:16px;"></i><span class="tip">Déconnexion</span></button>
-      </form>
-    </div>
-  </aside>
+  @include('partials.sidebar')
 
   <main class="main">
 
@@ -161,10 +136,6 @@
         <p>Consultez les congés et absences par département</p>
       </div>
       <div class="header-right">
-        <div class="search-box">
-          <i data-lucide="search" style="width:15px;height:15px; color:var(--text-dim);"></i>
-          <input type="text" placeholder="Rechercher un employé...">
-        </div>
         <form method="GET" action="{{ route('conges.apercu') }}" class="date-box">
           @if ($departementFiltre) <input type="hidden" name="departement" value="{{ $departementFiltre }}"> @endif
           <i data-lucide="calendar" style="width:14px;height:14px;"></i>

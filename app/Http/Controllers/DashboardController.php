@@ -139,9 +139,20 @@ class DashboardController extends Controller
             ->distinct('user_id')
             ->count('user_id');
 
-        $joursPrisCeMois = LeaveRequest::where('statut', 'approuve')
-            ->whereBetween('date_debut', [$debutMois, $finMois])
-            ->sum('jours');
+        // FIX : on ne compte que les jours qui tombent réellement dans le mois en cours
+        // (intersection entre la période de la demande et le mois), au lieu de compter
+        // le total complet 'jours' d'une demande dès que sa date de début est dans le mois.
+        // Une demande du 23 août au 27 septembre comptait avant pour 30 jours "en août"
+        // au lieu des ~9 jours réellement pris en août.
+        $joursPrisCeMois = (int) round(LeaveRequest::where('statut', 'approuve')
+            ->where('date_debut', '<=', $finMois)
+            ->where('date_fin', '>=', $debutMois)
+            ->get()
+            ->sum(function ($demande) use ($debutMois, $finMois) {
+                $debutEffectif = $demande->date_debut->copy()->startOfDay()->max($debutMois->copy()->startOfDay());
+                $finEffectif = $demande->date_fin->copy()->startOfDay()->min($finMois->copy()->startOfDay());
+                return $debutEffectif->diffInDays($finEffectif) + 1;
+            }));
 
         // ---------- Activité récente de l'équipe ----------
         $activiteRecente = LeaveRequest::with('user')

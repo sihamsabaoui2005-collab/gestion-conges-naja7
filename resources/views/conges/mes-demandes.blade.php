@@ -28,7 +28,6 @@
 
   .app{display:flex; align-items:flex-start; min-height:100vh; padding:16px 24px; gap:16px; max-width:1500px; margin:0 auto; overflow-x:hidden;}
 
-  /* ===== SIDEBAR (identique aux autres pages employé) ===== */
   .sidebar{width:64px; flex:none; align-self:flex-start; position:sticky; top:16px; z-index:100; background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:32px; padding:14px 0 16px; display:flex; flex-direction:column; align-items:center; box-shadow:0 8px 32px rgba(0,0,0,.35); max-height:94vh;}
   .side-logo{width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,var(--orange),#DC2626); display:flex; align-items:center; justify-content:center; margin-bottom:12px; font-weight:700; overflow:hidden; flex:none;}
   .side-logo img{width:100%; height:100%; object-fit:cover;}
@@ -43,7 +42,6 @@
 
   .main{flex:1; align-self:stretch; padding:6px 6px 40px; max-width:100%; overflow-x:hidden; position:relative;}
 
-  /* ===== HEADER ===== */
   .header{display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:14px;}
   .header-left h1{font-size:26px; font-weight:800; color:#fff;}
   .header-left p{color:var(--text-dim); font-size:13.5px; margin-top:4px;}
@@ -75,7 +73,6 @@
   .user-dropdown a, .user-dropdown button{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:11px; font-size:13px; width:100%; text-align:left; color:#fff;}
   .user-dropdown a:hover, .user-dropdown button:hover{background:rgba(255,255,255,.06);}
 
-  /* ===== STATS ===== */
   .stats-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:22px;}
   @media (max-width:900px){ .stats-grid{grid-template-columns:1fr 1fr;} }
   .stat-card{background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:18px; padding:18px; display:flex; align-items:center; gap:14px; box-shadow:0 8px 24px rgba(0,0,0,.25);}
@@ -88,7 +85,6 @@
   .stat-attente .ico{background:rgba(245,158,11,.18); color:var(--orange);}
   .stat-refuse .ico{background:rgba(239,68,68,.18); color:var(--red);}
 
-  /* ===== LAYOUT ===== */
   .layout{display:grid; grid-template-columns:1fr 320px; gap:18px; align-items:start;}
   @media (max-width:1050px){ .layout{grid-template-columns:1fr;} }
   .panel{background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 8px 24px rgba(0,0,0,.25);}
@@ -121,7 +117,6 @@
   .empty-state{text-align:center; padding:44px 0; color:var(--text-dim);}
   .empty-state .ico{width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.06); display:flex; align-items:center; justify-content:center; margin:0 auto 12px;}
 
-  /* ===== SIDEBAR DROITE ===== */
   .filtre-item{display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-radius:13px; margin-bottom:8px; font-size:13.5px; font-weight:600; border:1px solid var(--border);}
   .filtre-item.active{background:var(--blue); border-color:var(--blue); color:#fff;}
   .filtre-item .count{background:rgba(255,255,255,.18); padding:2px 10px; border-radius:20px; font-size:12px;}
@@ -155,31 +150,8 @@
 
 <div class="app">
 
-  <!-- ===== SIDEBAR ===== -->
-  <aside class="sidebar">
-    <div class="side-logo">
-      <img src="{{ asset('images/logo-naja7host.png') }}" alt="NAJA7HOST">
-    </div>
-    <nav class="side-nav">
-      <a href="{{ route('dashboard') }}" class="side-link"><i data-lucide="layout-dashboard" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
-      <a href="{{ route('conges.mesDemandes') }}" class="side-link active"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Mes demandes</span></a>
-      <a href="{{ route('conges.create') }}" class="side-link"><i data-lucide="plus-circle" style="width:17px;height:17px;"></i><span class="tip">Nouvelle demande</span></a>
-      <a href="{{ route('calendrier.index') }}" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier</span></a>
-      <a href="#" class="side-link"><i data-lucide="wallet" style="width:17px;height:17px;"></i><span class="tip">Mon solde</span></a>
-      <a href="#" class="side-link"><i data-lucide="history" style="width:17px;height:17px;"></i><span class="tip">Historique</span></a>
-      <a href="{{ route('profile.edit') }}" class="side-link"><i data-lucide="user" style="width:17px;height:17px;"></i><span class="tip">Mon profil</span></a>
-      <a href="#" class="side-link"><i data-lucide="settings" style="width:17px;height:17px;"></i><span class="tip">Paramètres</span></a>
-    </nav>
-    <div class="side-bottom">
-      <a href="#" class="side-link"><i data-lucide="headphones" style="width:16px;height:16px;"></i><span class="tip">Support</span></a>
-      <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="side-link"><i data-lucide="log-out" style="width:16px;height:16px;"></i><span class="tip">Déconnexion</span></button>
-      </form>
-    </div>
-  </aside>
+  @include('partials.sidebar')
 
-  <!-- ===== MAIN ===== -->
   <main class="main">
 
     <div class="header">

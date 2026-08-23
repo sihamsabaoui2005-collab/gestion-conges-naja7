@@ -33,6 +33,11 @@ class User extends Authenticatable
         'cin',
         'adresse',
         'situation_familiale',
+        'fuseau_horaire',
+        'format_date',
+        'notif_email',
+        'notif_solde',
+        'notif_demandes',
     ];
 
     /**
@@ -56,6 +61,9 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'date_naissance' => 'date',
+            'notif_email' => 'boolean',
+            'notif_solde' => 'boolean',
+            'notif_demandes' => 'boolean',
         ];
     }
 }
