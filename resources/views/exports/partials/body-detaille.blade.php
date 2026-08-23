@@ -80,7 +80,9 @@
   <div class="chart-box">
     <h3>Répartition des {{ $d['jours_utilises'] ?? 0 }} jours de congé par département</h3>
     @if($repDeptJours->isNotEmpty())
-      @php $totalJoursDept = $repDeptJours->sum(); @endphp
+      {{-- FIX : ?: 1 pour éviter une division par zéro quand aucun jour de congé
+           n'est encore approuvé sur la période (tous les $valeur à 0, somme = 0) --}}
+      @php $totalJoursDept = $repDeptJours->sum() ?: 1; @endphp
       <div class="segbar">
         @foreach($repDeptJours->sortDesc() as $dept => $valeur)
           <div class="seg" style="width:{{ round($valeur/$totalJoursDept*100) }}%; background:{{ $shades[$loop->index % count($shades)] }};"></div>
