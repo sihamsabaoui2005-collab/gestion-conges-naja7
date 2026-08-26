@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\LeaveRequest;
 use App\Models\User;
+use App\Notifications\LeaveRequestDecided;
+use App\Notifications\LeaveRequestReopened;
+use App\Notifications\NewCommentOnLeaveRequest;
 use Illuminate\Http\Request;
 
 class LeaveRequestController extends Controller
@@ -51,8 +54,9 @@ class LeaveRequestController extends Controller
     }
 
     /**
-     * Page employé : liste de ses propres demandes, avec stats et filtres
-     * (statut, période) — alimente la vue conges.mes-demandes.
+     * Page employé : "Mes demandes" — liste simple de ses propres demandes,
+     * avec filtre par statut et compteurs (sans les widgets de la page Historique).
+     * Alimente la vue conges.mes-demandes.
      */
     public function mesDemandes(Request $request)
     {
@@ -62,7 +66,7 @@ class LeaveRequestController extends Controller
         $du     = $request->query('du');
         $au     = $request->query('au');
 
-        $requete = LeaveRequest::where('user_id', $user->id);
+        $requete = LeaveRequest::where('user_id', $user->id)->with('comments.user');
 
         if ($statut) {
             $requete->where('statut', $statut);
@@ -87,6 +91,92 @@ class LeaveRequestController extends Controller
             'refusees'   => $toutesLesDemandes->where('statut', 'refuse')->count(),
             'statut'     => $statut,
         ]);
+    }
+
+    /**
+     * Page employé : "Historique de mes demandes" — timeline + filtres + widgets,
+     * alimente la vue conges.historique.
+     */
+    public function historique(Request $request)
+    {
+        $user = auth()->user();
+
+        $statut = $request->query('statut'); // 'en_attente' | 'approuve' | 'refuse' | null (toutes)
+        $du     = $request->query('du');
+        $au     = $request->query('au');
+
+        $requete = LeaveRequest::where('user_id', $user->id)->with('comments.user');
+
+        if ($statut) {
+            $requete->where('statut', $statut);
+        }
+        if ($du) {
+            $requete->where('date_debut', '>=', $du);
+        }
+        if ($au) {
+            $requete->where('date_fin', '<=', $au);
+        }
+
+        $demandes = $requete->orderBy('date_debut', 'desc')->get();
+
+        // Compteurs globaux (non filtrés) pour les widgets et le panneau de filtres
+        $toutesLesDemandes = LeaveRequest::where('user_id', $user->id)->get();
+
+        // ===== Solde de congés (widget "Mon solde de congés") =====
+        $soldeMax     = 30; // solde annuel de référence choisi pour le projet
+        $soldeRestant = $user->solde_conges_annuel;
+        $soldeUtilisePct = $soldeMax > 0
+            ? round((($soldeMax - $soldeRestant) / $soldeMax) * 100)
+            : 0;
+
+        // ===== Répartition par type (widget "Répartition par type") =====
+        // Basée sur TOUTES les demandes de l'employé (pas seulement la liste filtrée),
+        // pour donner une vue d'ensemble stable même quand un onglet de statut est actif.
+        $repartitionParType = $toutesLesDemandes->groupBy('type')->map->count();
+
+        // ===== Activité mensuelle de l'année en cours (widget "Activité annuelle") =====
+        $anneeActuelle = now()->year;
+        $activiteMensuelle = collect(range(1, 12))->mapWithKeys(function ($mois) use ($toutesLesDemandes, $anneeActuelle) {
+            $count = $toutesLesDemandes->filter(function ($d) use ($mois, $anneeActuelle) {
+                return (int) $d->date_debut->format('Y') === $anneeActuelle
+                    && (int) $d->date_debut->format('n') === $mois;
+            })->count();
+
+            return [$mois => $count];
+        });
+
+        return view('conges.historique', [
+            'demandes'           => $demandes,
+            'total'              => $toutesLesDemandes->count(),
+            'approuvees'         => $toutesLesDemandes->where('statut', 'approuve')->count(),
+            'enAttente'          => $toutesLesDemandes->where('statut', 'en_attente')->count(),
+            'refusees'           => $toutesLesDemandes->where('statut', 'refuse')->count(),
+            'statut'             => $statut,
+            'soldeMax'           => $soldeMax,
+            'soldeRestant'       => $soldeRestant,
+            'soldeUtilisePct'    => $soldeUtilisePct,
+            'repartitionParType' => $repartitionParType,
+            'activiteMensuelle'  => $activiteMensuelle,
+            'anneeActuelle'      => $anneeActuelle,
+        ]);
+    }
+
+    /**
+     * Annuler une demande encore en attente (par l'employé qui l'a créée)
+     */
+    public function annuler(LeaveRequest $leaveRequest)
+    {
+        if ($leaveRequest->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($leaveRequest->statut !== 'en_attente') {
+            return back()->with('error', 'Seules les demandes en attente peuvent être annulées.');
+        }
+
+        $leaveRequest->delete();
+
+        return back()->with('success', 'Ta demande a été annulée.');
     }
 
     /**
@@ -479,6 +569,10 @@ class LeaveRequestController extends Controller
             'visibilite' => $validated['visibilite'],
         ]);
 
+        if ($user->role === 'rh' && $validated['visibilite'] === 'employe') {
+            $leaveRequest->user->notify(new NewCommentOnLeaveRequest($leaveRequest));
+        }
+
         return back()->with('success', 'Commentaire ajouté.');
     }
 
@@ -495,6 +589,11 @@ class LeaveRequestController extends Controller
         if ($leaveRequest->type === 'paye') {
             $employe = $leaveRequest->user;
             $employe->decrement('solde_conges_annuel', $leaveRequest->jours);
+            $employe->refresh();
+
+            if ($employe->notif_solde && $employe->solde_conges_annuel < 5) {
+                $employe->notify(new \App\Notifications\SoldeFaibleReminder($employe->solde_conges_annuel));
+            }
         }
 
         $leaveRequest->update([
@@ -510,6 +609,8 @@ class LeaveRequestController extends Controller
                 'visibilite' => $request->input('visibilite', 'employe'),
             ]);
         }
+
+        $leaveRequest->user->notify(new LeaveRequestDecided($leaveRequest));
 
         return back()->with('success', 'Demande approuvée.');
     }
@@ -542,6 +643,38 @@ class LeaveRequestController extends Controller
             'visibilite' => $request->input('visibilite', 'employe'),
         ]);
 
+        $leaveRequest->user->notify(new LeaveRequestDecided($leaveRequest));
+
         return back()->with('success', 'Demande refusée.');
+    }
+
+    /**
+     * Annuler une décision déjà prise (approbation ou refus) : remet la demande
+     * en attente, recrédite le solde si c'était un congé payé approuvé,
+     * et notifie l'employé.
+     */
+    public function annulerDecision(LeaveRequest $leaveRequest)
+    {
+        if (auth()->user()->role !== 'rh') {
+            abort(403);
+        }
+
+        if (!in_array($leaveRequest->statut, ['approuve', 'refuse'])) {
+            return back()->with('error', 'Seules les demandes déjà approuvées ou refusées peuvent être réouvertes.');
+        }
+
+        if ($leaveRequest->statut === 'approuve' && $leaveRequest->type === 'paye') {
+            $leaveRequest->user->increment('solde_conges_annuel', $leaveRequest->jours);
+        }
+
+        $leaveRequest->update([
+            'statut'     => 'en_attente',
+            'valide_par' => null,
+            'valide_le'  => null,
+        ]);
+
+        $leaveRequest->user->notify(new LeaveRequestReopened($leaveRequest));
+
+        return back()->with('success', 'La décision a été annulée. La demande est de nouveau en attente.');
     }
 }

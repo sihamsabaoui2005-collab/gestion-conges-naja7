@@ -178,9 +178,6 @@
   <main class="main">
 
     <div class="topbar">
-      <button class="icon-btn"><i data-lucide="bell" style="width:17px;height:17px;"></i>
-        @if (($demandesEnAttente ?? 0) > 0)<span class="dot">{{ $demandesEnAttente }}</span>@endif
-      </button>
       <div class="user-chip" id="userChip">
         <div class="avatar-sm">
           @if (auth()->user()->photo_path)

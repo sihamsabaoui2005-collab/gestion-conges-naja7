@@ -13,7 +13,7 @@
     --orange:#F59E0B; --amber:#FBBF24; --green:#10B981; --red:#EF4444; --purple:#8B5CF6; --pink:#EC4899; --cyan:#22D3EE;
     --bg:#05070F; --panel:rgba(18,24,42,.55); --panel-2:rgba(255,255,255,.06);
     --border:rgba(255,255,255,.12);
-    --text:#F1F4FA; --text-dim:#C3CCE0;
+    --text:#FFFFFF; --text-dim:#E3E8F5;
     --radius:22px; --glass-blur:22px;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
@@ -23,6 +23,9 @@
     background:
       linear-gradient(180deg, rgba(4,6,14,.72), rgba(4,6,14,.88)),
       url('{{ asset('images/dashboard-bg.jpg') }}') center/cover no-repeat fixed;
+  }
+  body, p, span, label, div, li, a, button, input, textarea, small, b, i, select, option{
+    font-weight:700 !important;
   }
   a{text-decoration:none; color:inherit;}
   button{font-family:inherit; cursor:pointer; border:none; background:none; color:inherit;}
@@ -43,13 +46,21 @@
 
   .main{flex:1; align-self:stretch; padding:6px 6px 40px; max-width:100%; overflow-x:hidden;}
 
-  .header{display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:14px;}
+  .header{display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:14px; position:relative;}
   .header-left h1{position:relative; font-size:16px; font-weight:800; color:#fff; display:inline-flex; align-items:center; gap:8px;
     padding:12px 28px; background:linear-gradient(180deg,#3D7BFF 0%,#1E4FC4 55%,#123591 100%); border-radius:999px;
     box-shadow:0 6px 14px rgba(23,73,176,.5), inset 0 2px 0 rgba(255,255,255,.4), inset 0 -4px 8px rgba(0,0,0,.3);}
   .header-left p{color:var(--text-dim); font-size:13.5px; margin-top:4px; text-shadow:0 2px 8px rgba(0,0,0,.5); max-width:520px;}
   .icon-btn{position:relative; width:38px; height:38px; border-radius:12px; background:var(--panel); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex:none;}
   .icon-btn .dot{position:absolute; top:-3px; right:-3px; background:var(--red); color:#fff; font-size:9px; font-weight:700; width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center;}
+
+  .notif-panel{position:absolute; top:52px; right:0; background:rgba(18,24,42,.85); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:16px; padding:10px; width:290px; box-shadow:0 12px 30px rgba(0,0,0,.4); display:none; z-index:80;}
+  .notif-panel.open{display:block;}
+  .notif-panel h4{font-size:12.5px; padding:6px 8px 10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em;}
+  .notif-item{display:flex; align-items:flex-start; gap:10px; padding:9px 8px; border-radius:11px; font-size:12.5px;}
+  .notif-item:hover{background:rgba(255,255,255,.05);}
+  .notif-item .n-ico{width:28px; height:28px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex:none;}
+  .notif-empty{padding:14px 8px; font-size:12.5px; color:var(--text-dim); text-align:center;}
 
   .panel{background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 8px 24px rgba(0,0,0,.25);}
 
@@ -82,7 +93,13 @@
   .dept-list-item .count{margin-left:auto; font-size:11.5px; color:var(--text-dim);}
   .dept-list-item.active .count{color:var(--blue-2);}
 
-  .apercu-rapide h3{font-size:13px; font-weight:800; margin-bottom:14px;}
+  .apercu-rapide h3{
+    display:inline-flex; align-items:center;
+    font-size:13px; font-weight:700; color:#fff;
+    margin-bottom:14px; padding:9px 18px; border-radius:12px;
+    background:linear-gradient(135deg, var(--blue), #1D4ED8);
+    box-shadow:0 6px 16px rgba(59,130,246,.35), inset 0 1px 0 rgba(255,255,255,.15);
+  }
   .apercu-donut-wrap{position:relative; width:104px; height:104px; margin:0 auto 16px;}
   .apercu-donut-center{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
   .apercu-donut-center b{font-size:24px; font-weight:800; color:#fff;}
@@ -124,7 +141,13 @@
 
   .side-stack{display:flex; flex-direction:column; gap:16px;}
   .stats-card{padding:20px;}
-  .stats-card h3{font-size:14px; font-weight:800; color:#fff; margin-bottom:14px;}
+  .stats-card h3{
+    display:inline-flex; align-items:center;
+    font-size:13px; font-weight:700; color:#fff;
+    margin-bottom:14px; padding:9px 18px; border-radius:12px;
+    background:linear-gradient(135deg, var(--blue), #1D4ED8);
+    box-shadow:0 6px 16px rgba(59,130,246,.35), inset 0 1px 0 rgba(255,255,255,.15);
+  }
   .stat-line{display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid var(--border);}
   .stat-line:last-child{border-bottom:none;}
   .stat-line .ico{width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex:none;}
@@ -133,7 +156,13 @@
 
   .prochains-card{padding:18px;}
   .prochains-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;}
-  .prochains-head h3{font-size:14px; font-weight:800; color:#fff;}
+  .prochains-head h3{
+    display:inline-flex; align-items:center;
+    font-size:13px; font-weight:700; color:#fff;
+    padding:9px 18px; border-radius:12px;
+    background:linear-gradient(135deg, var(--blue), #1D4ED8);
+    box-shadow:0 6px 16px rgba(59,130,246,.35), inset 0 1px 0 rgba(255,255,255,.15);
+  }
   .prochain-item{display:flex; align-items:center; gap:12px; padding:10px 0; border-left:3px solid var(--c); padding-left:12px; margin-bottom:8px;}
   .prochain-item b{display:block; font-size:13px; font-weight:700;}
   .prochain-item span{font-size:11.5px; color:var(--text-dim);}
@@ -162,7 +191,7 @@
         <h1>{{ $estRh ? 'Calendrier équipe' : 'Mon calendrier' }}</h1>
         <p>{{ $estRh ? "Visualisez les congés et absences de votre équipe en un coup d'œil" : 'Consultez uniquement vos congés et absences' }}</p>
       </div>
-      <button class="icon-btn"><i data-lucide="bell" style="width:16px;height:16px;"></i></button>
+      @include('partials.notifications')
     </div>
 
     <div class="layout {{ $estRh ? '' : 'employe-layout' }}">
@@ -403,6 +432,17 @@
 <script>
   lucide.createIcons();
   document.querySelectorAll('a[href="#"]').forEach(l => l.addEventListener('click', e => e.preventDefault()));
+
+  const notifBtn = document.getElementById('notifBtn');
+  const notifPanel = document.getElementById('notifPanel');
+  if (notifBtn && notifPanel) {
+    notifBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      notifPanel.classList.toggle('open');
+    });
+    document.addEventListener('click', () => notifPanel.classList.remove('open'));
+    notifPanel.addEventListener('click', (e) => e.stopPropagation());
+  }
 </script>
 </body>
 </html>

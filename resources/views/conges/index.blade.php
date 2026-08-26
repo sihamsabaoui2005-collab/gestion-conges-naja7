@@ -65,7 +65,7 @@
   .notif-panel h4{font-size:12.5px; padding:6px 8px 10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em;}
   .notif-item{display:flex; align-items:flex-start; gap:10px; padding:9px 8px; border-radius:11px; font-size:12.5px;}
   .notif-item:hover{background:rgba(255,255,255,.05);}
-  .notif-item .n-ico{width:28px; height:28px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex:none;}
+  .notif-item .n-ico{width:28px; height:28px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex:none; background:rgba(59,130,246,.15); color:var(--blue-2);}
   .notif-empty{padding:14px 8px; font-size:12.5px; color:var(--text-dim); text-align:center;}
 
   .layout{display:grid; grid-template-columns:1fr 320px; gap:18px; align-items:start;}
@@ -223,19 +223,22 @@
         </div>
 
         <button class="icon-btn" id="notifBtn"><i data-lucide="bell" style="width:16px;height:16px;"></i>
-          @if ($countAValider > 0)<span class="dot">{{ $countAValider }}</span>@endif
+          @if (auth()->user()->unreadNotifications->count() > 0)<span class="dot">{{ auth()->user()->unreadNotifications->count() }}</span>@endif
         </button>
 
         <div class="notif-panel" id="notifPanel">
           <h4>Notifications</h4>
-          @if ($countAValider > 0)
-            <div class="notif-item">
-              <span class="n-ico" style="background:rgba(245,158,11,.15); color:var(--orange);"><i data-lucide="hourglass" style="width:14px;height:14px;"></i></span>
-              <div>{{ $countAValider }} demande(s) à valider</div>
-            </div>
-          @else
+          @forelse (auth()->user()->unreadNotifications as $notification)
+            <a href="{{ route('notifications.ouvrir', $notification->id) }}" class="notif-item">
+              <span class="n-ico"><i data-lucide="{{ $notification->data['icone'] ?? 'bell' }}" style="width:14px;height:14px;"></i></span>
+              <div>
+                <b style="display:block;">{{ $notification->data['titre'] ?? '' }}</b>
+                <span style="font-size:11px; color:var(--text-dim); display:block;">{{ $notification->data['message'] ?? '' }}</span>
+              </div>
+            </a>
+          @empty
             <div class="notif-empty">Aucune notification récente.</div>
-          @endif
+          @endforelse
         </div>
 
         <a href="{{ route('profile.edit') }}" class="avatar">

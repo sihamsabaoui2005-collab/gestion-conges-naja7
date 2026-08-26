@@ -48,7 +48,7 @@
     padding:12px 28px; background:linear-gradient(180deg,#3D7BFF 0%,#1E4FC4 55%,#123591 100%); border-radius:999px;
     box-shadow:0 6px 14px rgba(23,73,176,.5), inset 0 2px 0 rgba(255,255,255,.4), inset 0 -4px 8px rgba(0,0,0,.3);}
   .header-left p{color:var(--text-dim); font-size:13.5px; margin-top:4px; text-shadow:0 2px 8px rgba(0,0,0,.5); max-width:520px;}
-  .header-right{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+  .header-right{display:flex; align-items:center; gap:12px; flex-wrap:wrap; position:relative;}
 
   .date-box{display:flex; align-items:center; gap:8px; height:40px; background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:0 12px; font-size:13px; color:var(--text-dim);}
   .date-box input{background:transparent; border:none; color:#fff; font-size:13px; outline:none; width:110px;}
@@ -57,6 +57,14 @@
   .icon-btn .dot{position:absolute; top:-3px; right:-3px; background:var(--red); color:#fff; font-size:9px; font-weight:700; width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center;}
   .avatar{width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--orange),#DC2626); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; overflow:hidden; flex:none;}
   .avatar img{width:100%; height:100%; object-fit:cover; object-position:center top;}
+
+  .notif-panel{position:absolute; top:52px; right:0; background:rgba(18,24,42,.85); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:16px; padding:10px; width:290px; box-shadow:0 12px 30px rgba(0,0,0,.4); display:none; z-index:80;}
+  .notif-panel.open{display:block;}
+  .notif-panel h4{font-size:12.5px; padding:6px 8px 10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em;}
+  .notif-item{display:flex; align-items:flex-start; gap:10px; padding:9px 8px; border-radius:11px; font-size:12.5px;}
+  .notif-item:hover{background:rgba(255,255,255,.05);}
+  .notif-item .n-ico{width:28px; height:28px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex:none; background:rgba(59,130,246,.15); color:var(--blue-2);}
+  .notif-empty{padding:14px 8px; font-size:12.5px; color:var(--text-dim); text-align:center;}
 
   .panel{background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 8px 24px rgba(0,0,0,.25);}
 
@@ -143,9 +151,26 @@
           <span>—</span>
           <input type="date" name="fin" value="{{ $fin->format('Y-m-d') }}" onchange="this.form.submit()">
         </form>
-        <button class="icon-btn"><i data-lucide="bell" style="width:16px;height:16px;"></i>
-          @if ($absencesAujourdhui->count() > 0)<span class="dot">{{ $absencesAujourdhui->count() }}</span>@endif
+
+        <button class="icon-btn" id="notifBtn"><i data-lucide="bell" style="width:16px;height:16px;"></i>
+          @if (auth()->user()->unreadNotifications->count() > 0)<span class="dot">{{ auth()->user()->unreadNotifications->count() }}</span>@endif
         </button>
+
+        <div class="notif-panel" id="notifPanel">
+          <h4>Notifications</h4>
+          @forelse (auth()->user()->unreadNotifications as $notification)
+            <a href="{{ route('notifications.ouvrir', $notification->id) }}" class="notif-item">
+              <span class="n-ico"><i data-lucide="{{ $notification->data['icone'] ?? 'bell' }}" style="width:14px;height:14px;"></i></span>
+              <div>
+                <b style="display:block;">{{ $notification->data['titre'] ?? '' }}</b>
+                <span style="font-size:11px; color:var(--text-dim); display:block;">{{ $notification->data['message'] ?? '' }}</span>
+              </div>
+            </a>
+          @empty
+            <div class="notif-empty">Aucune notification récente.</div>
+          @endforelse
+        </div>
+
         <div class="avatar">
           @if (auth()->user()->photo_path)
             <img src="{{ asset('storage/'.auth()->user()->photo_path) }}" alt="">
@@ -169,7 +194,6 @@
     </div>
 
     @php
-      // icône + couleur par département (approximatif, ajuste selon tes vrais noms de département)
       $iconesDept = ['users','code-2','megaphone','wallet','handshake','factory','headphones'];
       $couleursDept = ['var(--purple)','var(--blue)','var(--pink)','var(--green)','var(--orange)','#F97316','var(--cyan)'];
 
@@ -313,6 +337,17 @@
 <script>
   lucide.createIcons();
   document.querySelectorAll('a[href="#"]').forEach(l => l.addEventListener('click', e => e.preventDefault()));
+
+  const notifBtn = document.getElementById('notifBtn');
+  const notifPanel = document.getElementById('notifPanel');
+  if (notifBtn && notifPanel) {
+    notifBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      notifPanel.classList.toggle('open');
+    });
+    document.addEventListener('click', () => notifPanel.classList.remove('open'));
+    notifPanel.addEventListener('click', (e) => e.stopPropagation());
+  }
 </script>
 </body>
 </html>

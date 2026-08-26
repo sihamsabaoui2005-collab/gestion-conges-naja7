@@ -13,7 +13,7 @@
     --orange:#F59E0B; --orange-2:#FBBF24; --green:#10B981; --red:#EF4444; --purple:#8B5CF6;
     --bg:#05070F; --panel:rgba(18,24,42,.55); --panel-2:rgba(255,255,255,.06);
     --border:rgba(255,255,255,.12);
-    --text:#F1F4FA; --text-dim:#C3CCE0;
+    --text:#FFFFFF; --text-dim:#E3E8F5;
     --radius:22px; --glass-blur:22px;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
@@ -21,6 +21,9 @@
   body{
     font-family:'Poppins',sans-serif; color:var(--text); -webkit-font-smoothing:antialiased;
     background: linear-gradient(180deg, rgba(4,6,14,.72), rgba(4,6,14,.88)), url('{{ asset('images/dashboard-bg.jpg') }}') center/cover no-repeat fixed;
+  }
+  body, p, span, label, div, li, a, button, input, textarea, small, b, i{
+    font-weight:700 !important;
   }
   a{text-decoration:none; color:inherit;}
   button{font-family:inherit; cursor:pointer; border:none; background:none; color:inherit;}
@@ -61,8 +64,14 @@
   .fil b{color:#fff;}
 
   .header{margin-bottom:22px;}
-  .header h1{font-size:26px; font-weight:800; color:#fff;}
-  .header p{color:var(--text-dim); font-size:14px; margin-top:4px;}
+  .header h1{
+    display:inline-flex; align-items:center;
+    font-size:18px; font-weight:800; color:#fff;
+    padding:10px 20px; border-radius:12px;
+    background:linear-gradient(135deg, var(--blue), #1D4ED8);
+    box-shadow:0 6px 16px rgba(59,130,246,.35), inset 0 1px 0 rgba(255,255,255,.15);
+  }
+  .header p{color:var(--text-dim); font-size:14px; margin-top:10px;}
 
   .layout{display:grid; grid-template-columns:1fr 320px; gap:18px; align-items:start;}
   .layout > .panel{min-width:0;}
@@ -85,9 +94,18 @@
   .avantage span{font-size:10.5px; color:var(--text-dim);}
 
   .section{margin-bottom:24px;}
-  .section-title{display:flex; align-items:center; gap:8px; font-size:15px; font-weight:700; color:#fff; margin-bottom:12px;}
-  .section-title .num{width:22px; height:22px; border-radius:7px; background:var(--orange); color:#111; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; flex:none;}
-  .section-title .optionnel{font-size:12px; font-weight:500; color:var(--text-dim);}
+  .section-title{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:13.5px; font-weight:700; color:#fff;
+    margin-bottom:14px; padding:9px 18px; border-radius:12px;
+    background:linear-gradient(135deg, var(--blue), #1D4ED8);
+    box-shadow:0 6px 16px rgba(59,130,246,.35), inset 0 1px 0 rgba(255,255,255,.15);
+  }
+  .section-title .num{
+    width:auto; height:auto; border-radius:0; background:transparent;
+    color:#fff; font-size:13.5px; font-weight:800; display:inline; padding:0;
+  }
+  .section-title .optionnel{font-size:11.5px; font-weight:500; color:rgba(255,255,255,.75);}
 
   .type-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:10px;}
   @media (max-width:900px){ .type-grid{grid-template-columns:repeat(3,1fr);} }
@@ -135,7 +153,13 @@
   .btn-soumettre[disabled]{opacity:.6; cursor:default;}
 
   .side-panel{padding:20px;}
-  .side-panel h3{font-size:15px; font-weight:800; color:#fff; margin-bottom:14px;}
+  .side-panel h3{
+    display:inline-flex; align-items:center;
+    font-size:13.5px; font-weight:700; color:#fff;
+    margin-bottom:14px; padding:9px 18px; border-radius:12px;
+    background:linear-gradient(135deg, var(--blue), #1D4ED8);
+    box-shadow:0 6px 16px rgba(59,130,246,.35), inset 0 1px 0 rgba(255,255,255,.15);
+  }
 
   .solde-wrap{position:relative; width:150px; height:150px; margin:0 auto 16px;}
   .solde-center{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;}
@@ -182,13 +206,8 @@
   <main class="main">
 
     <div class="topbar">
-      <button class="icon-btn" id="notifBtn"><i data-lucide="bell" style="width:17px;height:17px;"></i><span class="dot">3</span></button>
-      <div class="notif-panel" id="notifPanel">
-        <h4>Notifications</h4>
-        <div class="notif-empty">Aucune notification récente.</div>
-      </div>
+      @include('partials.notifications')
 
-      <button class="icon-btn"><i data-lucide="mail" style="width:17px;height:17px;"></i></button>
       <div class="user-chip" id="userChip">
         <div class="avatar-sm">
           @if (auth()->user()->photo_path)
@@ -205,7 +224,7 @@
 
         <div class="user-dropdown" id="userDropdown">
           <a href="{{ route('profile.edit') }}"><i data-lucide="user" style="width:15px;height:15px;"></i> Mon profil</a>
-          <a href="#"><i data-lucide="settings" style="width:15px;height:15px;"></i> Paramètres</a>
+          <a href="{{ route('settings.index') }}"><i data-lucide="settings" style="width:15px;height:15px;"></i> Paramètres</a>
           <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit"><i data-lucide="log-out" style="width:15px;height:15px;"></i> Déconnexion</button>

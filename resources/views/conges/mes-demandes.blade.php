@@ -95,7 +95,7 @@
   .panel-head h2::before{content:''; position:absolute; left:0; top:3px; bottom:3px; width:4px; border-radius:3px; background:var(--blue);}
   .sort-select{background:#141b30; border:1px solid var(--border); color:#fff; font-size:12.5px; padding:8px 12px; border-radius:9px;}
 
-  .demande-card{display:flex; gap:14px; padding:16px; border-radius:16px; background:var(--panel-2); margin-bottom:12px; border-left:4px solid var(--c); align-items:flex-start;}
+  .demande-card{display:flex; gap:14px; padding:16px; border-radius:16px; background:var(--panel-2); margin-bottom:12px; border-left:4px solid var(--c); align-items:flex-start; flex-wrap:wrap;}
   .demande-card .ico-wrap{width:44px; height:44px; border-radius:12px; background:var(--c); display:flex; align-items:center; justify-content:center; flex:none; opacity:.9;}
   .demande-body{flex:1; min-width:0;}
   .demande-top{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px;}
@@ -113,6 +113,21 @@
   .badge-rejected{background:rgba(239,68,68,.15); color:var(--red);}
   .chev-btn{width:28px; height:28px; border-radius:9px; background:rgba(255,255,255,.06); display:flex; align-items:center; justify-content:center; color:var(--text-dim);}
   .chev-btn:hover{color:#fff; background:rgba(255,255,255,.1);}
+  .btn-annuler-demande{display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; color:var(--red); background:rgba(239,68,68,.12); border:1px solid rgba(239,68,68,.3); padding:6px 12px; border-radius:9px; white-space:nowrap;}
+  .btn-annuler-demande:hover{background:rgba(239,68,68,.2);}
+
+  .modal-overlay{position:fixed; inset:0; background:rgba(2,4,10,.65); backdrop-filter:blur(4px); z-index:300; display:none; align-items:center; justify-content:center;}
+  .modal-overlay.open{display:flex;}
+  .modal-box{background:rgba(20,27,48,.98); border:1px solid var(--border); border-radius:20px; padding:26px; width:360px; max-width:90vw; box-shadow:0 20px 50px rgba(0,0,0,.5); text-align:center;}
+  .modal-box .modal-ico{width:52px; height:52px; border-radius:50%; background:rgba(239,68,68,.15); color:var(--red); display:flex; align-items:center; justify-content:center; margin:0 auto 16px;}
+  .modal-box h3{font-size:16px; font-weight:700; color:#fff; margin-bottom:8px;}
+  .modal-box p{font-size:13px; color:var(--text-dim); line-height:1.5; margin-bottom:22px;}
+  .modal-actions{display:flex; gap:10px;}
+  .modal-btn{flex:1; padding:11px; border-radius:11px; font-size:13px; font-weight:700;}
+  .modal-btn-cancel{background:var(--panel-2); border:1px solid var(--border); color:#fff;}
+  .modal-btn-cancel:hover{background:rgba(255,255,255,.1);}
+  .modal-btn-confirm{background:linear-gradient(160deg, #EF4444, #7F1D1D 75%); color:#fff; box-shadow:0 8px 20px rgba(127,29,29,.4);}
+  .modal-btn-confirm:hover{filter:brightness(1.1);}
 
   .empty-state{text-align:center; padding:44px 0; color:var(--text-dim);}
   .empty-state .ico{width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.06); display:flex; align-items:center; justify-content:center; margin:0 auto 12px;}
@@ -143,6 +158,17 @@
   .rappel-card p{font-size:12px; color:var(--text-dim); line-height:1.5;}
   .rappel-close{position:absolute; top:14px; right:14px; color:var(--text-dim);}
 
+  /* ===== Commentaires visibles par l'employé sur chaque demande ===== */
+  .demande-comments{flex-basis:100%; width:100%; margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,.08);}
+  .demande-comment{display:flex; gap:8px; margin-bottom:8px;}
+  .demande-comment:last-child{margin-bottom:0;}
+  .demande-comment .c-ico{width:26px; height:26px; border-radius:50%; background:rgba(59,130,246,.15); color:var(--blue-2); display:flex; align-items:center; justify-content:center; flex:none;}
+  .demande-comment .c-body{background:rgba(255,255,255,.04); border-radius:10px; padding:8px 10px; flex:1;}
+  .demande-comment .c-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:2px;}
+  .demande-comment b{font-size:11.5px; color:#fff;}
+  .demande-comment .c-time{font-size:10px; color:var(--text-dim);}
+  .demande-comment p{font-size:12px; color:var(--text-dim); line-height:1.4; margin:0;}
+
   @media (max-width:800px){ .sidebar{display:none;} }
 </style>
 </head>
@@ -156,29 +182,11 @@
 
     <div class="header">
       <div class="header-left">
-        <h1>Demandes des employés</h1>
-        <p>Suivez et gérez toutes les demandes de congé de vos employés.</p>
+        <h1>Mes demandes</h1>
+        <p>Suivez et gérez toutes vos demandes de congé.</p>
       </div>
       <div class="header-right">
-        <div class="search-box">
-          <i data-lucide="search" style="width:15px;height:15px; color:var(--text-dim);"></i>
-          <input type="text" placeholder="Rechercher une demande...">
-        </div>
-
-        <button class="icon-btn" id="notifBtn"><i data-lucide="bell" style="width:16px;height:16px;"></i>
-          @if ($enAttente > 0)<span class="dot">{{ $enAttente }}</span>@endif
-        </button>
-        <div class="notif-panel" id="notifPanel">
-          <h4>Notifications</h4>
-          @if ($enAttente > 0)
-            <div class="notif-item">
-              <span class="n-ico" style="background:rgba(245,158,11,.15); color:var(--orange);"><i data-lucide="hourglass" style="width:14px;height:14px;"></i></span>
-              <div>{{ $enAttente }} demande(s) encore en attente</div>
-            </div>
-          @else
-            <div class="notif-empty">Aucune notification récente.</div>
-          @endif
-        </div>
+        @include('partials.notifications')
 
         <div class="user-chip" id="userChip">
           <div class="avatar">
@@ -194,7 +202,7 @@
           </div>
           <div class="user-dropdown" id="userDropdown">
             <a href="{{ route('profile.edit') }}"><i data-lucide="user" style="width:15px;height:15px;"></i> Mon profil</a>
-            <a href="#"><i data-lucide="settings" style="width:15px;height:15px;"></i> Paramètres</a>
+            <a href="{{ route('settings.index') }}"><i data-lucide="settings" style="width:15px;height:15px;"></i> Paramètres & support</a>
             <form method="POST" action="{{ route('logout') }}">
               @csrf
               <button type="submit"><i data-lucide="log-out" style="width:15px;height:15px;"></i> Déconnexion</button>
@@ -268,7 +276,34 @@
                 {{ $labelStatut[$demande->statut] ?? $demande->statut }}
               </span>
               <a href="{{ route('conges.mesDemandes') }}#demande-{{ $demande->id }}" class="chev-btn"><i data-lucide="chevron-right" style="width:15px;height:15px;"></i></a>
+              @if ($demande->statut === 'en_attente')
+                <form method="POST" action="{{ route('conges.annuler', $demande->id) }}" id="annulerForm-{{ $demande->id }}">
+                  @csrf
+                  @method('delete')
+                </form>
+                <button type="button" class="btn-annuler-demande" onclick="ouvrirConfirmAnnulation({{ $demande->id }})"><i data-lucide="x" style="width:12px;height:12px;"></i> Annuler</button>
+              @endif
             </div>
+
+            @php
+              $commentairesVisibles = $demande->comments->where('visibilite', 'employe');
+            @endphp
+            @if ($commentairesVisibles->isNotEmpty())
+              <div class="demande-comments">
+                @foreach ($commentairesVisibles as $commentaire)
+                  <div class="demande-comment">
+                    <span class="c-ico"><i data-lucide="message-circle" style="width:13px;height:13px;"></i></span>
+                    <div class="c-body">
+                      <div class="c-top">
+                        <b>{{ $commentaire->user->name ?? 'RH' }}</b>
+                        <span class="c-time">{{ $commentaire->created_at->diffForHumans() }}</span>
+                      </div>
+                      <p>{{ $commentaire->message }}</p>
+                    </div>
+                  </div>
+                @endforeach
+              </div>
+            @endif
           </div>
         @empty
           <div class="empty-state">
@@ -334,6 +369,18 @@
   </main>
 </div>
 
+<div class="modal-overlay" id="confirmAnnulerOverlay">
+  <div class="modal-box">
+    <div class="modal-ico"><i data-lucide="triangle-alert" style="width:24px;height:24px;"></i></div>
+    <h3>Annuler cette demande ?</h3>
+    <p>Cette action est définitive. Ta demande de congé sera supprimée et tu devras en refaire une nouvelle si besoin.</p>
+    <div class="modal-actions">
+      <button type="button" class="modal-btn modal-btn-cancel" onclick="fermerConfirmAnnulation()">Non, garder</button>
+      <button type="button" class="modal-btn modal-btn-confirm" id="btnConfirmAnnuler">Oui, annuler</button>
+    </div>
+  </div>
+</div>
+
 <script>
   lucide.createIcons();
 
@@ -355,6 +402,28 @@
   const rappelClose = document.getElementById('rappelClose');
   const rappelCard = document.getElementById('rappelCard');
   rappelClose.addEventListener('click', () => rappelCard.style.display = 'none');
+
+  // ===== Modale de confirmation d'annulation =====
+  const confirmOverlay = document.getElementById('confirmAnnulerOverlay');
+  const btnConfirmAnnuler = document.getElementById('btnConfirmAnnuler');
+  let idDemandeAAnnuler = null;
+
+  function ouvrirConfirmAnnulation(id) {
+    idDemandeAAnnuler = id;
+    confirmOverlay.classList.add('open');
+  }
+  function fermerConfirmAnnulation() {
+    confirmOverlay.classList.remove('open');
+    idDemandeAAnnuler = null;
+  }
+  btnConfirmAnnuler.addEventListener('click', () => {
+    if (idDemandeAAnnuler) {
+      document.getElementById('annulerForm-' + idDemandeAAnnuler).submit();
+    }
+  });
+  confirmOverlay.addEventListener('click', (e) => {
+    if (e.target === confirmOverlay) fermerConfirmAnnulation();
+  });
 </script>
 </body>
 </html>

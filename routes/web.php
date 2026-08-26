@@ -10,6 +10,8 @@ use App\Http\Controllers\CalendrierController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StatistiqueController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\SoldeController;
+use App\Http\Controllers\NotificationController;
 
 Route::get('/', function () {
     return view('pages.home');
@@ -29,12 +31,24 @@ Route::middleware('auth')->group(function () {
     Route::get('/parametres-support', [SettingsController::class, 'index'])->name('settings.index');
     Route::patch('/parametres-support', [SettingsController::class, 'update'])->name('settings.update');
 
+    // Ouvrir une notification (marque comme lue + redirige vers la bonne page)
+    Route::get('/notifications/{id}/ouvrir', [NotificationController::class, 'ouvrir'])->name('notifications.ouvrir');
+
     // Employé : nouvelle demande de congé
     Route::get('/conges/nouvelle', [LeaveRequestController::class, 'create'])->name('conges.create');
     Route::post('/conges', [LeaveRequestController::class, 'store'])->name('conges.store');
 
-    // Employé : ses propres demandes
+    // Employé : ses propres demandes (liste simple)
     Route::get('/conges/mes-demandes', [LeaveRequestController::class, 'mesDemandes'])->name('conges.mesDemandes');
+
+    // Employé : annuler une demande encore en attente
+    Route::delete('/conges/{leaveRequest}/annuler', [LeaveRequestController::class, 'annuler'])->name('conges.annuler');
+
+    // Employé : historique de ses demandes (timeline + filtres + widgets)
+    Route::get('/conges/historique', [LeaveRequestController::class, 'historique'])->name('conges.historique');
+
+    // Employé : solde de congés
+    Route::get('/conges/solde', [SoldeController::class, 'index'])->name('conges.solde');
 
     // RH : liste des demandes + validation
     Route::get('/rh/conges', [LeaveRequestController::class, 'index'])->name('conges.index');
@@ -51,6 +65,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/rh/conges/{leaveRequest}/commentaire', [LeaveRequestController::class, 'storeComment'])->name('conges.comment');
     Route::post('/rh/conges/{leaveRequest}/approuver', [LeaveRequestController::class, 'approve'])->name('conges.approve');
     Route::post('/rh/conges/{leaveRequest}/refuser', [LeaveRequestController::class, 'reject'])->name('conges.reject');
+    Route::post('/rh/conges/{leaveRequest}/annuler-decision', [LeaveRequestController::class, 'annulerDecision'])->name('conges.annulerDecision');
 
     // Rapports
     Route::get('/rh/rapports', [ReportController::class, 'index'])->name('rapports.index');

@@ -48,17 +48,21 @@
       <a href="{{ route('dashboard') }}" class="side-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
         <i data-lucide="layout-dashboard" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span>
       </a>
-      <a href="{{ route('conges.mesDemandes') }}" class="side-link {{ request()->routeIs('conges.mesDemandes') ? 'active' : '' }}">
-        <i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Mes demandes</span>
-      </a>
       <a href="{{ route('conges.create') }}" class="side-link {{ request()->routeIs('conges.create') ? 'active' : '' }}">
         <i data-lucide="plus-circle" style="width:17px;height:17px;"></i><span class="tip">Nouvelle demande</span>
       </a>
       <a href="{{ route('calendrier.index') }}" class="side-link {{ request()->routeIs('calendrier.index') ? 'active' : '' }}">
         <i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier</span>
       </a>
-      <a href="#" class="side-link"><i data-lucide="wallet" style="width:17px;height:17px;"></i><span class="tip">Mon solde</span></a>
-      <a href="#" class="side-link"><i data-lucide="history" style="width:17px;height:17px;"></i><span class="tip">Historique</span></a>
+      <a href="{{ route('conges.solde') }}" class="side-link {{ request()->routeIs('conges.solde') ? 'active' : '' }}">
+        <i data-lucide="wallet" style="width:17px;height:17px;"></i><span class="tip">Mon solde</span>
+      </a>
+      <a href="{{ route('conges.mesDemandes') }}" class="side-link {{ request()->routeIs('conges.mesDemandes') ? 'active' : '' }}">
+        <i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Mes demandes</span>
+      </a>
+      <a href="{{ route('conges.historique') }}" class="side-link {{ request()->routeIs('conges.historique') ? 'active' : '' }}">
+        <i data-lucide="history" style="width:17px;height:17px;"></i><span class="tip">Historique</span>
+      </a>
       <a href="{{ route('profile.edit') }}" class="side-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
         <i data-lucide="user" style="width:17px;height:17px;"></i><span class="tip">Mon profil</span>
       </a>

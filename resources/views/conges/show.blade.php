@@ -55,13 +55,22 @@
   .header{display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:14px;}
   .header-left h1{font-size:24px; font-weight:700; text-shadow:0 2px 12px rgba(0,0,0,.5);}
   .header-left p{color:var(--text-dim); font-size:13.5px; margin-top:4px; text-shadow:0 2px 8px rgba(0,0,0,.5); max-width:520px;}
-  .header-right{display:flex; align-items:center; gap:12px;}
+  .header-right{display:flex; align-items:center; gap:12px; position:relative;}
   .icon-btn{position:relative; width:38px; height:38px; border-radius:12px; background:var(--panel); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex:none;}
+  .icon-btn .dot{position:absolute; top:-3px; right:-3px; background:var(--red); color:#fff; font-size:9px; font-weight:700; width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center;}
   .avatar{width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--orange),#DC2626); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; overflow:hidden; flex:none;}
   .avatar img{width:100%; height:100%; object-fit:cover; object-position:center top;}
   .user-mini p{font-size:13px; font-weight:600;}
   .user-mini span{font-size:11px; color:var(--text-dim);}
   .user-mini-wrap{display:flex; align-items:center; gap:9px;}
+
+  .notif-panel{position:absolute; top:52px; right:0; background:rgba(18,24,42,.85); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:16px; padding:10px; width:290px; box-shadow:0 12px 30px rgba(0,0,0,.4); display:none; z-index:80;}
+  .notif-panel.open{display:block;}
+  .notif-panel h4{font-size:12.5px; padding:6px 8px 10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em;}
+  .notif-item{display:flex; align-items:flex-start; gap:10px; padding:9px 8px; border-radius:11px; font-size:12.5px;}
+  .notif-item:hover{background:rgba(255,255,255,.05);}
+  .notif-item .n-ico{width:28px; height:28px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex:none; background:rgba(59,130,246,.15); color:var(--blue-2);}
+  .notif-empty{padding:14px 8px; font-size:12.5px; color:var(--text-dim); text-align:center;}
 
   .panel{background:var(--panel); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 8px 24px rgba(0,0,0,.25);}
   .panel-pad{padding:20px;}
@@ -158,12 +167,58 @@
   .decision-actions{display:flex; gap:10px;}
   .btn-annuler{flex:1; background:var(--panel-2); border:1px solid var(--border); color:var(--text-dim); font-size:12.5px; font-weight:600; padding:11px; border-radius:12px; text-align:center;}
   .btn-enregistrer{flex:2; background:var(--blue); color:#fff; font-size:12.5px; font-weight:700; padding:11px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:6px;}
-  .deja-traitee{background:var(--panel-2); border-radius:14px; padding:14px; text-align:center; font-size:12.5px; color:var(--text-dim);}
+
+  .deja-traitee{background:var(--panel-2); border-radius:14px; padding:16px; text-align:center; font-size:13px; color:var(--text-dim); display:flex; flex-direction:column; align-items:center; gap:6px;}
+  .deja-traitee .status-ico{width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:4px;}
+
+  /* ===== Bouton "Annuler la décision" — orange, plus grand, cohérent avec le thème ===== */
+  .btn-annuler-decision{
+    width:100%; display:flex; align-items:center; justify-content:center; gap:9px;
+    margin-top:16px; padding:15px 20px; border-radius:14px;
+    font-size:14.5px; font-weight:700; color:#fff;
+    background: radial-gradient(130% 200% at 30% -30%, rgba(255,255,255,.3), rgba(255,255,255,0) 45%), linear-gradient(160deg, #F59E0B, #C2410C 75%);
+    box-shadow:0 8px 20px rgba(194,65,12,.4), inset 0 1px 0 rgba(255,255,255,.25);
+    transition:transform .15s ease, box-shadow .15s ease, filter .15s ease;
+  }
+  .btn-annuler-decision:hover{transform:translateY(-2px); filter:brightness(1.08); box-shadow:0 12px 26px rgba(194,65,12,.5), inset 0 1px 0 rgba(255,255,255,.3);}
+  .btn-annuler-decision:active{transform:translateY(0);}
+  .btn-annuler-decision i{width:18px; height:18px;}
 
   .badge{display:inline-flex; align-items:center; gap:5px; padding:4px 11px; border-radius:20px; font-size:10.5px; font-weight:600;}
   .badge-approved{background:rgba(16,185,129,.15); color:var(--green);}
   .badge-pending{background:rgba(245,158,11,.15); color:var(--orange);}
   .badge-rejected{background:rgba(239,68,68,.15); color:var(--red);}
+
+  /* ===== Modale moderne de confirmation (remplace le confirm() natif du navigateur) ===== */
+  .modal-overlay{position:fixed; inset:0; background:rgba(2,4,10,.68); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); z-index:300; display:none; align-items:center; justify-content:center; padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal-box{
+    position:relative; overflow:hidden; width:400px; max-width:100%;
+    background: radial-gradient(120% 160% at 15% -10%, rgba(245,158,11,.14), transparent 55%), linear-gradient(165deg, #171d33, #0c1120 100%);
+    border:1px solid rgba(245,158,11,.25); border-radius:24px; padding:30px 28px 26px;
+    box-shadow:0 24px 60px rgba(0,0,0,.55), 0 0 40px rgba(245,158,11,.08);
+    text-align:center; animation:modalPop .22s cubic-bezier(.2,.9,.3,1.1);
+  }
+  @keyframes modalPop{ from{ opacity:0; transform:translateY(10px) scale(.97);} to{ opacity:1; transform:translateY(0) scale(1);} }
+  .modal-box .modal-ico-ring{
+    width:64px; height:64px; border-radius:50%; margin:0 auto 18px; display:flex; align-items:center; justify-content:center;
+    background:rgba(245,158,11,.15); box-shadow:0 0 0 8px rgba(245,158,11,.08);
+    color:var(--orange);
+  }
+  .modal-box h3{font-size:18px; font-weight:800; color:#fff; margin-bottom:10px;}
+  .modal-box p{font-size:13px; color:var(--text-dim); line-height:1.55; margin-bottom:26px;}
+  .modal-box p b{color:#fff; font-weight:700;}
+  .modal-actions{display:flex; gap:10px;}
+  .modal-btn{flex:1; padding:13px; border-radius:13px; font-size:13.5px; font-weight:700; transition:transform .15s ease, filter .15s ease;}
+  .modal-btn:hover{transform:translateY(-1px);}
+  .modal-btn-cancel{background:var(--panel-2); border:1px solid var(--border); color:#fff;}
+  .modal-btn-cancel:hover{background:rgba(255,255,255,.1);}
+  .modal-btn-confirm{
+    display:flex; align-items:center; justify-content:center; gap:7px;
+    background: radial-gradient(130% 200% at 30% -30%, rgba(255,255,255,.3), rgba(255,255,255,0) 45%), linear-gradient(160deg, #F59E0B, #C2410C 75%);
+    color:#fff; box-shadow:0 8px 20px rgba(194,65,12,.4), inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .modal-btn-confirm:hover{filter:brightness(1.08);}
 
   @media (max-width:1100px){
     .content-grid{grid-template-columns:1fr;}
@@ -187,6 +242,25 @@
         <p>Voici le détail de la demande de congé à traiter.</p>
       </div>
       <div class="header-right">
+        <button class="icon-btn" id="notifBtn"><i data-lucide="bell" style="width:16px;height:16px;"></i>
+          @if (auth()->user()->unreadNotifications->count() > 0)<span class="dot">{{ auth()->user()->unreadNotifications->count() }}</span>@endif
+        </button>
+
+        <div class="notif-panel" id="notifPanel">
+          <h4>Notifications</h4>
+          @forelse (auth()->user()->unreadNotifications as $notification)
+            <a href="{{ route('notifications.ouvrir', $notification->id) }}" class="notif-item">
+              <span class="n-ico"><i data-lucide="{{ $notification->data['icone'] ?? 'bell' }}" style="width:14px;height:14px;"></i></span>
+              <div>
+                <b style="display:block;">{{ $notification->data['titre'] ?? '' }}</b>
+                <span style="font-size:11px; color:var(--text-dim); display:block;">{{ $notification->data['message'] ?? '' }}</span>
+              </div>
+            </a>
+          @empty
+            <div class="notif-empty">Aucune notification récente.</div>
+          @endforelse
+        </div>
+
         <div class="user-mini-wrap">
           <div class="avatar">
             @if (auth()->user()->photo_path)
@@ -446,12 +520,23 @@
 
           @if ($leaveRequest->statut !== 'en_attente')
             <div class="deja-traitee">
+              <span class="status-ico" style="background:{{ $leaveRequest->statut === 'approuve' ? 'rgba(16,185,129,.15)' : 'rgba(239,68,68,.15)' }}; color:{{ $leaveRequest->statut === 'approuve' ? 'var(--green)' : 'var(--red)' }};">
+                <i data-lucide="{{ $leaveRequest->statut === 'approuve' ? 'check' : 'x' }}" style="width:18px;height:18px;"></i>
+              </span>
               Cette demande a déjà été
               <b style="color:{{ $leaveRequest->statut === 'approuve' ? 'var(--green)' : 'var(--red)' }};">
                 {{ $leaveRequest->statut === 'approuve' ? 'approuvée' : 'refusée' }}
               </b>
               le {{ optional($leaveRequest->valide_le)->format('d M Y') }}.
             </div>
+
+            <button type="button" class="btn-annuler-decision" id="btnOuvrirAnnulation">
+              <i data-lucide="rotate-ccw"></i> Annuler la décision
+            </button>
+
+            <form method="POST" action="{{ route('conges.annulerDecision', $leaveRequest->id) }}" id="annulerDecisionForm">
+              @csrf
+            </form>
           @else
             <form method="POST" action="" id="decisionForm" class="decision-form">
               @csrf
@@ -492,9 +577,42 @@
   </main>
 </div>
 
+@if ($leaveRequest->statut !== 'en_attente')
+<div class="modal-overlay" id="confirmAnnulationOverlay">
+  <div class="modal-box">
+    <div class="modal-ico-ring"><i data-lucide="rotate-ccw" style="width:26px;height:26px;"></i></div>
+    <h3>Annuler cette décision ?</h3>
+    <p>
+      La demande repassera en <b>attente de validation</b>.
+      @if ($leaveRequest->statut === 'approuve' && $leaveRequest->type === 'paye')
+        Le solde de <b>{{ $leaveRequest->jours }} jour{{ $leaveRequest->jours > 1 ? 's' : '' }}</b> déjà décompté sera recrédité automatiquement à {{ $employe->name }}.
+      @endif
+      {{ $employe->name }} recevra une notification.
+    </p>
+    <div class="modal-actions">
+      <button type="button" class="modal-btn modal-btn-cancel" id="btnFermerAnnulation">Non, garder</button>
+      <button type="button" class="modal-btn modal-btn-confirm" id="btnConfirmerAnnulation">
+        <i data-lucide="rotate-ccw" style="width:14px;height:14px;"></i> Oui, annuler
+      </button>
+    </div>
+  </div>
+</div>
+@endif
+
 <script>
   lucide.createIcons();
   document.querySelectorAll('a[href="#"]').forEach(l => l.addEventListener('click', e => e.preventDefault()));
+
+  const notifBtn = document.getElementById('notifBtn');
+  const notifPanel = document.getElementById('notifPanel');
+  if (notifBtn && notifPanel) {
+    notifBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      notifPanel.classList.toggle('open');
+    });
+    document.addEventListener('click', () => notifPanel.classList.remove('open'));
+    notifPanel.addEventListener('click', (e) => e.stopPropagation());
+  }
 
   const form = document.getElementById('decisionForm');
   const btnValider = document.getElementById('btnValider');
@@ -527,6 +645,28 @@
       commentaireInput.required = true;
       form.action = rejectUrl;
       btnEnregistrer.disabled = false;
+    });
+  }
+
+  // ===== Modale moderne "Annuler la décision" (remplace le confirm() natif) =====
+  const btnOuvrirAnnulation = document.getElementById('btnOuvrirAnnulation');
+  const confirmAnnulationOverlay = document.getElementById('confirmAnnulationOverlay');
+  const btnFermerAnnulation = document.getElementById('btnFermerAnnulation');
+  const btnConfirmerAnnulation = document.getElementById('btnConfirmerAnnulation');
+  const annulerDecisionForm = document.getElementById('annulerDecisionForm');
+
+  if (btnOuvrirAnnulation && confirmAnnulationOverlay) {
+    btnOuvrirAnnulation.addEventListener('click', () => {
+      confirmAnnulationOverlay.classList.add('open');
+    });
+    btnFermerAnnulation.addEventListener('click', () => {
+      confirmAnnulationOverlay.classList.remove('open');
+    });
+    confirmAnnulationOverlay.addEventListener('click', (e) => {
+      if (e.target === confirmAnnulationOverlay) confirmAnnulationOverlay.classList.remove('open');
+    });
+    btnConfirmerAnnulation.addEventListener('click', () => {
+      annulerDecisionForm.submit();
     });
   }
 </script>

@@ -41,7 +41,7 @@
   .side-link.active{background:var(--orange); color:#fff;}
   .side-link .tip{position:absolute; left:48px; top:50%; transform:translateY(-50%); background:rgba(20,26,46,.92); backdrop-filter:blur(10px); padding:6px 12px; border-radius:8px; font-size:12px; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .15s; z-index:30; border:1px solid var(--border);}
   .side-link:hover .tip{opacity:1;}
-  .side-bottom{display:flex; flex-direction:column; gap:6px; padding-top:10px; margin-top:8px; border-top:1px solid var(--border); align-items:center;}
+  .side-bottom{display:flex; flex-direction:column; gap:6px; padding-top:10px; margin-top:8px; border-top:1px solid var(--border); align-items:center; position:relative;}
   .side-link:focus .tip{opacity:1;}
 
   /* ===== MAIN ===== */
@@ -53,13 +53,7 @@
   .brand-lockup .brand-text b{display:block; font-size:15px; font-weight:800; letter-spacing:.02em;}
   .brand-lockup .brand-text b span{color:var(--orange);}
   .brand-lockup .brand-text small{display:block; font-size:9.5px; color:var(--text-dim); line-height:1.2;}
-  .topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:30px;}
-
-  /* ===== RECHERCHE (rectangle sombre + bloc blanc + icône, style simple demandé) ===== */
-  .search-box{width:340px; height:44px; display:flex; align-items:stretch; background:#0F2A47; border-radius:8px; padding:5px; gap:8px;}
-  .search-box input{flex:1; border:none; outline:none; background:#fff; border-radius:4px; color:#0F2A47; font-size:13.5px; padding:0 14px; font-family:inherit;}
-  .search-box input::placeholder{color:#8896A8;}
-  .search-btn{width:34px; border:none; background:transparent; color:#CFE0F0; cursor:pointer; display:flex; align-items:center; justify-content:center; flex:none;}
+  .topbar{display:flex; align-items:center; justify-content:flex-end; margin-bottom:30px;}
 
   .top-right{display:flex; align-items:center; gap:14px; position:relative;}
   .icon-btn{position:relative; width:40px; height:40px; border-radius:14px; background:var(--panel); backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); display:flex; align-items:center; justify-content:center;}
@@ -70,7 +64,7 @@
   .user-chip p{font-size:13px; font-weight:600;}
   .user-chip span{font-size:11px; color:var(--text-dim);}
 
-  /* ===== DROPDOWNS (profil + notifications) ===== */
+  /* ===== DROPDOWNS (profil + notifications + paramètres/support) ===== */
   .dropdown{position:absolute; top:52px; right:0; background:rgba(18,24,42,.85); backdrop-filter:blur(var(--glass-blur)); border:1px solid var(--border); border-radius:16px; padding:8px; width:230px; box-shadow:0 12px 30px rgba(0,0,0,.4); display:none; z-index:50;}
   .dropdown.open{display:block;}
   .dropdown-item{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:11px; font-size:13px; width:100%; text-align:left;}
@@ -83,6 +77,9 @@
   .notif-item .n-ico{width:28px; height:28px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex:none;}
   .notif-empty{padding:14px 8px; font-size:12.5px; color:var(--text-dim); text-align:center;}
 
+  /* Dropdown "Paramètres & Support" ancré à la sidebar */
+  .settings-dropdown{position:absolute; left:48px; bottom:0; top:auto; right:auto;}
+
   /* ===== GREETING ===== */
   .greeting{margin-bottom:26px; position:relative;}
   .greeting h1{font-size:27px; font-weight:700; text-shadow:0 2px 12px rgba(0,0,0,.5);}
@@ -92,7 +89,7 @@
   .kpi-image-card img{width:100%; height:100%; object-fit:cover;}
 
   /* ===== GRID LAYOUT ===== */
-  .row2-grid{display:grid; grid-template-columns:0.9fr 1.5fr 0.8fr; gap:16px; margin-bottom:12px; height:210px;}
+  .row2-grid{display:grid; grid-template-columns:0.9fr 1.5fr 0.8fr; gap:16px; margin-bottom:12px; height:240px;}
   .row2-grid > .panel{height:100%; padding:16px; overflow:visible; display:flex; flex-direction:column;}
   @media (max-width:1100px){
     .row2-grid{grid-template-columns:1fr;}
@@ -205,7 +202,6 @@
   }
   @media (max-width:800px){
     .sidebar{display:none;}
-    .search-box{width:220px;}
   }
 </style>
 </head>
@@ -213,48 +209,17 @@
 
 <div class="app">
 
-  <!-- ===== SIDEBAR ===== -->
-  <aside class="sidebar">
-    <div class="side-logo">
-      <img src="{{ asset('images/logo-naja7host.png') }}" alt="NAJA7HOST">
-    </div>
-
-    <nav class="side-nav">
-      <a href="{{ route('dashboard') }}" class="side-link active"><i data-lucide="layout-dashboard" style="width:17px;height:17px;"></i><span class="tip">Tableau de bord</span></a>
-      {{-- FIX : pointait par erreur vers conges.create (même route que "Nouvelle demande" juste en dessous) au lieu de la liste des demandes de l'employé. --}}
-      <a href="{{ route('conges.mesDemandes') }}" class="side-link"><i data-lucide="file-text" style="width:17px;height:17px;"></i><span class="tip">Mes demandes</span></a>
-      <a href="{{ route('conges.create') }}" class="side-link"><i data-lucide="plus-circle" style="width:17px;height:17px;"></i><span class="tip">Nouvelle demande</span></a>
-      <a href="{{ route('calendrier.index') }}" class="side-link"><i data-lucide="calendar-days" style="width:17px;height:17px;"></i><span class="tip">Calendrier</span></a>
-      {{-- Pas de route connue côté employé pour ces 2 liens : donne les noms de route si elles existent, sinon je les construis. --}}
-      <a href="#" class="side-link"><i data-lucide="wallet" style="width:17px;height:17px;"></i><span class="tip">Mon solde</span></a>
-      <a href="#" class="side-link"><i data-lucide="history" style="width:17px;height:17px;"></i><span class="tip">Historique</span></a>
-      <a href="{{ route('profile.edit') }}" class="side-link"><i data-lucide="user" style="width:17px;height:17px;"></i><span class="tip">Mon profil</span></a>
-      <a href="#" class="side-link"><i data-lucide="settings" style="width:17px;height:17px;"></i><span class="tip">Paramètres</span></a>
-    </nav>
-
-    <div class="side-bottom">
-      <a href="#" class="side-link"><i data-lucide="headphones" style="width:16px;height:16px;"></i><span class="tip">Support</span></a>
-      <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit" class="side-link"><i data-lucide="log-out" style="width:16px;height:16px;"></i><span class="tip">Déconnexion</span></button>
-      </form>
-    </div>
-  </aside>
+  <!-- ===== SIDEBAR (partagé, cf. resources/views/partials/sidebar.blade.php) ===== -->
+  @include('partials.sidebar')
 
   <!-- ===== MAIN ===== -->
   <main class="main">
 
     <!-- ===== TOPBAR ===== -->
     <div class="topbar">
-      <div class="search-box">
-        <input type="text" id="rechercheInput" placeholder="Rechercher une demande...">
-        <button type="button" class="search-btn"><i data-lucide="search" style="width:18px;height:18px;"></i></button>
-      </div>
       <div class="top-right">
-        <button class="icon-btn" id="notifBtn"><i data-lucide="bell" style="width:17px;height:17px;"></i>
-          @if ($demandesEnAttente > 0)<span class="dot">{{ $demandesEnAttente }}</span>@endif
-        </button>
-        <button class="icon-btn"><i data-lucide="message-square" style="width:17px;height:17px;"></i></button>
+        @include('partials.notifications')
+
         <div class="user-chip" id="userChip">
           <div class="avatar">
             @if (auth()->user()->photo_path)
@@ -270,33 +235,10 @@
           <i data-lucide="chevron-down" style="width:14px;height:14px; color:var(--text-dim);"></i>
         </div>
 
-        <!-- ===== Panneau notifications ===== -->
-        <div class="notif-panel" id="notifPanel">
-          <h4>Notifications</h4>
-          @if ($demandesEnAttente > 0)
-            <div class="notif-item">
-              <span class="n-ico" style="background:rgba(245,158,11,.15); color:var(--orange);"><i data-lucide="hourglass" style="width:14px;height:14px;"></i></span>
-              <div>{{ $demandesEnAttente }} demande(s) en attente de validation</div>
-            </div>
-          @endif
-          @forelse ($notifications as $notif)
-            <div class="notif-item">
-              <span class="n-ico" style="background:{{ $notif->statut === 'approuve' ? 'rgba(16,185,129,.15)' : 'rgba(239,68,68,.15)' }}; color:{{ $notif->statut === 'approuve' ? 'var(--green)' : 'var(--red)' }};">
-                <i data-lucide="{{ $notif->statut === 'approuve' ? 'check' : 'x' }}" style="width:14px;height:14px;"></i>
-              </span>
-              <div>Votre demande du {{ $notif->date_debut->format('d M') }} a été {{ $notif->statut === 'approuve' ? 'approuvée' : 'refusée' }}</div>
-            </div>
-          @empty
-            @if ($demandesEnAttente === 0)
-              <div class="notif-empty">Aucune notification récente.</div>
-            @endif
-          @endforelse
-        </div>
-
         <!-- ===== Menu profil ===== -->
         <div class="dropdown" id="userMenu">
           <a href="{{ route('profile.edit') }}" class="dropdown-item"><i data-lucide="user" style="width:15px;height:15px;"></i> Mon profil</a>
-          <a href="#" class="dropdown-item"><i data-lucide="settings" style="width:15px;height:15px;"></i> Mes paramètres</a>
+          <a href="{{ route('settings.index') }}" class="dropdown-item"><i data-lucide="settings" style="width:15px;height:15px;"></i> Paramètres et support</a>
           <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="dropdown-item"><i data-lucide="log-out" style="width:15px;height:15px;"></i> Se déconnecter</button>
@@ -315,7 +257,7 @@
     <div class="dash-left">
 
         <!-- ===== KPI (4 anneaux) + image, même hauteur ===== -->
-        <div class="kpi-row">
+        <div class="kpi-row" id="solde-section">
         <div class="panel stats-panel">
           @php
             $anneaux = [
@@ -378,7 +320,7 @@
                 <div class="ring-sub2">cette année</div>
               </div>
             </div>
-            <a class="foot-btn" href="{{ route('conges.mesDemandes', ['statut' => 'approuve']) }}">Voir l'historique</a>
+            <a class="foot-btn" href="{{ route('conges.historique', ['statut' => 'approuve']) }}">Voir l'historique</a>
           </div>
 
           <div class="stat-cell">
@@ -417,7 +359,7 @@
             </div>
             <table id="demandesTable">
               <thead>
-                <tr><th>Type</th><th>Date</th><th>Durée</th><th>Statut</th><th></th></tr>
+                <tr><th>Type</th><th>Date</th><th>Durée</th><th>Statut</th></tr>
               </thead>
               <tbody>
                 @php
@@ -443,9 +385,8 @@
                     [$icone, $iconeClasse] = $icones[$demande->type] ?? ['calendar', 'ico-blue'];
                     $badge = ['approuve' => 'badge-approved', 'en_attente' => 'badge-pending', 'refuse' => 'badge-rejected'][$demande->statut];
                     $statutLabel = ['approuve' => 'Approuvé', 'en_attente' => 'En attente', 'refuse' => 'Refusé'][$demande->statut];
-                    $texteRecherche = strtolower(($libelles[$demande->type] ?? $demande->type).' '.$statutLabel.' '.$demande->date_debut->format('d M'));
                   @endphp
-                  <tr data-recherche="{{ $texteRecherche }}">
+                  <tr>
                     <td>
                       <div class="type-cell">
                         <span class="type-ico {{ $iconeClasse }}"><i data-lucide="{{ $icone }}" style="width:14px;height:14px;"></i></span>
@@ -455,10 +396,9 @@
                     <td>{{ $demande->date_debut->format('d M') }} - {{ $demande->date_fin->format('d M') }}</td>
                     <td>{{ $demande->jours }} jours</td>
                     <td><span class="badge {{ $badge }}">{{ $statutLabel }}</span></td>
-                    <td><span class="action-dots">⋯</span></td>
                   </tr>
                 @empty
-                  <tr><td colspan="5" style="padding:26px 0;">
+                  <tr><td colspan="4" style="padding:26px 0;">
                     <div style="display:flex; flex-direction:column; align-items:center; gap:8px; color:var(--text-dim);">
                       <span style="width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,.06); display:flex; align-items:center; justify-content:center;"><i data-lucide="inbox" style="width:20px;height:20px;"></i></span>
                       <span style="font-size:13px; font-weight:600; color:#fff;">Aucune demande pour le moment</span>
@@ -468,7 +408,6 @@
                 @endforelse
               </tbody>
             </table>
-            <p id="rechercheVide" style="display:none; text-align:center; color:var(--text-dim); font-size:13px; padding:14px 0;">Aucun résultat pour cette recherche.</p>
           </div>
 
           <div class="panel">
@@ -498,10 +437,10 @@
             <div class="panel" style="position:relative; overflow:hidden;">
               <div class="card-head" style="position:relative; z-index:1;"><h2>Solde moyen de congés</h2></div>
               <div style="display:flex; align-items:center; gap:14px; position:relative; z-index:1;">
-                <div style="position:relative; width:90px; height:90px; flex:none;">
-                  <svg viewBox="0 0 90 90" width="90" height="90" style="transform:rotate(-90deg);">
-                    <circle cx="45" cy="45" r="36" fill="none" stroke="var(--panel-2)" stroke-width="9" />
-                    <circle cx="45" cy="45" r="36" fill="none" stroke="url(#soldeGrad)" stroke-width="9" stroke-linecap="round"
+                <div style="position:relative; width:120px; height:120px; flex:none;">
+                  <svg viewBox="0 0 90 90" width="120" height="120" style="transform:rotate(-90deg);">
+                    <circle cx="45" cy="45" r="36" fill="none" stroke="var(--panel-2)" stroke-width="11" />
+                    <circle cx="45" cy="45" r="36" fill="none" stroke="url(#soldeGrad)" stroke-width="11" stroke-linecap="round"
                       stroke-dasharray="{{ 2 * pi() * 36 * ($pourcentageUtilise / 100) }} {{ 2 * pi() * 36 }}" />
                     <defs>
                       <linearGradient id="soldeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -511,14 +450,14 @@
                     </defs>
                   </svg>
                   <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                    <b style="font-size:19px; font-weight:700; line-height:1;">{{ $soldeDisponible }}</b>
-                    <span style="font-size:9px; color:var(--text-dim); text-align:center;">jours<br>restants</span>
+                    <b style="font-size:25px; font-weight:700; line-height:1;">{{ $soldeDisponible }}</b>
+                    <span style="font-size:11px; color:var(--text-dim); text-align:center;">jours<br>restants</span>
                   </div>
                 </div>
-                <div style="display:flex; flex-direction:column; gap:7px; font-size:11.5px;">
-                  <div style="display:flex; align-items:center; gap:6px;"><span class="dot" style="background:var(--blue);"></span> Utilisés <b style="margin-left:auto;">{{ $joursUtilises }}j</b></div>
-                  <div style="display:flex; align-items:center; gap:6px;"><span class="dot" style="background:var(--green);"></span> Restants <b style="margin-left:auto;">{{ $soldeDisponible }}j</b></div>
-                  <div style="display:flex; align-items:center; gap:6px;"><span class="dot" style="background:#64748b;"></span> Total <b style="margin-left:auto;">{{ $soldeAnnuel }}j</b></div>
+                <div style="display:flex; flex-direction:column; gap:10px; font-size:14px;">
+                  <div style="display:flex; align-items:center; gap:8px;"><span class="dot" style="background:var(--blue); width:10px; height:10px;"></span> Utilisés <b style="margin-left:auto; font-size:15px;">{{ $joursUtilises }}j</b></div>
+                  <div style="display:flex; align-items:center; gap:8px;"><span class="dot" style="background:var(--green); width:10px; height:10px;"></span> Restants <b style="margin-left:auto; font-size:15px;">{{ $soldeDisponible }}j</b></div>
+                  <div style="display:flex; align-items:center; gap:8px;"><span class="dot" style="background:#64748b; width:10px; height:10px;"></span> Total <b style="margin-left:auto; font-size:15px;">{{ $soldeAnnuel }}j</b></div>
                 </div>
               </div>
               <img src="{{ asset('images/greeting-illustration.png') }}" alt=""
@@ -529,7 +468,6 @@
               <div class="card-head"><h2>Actions rapides</h2></div>
               <div style="display:flex; gap:10px;">
                 <a href="{{ route('conges.create') }}" class="action-tile" style="width:auto; flex:1;"><span class="ico"><i data-lucide="plus" style="width:16px;height:16px;"></i></span> Nouvelle demande</a>
-                <button type="button" id="genererDoc" class="action-tile" style="width:auto; flex:1;"><span class="ico"><i data-lucide="download" style="width:16px;height:16px;"></i></span> Exporter rapport</button>
               </div>
             </div>
           </div>
@@ -541,9 +479,9 @@
             <div class="card-head"><h2>Utilisation de vos congés</h2></div>
             <div class="donut-wrap">
               <div class="donut-ring">
-                <svg viewBox="0 0 120 120" width="90" height="90" style="transform:rotate(-90deg);">
-                  <circle cx="60" cy="60" r="50" fill="none" stroke="var(--panel-2)" stroke-width="13" />
-                  <circle cx="60" cy="60" r="50" fill="none" stroke="url(#grad)" stroke-width="13" stroke-linecap="round"
+                <svg viewBox="0 0 120 120" width="130" height="130" style="transform:rotate(-90deg);">
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="var(--panel-2)" stroke-width="15" />
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="url(#grad)" stroke-width="15" stroke-linecap="round"
                     stroke-dasharray="{{ 2 * pi() * 50 * ($pourcentageUtilise / 100) }} {{ 2 * pi() * 50 }}" />
                   <defs>
                     <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -552,12 +490,12 @@
                     </linearGradient>
                   </defs>
                 </svg>
-                <div class="center"><b>{{ $pourcentageUtilise }}%</b><span>utilisé</span></div>
+                <div class="center"><b style="font-size:30px;">{{ $pourcentageUtilise }}%</b><span style="font-size:12.5px;">utilisé</span></div>
               </div>
-              <div class="donut-legend" style="margin-top:0;">
-                <div class="row"><span class="dot" style="background:var(--blue);"></span> Utilisés <b style="margin-left:auto;">{{ $joursUtilises }} j</b></div>
-                <div class="row"><span class="dot" style="background:var(--green);"></span> Restants <b style="margin-left:auto;">{{ $soldeDisponible }} j</b></div>
-                <div class="row"><span class="dot" style="background:#475569;"></span> Total <b style="margin-left:auto;">{{ $soldeAnnuel }} j</b></div>
+              <div class="donut-legend" style="margin-top:0; gap:14px;">
+                <div class="row" style="font-size:15px;"><span class="dot" style="background:var(--blue); width:11px; height:11px;"></span> Utilisés <b style="margin-left:auto; font-size:16px;">{{ $joursUtilises }} j</b></div>
+                <div class="row" style="font-size:15px;"><span class="dot" style="background:var(--green); width:11px; height:11px;"></span> Restants <b style="margin-left:auto; font-size:16px;">{{ $soldeDisponible }} j</b></div>
+                <div class="row" style="font-size:15px;"><span class="dot" style="background:#475569; width:11px; height:11px;"></span> Total <b style="margin-left:auto; font-size:16px;">{{ $soldeAnnuel }} j</b></div>
               </div>
             </div>
           </div>
@@ -583,7 +521,7 @@
           </div>
 
           <div class="panel" style="display:flex; flex-direction:column; justify-content:center;">
-            <div class="card-head"><h2>Prochaines absences</h2><a href="{{ route('conges.mesDemandes', ['statut' => 'approuve']) }}">Voir tout</a></div>
+            <div class="card-head"><h2>Prochaines absences</h2><a href="{{ route('conges.historique', ['statut' => 'approuve']) }}">Voir tout</a></div>
             @forelse ($prochainesAbsences as $absence)
               <div class="absence-row">
                 <div class="left">
@@ -713,24 +651,6 @@
 
   dessinerCalendrier();
 
-  /* ===================== RECHERCHE (filtre le tableau des demandes) ===================== */
-  const rechercheInput = document.getElementById('rechercheInput');
-  const lignesDemandes = document.querySelectorAll('#demandesTable tbody tr[data-recherche]');
-  const rechercheVide = document.getElementById('rechercheVide');
-
-  rechercheInput.addEventListener('input', () => {
-    const terme = rechercheInput.value.trim().toLowerCase();
-    let visibles = 0;
-
-    lignesDemandes.forEach(ligne => {
-      const correspond = ligne.dataset.recherche.includes(terme);
-      ligne.style.display = correspond ? '' : 'none';
-      if (correspond) visibles++;
-    });
-
-    rechercheVide.style.display = (terme && visibles === 0) ? 'block' : 'none';
-  });
-
   /* ===================== MENUS DÉROULANTS (profil + notifications) ===================== */
   const userChip = document.getElementById('userChip');
   const userMenu = document.getElementById('userMenu');
@@ -810,11 +730,6 @@
   dessinerGraphique({{ $anneeActuelle }});
   document.getElementById('anneeSelect').addEventListener('change', (e) => {
     dessinerGraphique(parseInt(e.target.value));
-  });
-
-  document.getElementById('genererDoc').addEventListener('click', () => {
-    // NOTE : génération réelle du PDF à brancher à une étape suivante du projet
-    alert('Attestation à générer (fonctionnalité PDF à venir)');
   });
 </script>
 </body>
