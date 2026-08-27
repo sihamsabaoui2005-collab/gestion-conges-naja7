@@ -18,6 +18,9 @@ Route::get('/debug-locale', function () {
         'locale' => app()->getLocale(),
         'trans' => trans('auth.failed'),
         'config_locale' => config('app.locale'),
+        'env_helper' => env('APP_LOCALE'),
+        'getenv_raw' => getenv('APP_LOCALE'),
+        'env_file_exists' => file_exists(base_path('.env')),
     ]);
 });
 
