@@ -88,10 +88,10 @@
     box-shadow:0 5px 12px rgba(56,189,248,.35);}
   .hero-right b{display:block; font-size:16px; font-weight:700; color:var(--orange); margin-bottom:4px;}
   .hero-right p{font-size:11.5px; color:var(--text-dim); line-height:1.4; margin-bottom:8px;}
-  .hero-right a{font-size:12px; font-weight:700; color:#fff; display:inline-flex; align-items:center; gap:6px; padding:9px 16px; border-radius:999px; margin-top:2px;
+  .hero-right button.link-membres{font-size:12px; font-weight:700; color:#fff; display:inline-flex; align-items:center; gap:6px; padding:9px 16px; border-radius:999px; margin-top:2px;
     background: radial-gradient(130% 200% at 30% -30%, rgba(255,255,255,.3), rgba(255,255,255,0) 45%), linear-gradient(160deg, #F59E0B, #C2410C 75%);
     box-shadow:0 6px 16px rgba(194,65,12,.4), inset 0 1px 0 rgba(255,255,255,.25);}
-  .hero-right a:hover{transform:translateY(-1px);}
+  .hero-right button.link-membres:hover{transform:translateY(-1px);}
 
   .info-security-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
   .panel-pad{padding:22px;}
@@ -160,6 +160,23 @@
   .page-footer{display:flex; align-items:center; justify-content:space-between; margin-top:20px; font-size:11.5px; color:var(--text-dim);}
   .page-footer .badge-live{display:inline-flex; align-items:center; gap:6px; color:var(--orange); font-weight:600;}
   .page-footer .badge-live .dot-live{width:7px; height:7px; border-radius:50%; background:var(--orange);}
+
+  /* ===== Modale "Membres du département" ===== */
+  .modal-overlay{position:fixed; inset:0; background:rgba(2,4,10,.65); backdrop-filter:blur(4px); z-index:300; display:none; align-items:center; justify-content:center; padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal-box-membres{background:rgba(20,27,48,.98); border:1px solid var(--border); border-radius:22px; padding:24px; width:420px; max-width:100%; max-height:80vh; overflow-y:auto; box-shadow:0 24px 60px rgba(0,0,0,.55);}
+  .modal-box-membres .m-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;}
+  .modal-box-membres h3{font-size:16px; font-weight:800; color:#fff; display:flex; align-items:center; gap:8px;}
+  .modal-box-membres .m-close{width:30px; height:30px; border-radius:9px; background:var(--panel-2); display:flex; align-items:center; justify-content:center; color:var(--text-dim);}
+  .modal-box-membres .m-close:hover{color:#fff; background:rgba(255,255,255,.1);}
+  .modal-box-membres p.m-sub{font-size:12px; color:var(--text-dim); margin-bottom:16px;}
+  .membre-row{display:flex; align-items:center; gap:12px; padding:10px; border-radius:13px; background:var(--panel-2); margin-bottom:8px;}
+  .membre-row:last-child{margin-bottom:0;}
+  .membre-row .av{width:38px; height:38px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; overflow:hidden; flex:none;}
+  .membre-row .av img{width:100%; height:100%; object-fit:cover; object-position:center top;}
+  .membre-row b{display:block; font-size:13px;}
+  .membre-row span{font-size:11px; color:var(--text-dim);}
+  .membres-empty{font-size:12.5px; color:var(--text-dim); text-align:center; padding:20px 0;}
 
   @media (max-width:1000px){
     .profile-hero, .info-security-grid{grid-template-columns:1fr;}
@@ -248,7 +265,7 @@
           <h3>Mon département</h3>
           <b>{{ auth()->user()->departement ?? 'Non assigné' }}</b>
           <p>Vous faites partie du département {{ auth()->user()->departement ?? '—' }}.</p>
-          <a href="#">Voir les membres du département <i data-lucide="arrow-right" style="width:12px;height:12px;"></i></a>
+          <button type="button" class="link-membres" id="btnVoirMembres">Voir les membres du département <i data-lucide="arrow-right" style="width:12px;height:12px;"></i></button>
         </div>
       </div>
     </div>
@@ -366,6 +383,34 @@
   </main>
 </div>
 
+<div class="modal-overlay" id="membresOverlay">
+  <div class="modal-box-membres">
+    <div class="m-head">
+      <h3><i data-lucide="users" style="width:17px;height:17px; color:var(--orange);"></i> {{ auth()->user()->departement ?? 'Département' }}</h3>
+      <button type="button" class="m-close" id="btnFermerMembres"><i data-lucide="x" style="width:15px;height:15px;"></i></button>
+    </div>
+    <p class="m-sub">{{ $collegues->count() }} collègue{{ $collegues->count() > 1 ? 's' : '' }} dans ce département</p>
+
+    @forelse ($collegues as $collegue)
+      <div class="membre-row">
+        <span class="av">
+          @if ($collegue->photo_path)
+            <img src="{{ asset('storage/'.$collegue->photo_path) }}" alt="">
+          @else
+            {{ strtoupper(substr($collegue->name,0,1)) }}
+          @endif
+        </span>
+        <div>
+          <b>{{ $collegue->name }}</b>
+          <span>{{ $collegue->poste ?? 'Employé' }}</span>
+        </div>
+      </div>
+    @empty
+      <div class="membres-empty">Aucun autre collègue dans ce département pour le moment.</div>
+    @endforelse
+  </div>
+</div>
+
 <script>
   lucide.createIcons();
 
@@ -444,6 +489,17 @@
       wrap.innerHTML = `<i data-lucide="${showing ? 'eye' : 'eye-off'}"></i>`;
       lucide.createIcons();
     });
+  });
+
+  // ===== Modale "Voir les membres du département" =====
+  const btnVoirMembres = document.getElementById('btnVoirMembres');
+  const membresOverlay = document.getElementById('membresOverlay');
+  const btnFermerMembres = document.getElementById('btnFermerMembres');
+
+  btnVoirMembres.addEventListener('click', () => membresOverlay.classList.add('open'));
+  btnFermerMembres.addEventListener('click', () => membresOverlay.classList.remove('open'));
+  membresOverlay.addEventListener('click', (e) => {
+    if (e.target === membresOverlay) membresOverlay.classList.remove('open');
   });
 </script>
 </body>

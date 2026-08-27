@@ -55,7 +55,7 @@ class LeaveRequestController extends Controller
 
     /**
      * Page employé : "Mes demandes" — liste simple de ses propres demandes,
-     * avec filtre par statut et compteurs (sans les widgets de la page Historique).
+     * avec filtre par statut, tri et compteurs (sans les widgets de la page Historique).
      * Alimente la vue conges.mes-demandes.
      */
     public function mesDemandes(Request $request)
@@ -65,6 +65,7 @@ class LeaveRequestController extends Controller
         $statut = $request->query('statut'); // 'en_attente' | 'approuve' | 'refuse' | null (toutes)
         $du     = $request->query('du');
         $au     = $request->query('au');
+        $tri    = $request->query('tri', 'recent'); // 'recent' | 'ancien' | 'statut'
 
         $requete = LeaveRequest::where('user_id', $user->id)->with('comments.user');
 
@@ -78,7 +79,20 @@ class LeaveRequestController extends Controller
             $requete->where('date_fin', '<=', $au);
         }
 
-        $demandes = $requete->orderBy('date_debut', 'desc')->get();
+        switch ($tri) {
+            case 'ancien':
+                $requete->orderBy('date_debut', 'asc');
+                break;
+            case 'statut':
+                $requete->orderBy('statut', 'asc')->orderBy('date_debut', 'desc');
+                break;
+            default:
+                $tri = 'recent';
+                $requete->orderBy('date_debut', 'desc');
+                break;
+        }
+
+        $demandes = $requete->get();
 
         // Compteurs globaux (non filtrés) pour les cartes stats et le panneau de filtres
         $toutesLesDemandes = LeaveRequest::where('user_id', $user->id)->get();
@@ -90,6 +104,7 @@ class LeaveRequestController extends Controller
             'enAttente'  => $toutesLesDemandes->where('statut', 'en_attente')->count(),
             'refusees'   => $toutesLesDemandes->where('statut', 'refuse')->count(),
             'statut'     => $statut,
+            'tri'        => $tri,
         ]);
     }
 

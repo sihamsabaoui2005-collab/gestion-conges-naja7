@@ -362,7 +362,7 @@
               <span class="ico" style="background:rgba(16,185,129,.15); color:var(--green);"><i data-lucide="activity" style="width:15px;height:15px;"></i></span>
               Activité récente
             </div>
-            <a href="#">Voir tout</a>
+            <a href="{{ route('conges.historique') }}">Voir tout</a>
           </div>
           @foreach ($activitesRecentes as $activite)
             <div class="activite-item">

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,8 +18,20 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+
+        // Collègues du même département (pour la modale "Voir les membres du département")
+        $collegues = collect();
+        if ($user->departement) {
+            $collegues = User::where('departement', $user->departement)
+                ->where('id', '!=', $user->id)
+                ->orderBy('name')
+                ->get();
+        }
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user'      => $user,
+            'collegues' => $collegues,
         ]);
     }
 

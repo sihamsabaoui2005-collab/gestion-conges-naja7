@@ -237,9 +237,9 @@
         <div class="panel-head">
           <h2>Mes demandes récentes</h2>
           <select class="sort-select" id="triSelect">
-            <option value="recent">Trier par : Plus récent</option>
-            <option value="ancien">Trier par : Plus ancien</option>
-            <option value="statut">Trier par : Statut</option>
+            <option value="recent" @selected($tri === 'recent')>Trier par : Plus récent</option>
+            <option value="ancien" @selected($tri === 'ancien')>Trier par : Plus ancien</option>
+            <option value="statut" @selected($tri === 'statut')>Trier par : Statut</option>
           </select>
         </div>
 
@@ -402,6 +402,14 @@
   const rappelClose = document.getElementById('rappelClose');
   const rappelCard = document.getElementById('rappelCard');
   rappelClose.addEventListener('click', () => rappelCard.style.display = 'none');
+
+  // ===== Tri "Mes demandes récentes" — recharge la page avec le paramètre ?tri=... =====
+  const triSelect = document.getElementById('triSelect');
+  triSelect.addEventListener('change', () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('tri', triSelect.value);
+    window.location.href = url.toString();
+  });
 
   // ===== Modale de confirmation d'annulation =====
   const confirmOverlay = document.getElementById('confirmAnnulerOverlay');
