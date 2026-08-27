@@ -13,6 +13,14 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SoldeController;
 use App\Http\Controllers\NotificationController;
 
+Route::get('/debug-locale', function () {
+    return response()->json([
+        'locale' => app()->getLocale(),
+        'trans' => trans('auth.failed'),
+        'config_locale' => config('app.locale'),
+    ]);
+});
+
 Route::get('/', function () {
     return view('pages.home');
 })->name('home');
