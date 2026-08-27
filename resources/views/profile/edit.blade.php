@@ -178,6 +178,14 @@
   .membre-row span{font-size:11px; color:var(--text-dim);}
   .membres-empty{font-size:12.5px; color:var(--text-dim); text-align:center; padding:20px 0;}
 
+  /* ===== Modale suppression de compte ===== */
+  .delete-modal-box{background:rgba(20,27,48,.98); border:1px solid var(--border); border-radius:22px; padding:24px; width:380px; max-width:100%; box-shadow:0 24px 60px rgba(0,0,0,.55);}
+  .delete-modal-box h3{font-size:16px; font-weight:800; color:var(--red); margin-bottom:6px; display:flex; align-items:center; gap:8px;}
+  .delete-modal-box p{font-size:12.5px; color:var(--text-dim); margin-bottom:16px; line-height:1.5;}
+  .delete-modal-box .err{color:var(--red); font-size:11.5px; margin-top:6px;}
+  .delete-modal-actions{display:flex; gap:10px; margin-top:16px;}
+  .delete-modal-actions .btn-secondary, .delete-modal-actions .btn-danger{margin-top:0;}
+
   @media (max-width:1000px){
     .profile-hero, .info-security-grid{grid-template-columns:1fr;}
   }
@@ -364,13 +372,9 @@
         <div class="danger-zone">
           <h3>Supprimer mon compte</h3>
           <p>Cette action est irréversible. Toutes vos données seront supprimées.</p>
-          <button type="button" class="btn-danger" onclick="document.getElementById('deleteAccountForm').submit();">
+          <button type="button" class="btn-danger" id="btnOuvrirSuppression">
             <i data-lucide="trash-2" style="width:14px;height:14px;"></i> Supprimer mon compte
           </button>
-          <form id="deleteAccountForm" method="POST" action="{{ route('profile.destroy') }}" style="display:none;">
-            @csrf
-            @method('delete')
-          </form>
         </div>
       </div>
     </div>
@@ -408,6 +412,30 @@
     @empty
       <div class="membres-empty">Aucun autre collègue dans ce département pour le moment.</div>
     @endforelse
+  </div>
+</div>
+
+<div class="modal-overlay" id="deleteOverlay">
+  <div class="delete-modal-box">
+    <h3><i data-lucide="triangle-alert" style="width:17px;height:17px;"></i> Supprimer votre compte</h3>
+    <p>Cette action est irréversible. Entrez votre mot de passe pour confirmer la suppression de votre compte.</p>
+
+    <form id="deleteAccountForm" method="POST" action="{{ route('profile.destroy') }}">
+      @csrf
+      @method('delete')
+      <div class="field-group">
+        <label>Mot de passe</label>
+        <div class="input-wrap">
+          <input type="password" name="password" id="deletePwd" placeholder="Entrez votre mot de passe">
+          <span class="toggle-eye" data-target="deletePwd"><i data-lucide="eye"></i></span>
+        </div>
+        @error('password', 'userDeletion') <span class="err">{{ $message }}</span> @enderror
+      </div>
+      <div class="delete-modal-actions">
+        <button type="button" class="btn-secondary" id="btnAnnulerSuppression">Annuler</button>
+        <button type="submit" class="btn-danger">Supprimer définitivement</button>
+      </div>
+    </form>
   </div>
 </div>
 
@@ -501,6 +529,21 @@
   membresOverlay.addEventListener('click', (e) => {
     if (e.target === membresOverlay) membresOverlay.classList.remove('open');
   });
+
+  // ===== Modale "Supprimer mon compte" =====
+  const btnOuvrirSuppression = document.getElementById('btnOuvrirSuppression');
+  const deleteOverlay = document.getElementById('deleteOverlay');
+  const btnAnnulerSuppression = document.getElementById('btnAnnulerSuppression');
+
+  btnOuvrirSuppression.addEventListener('click', () => deleteOverlay.classList.add('open'));
+  btnAnnulerSuppression.addEventListener('click', () => deleteOverlay.classList.remove('open'));
+  deleteOverlay.addEventListener('click', (e) => {
+    if (e.target === deleteOverlay) deleteOverlay.classList.remove('open');
+  });
+
+  @if ($errors->userDeletion->any())
+    deleteOverlay.classList.add('open');
+  @endif
 </script>
 </body>
 </html>
