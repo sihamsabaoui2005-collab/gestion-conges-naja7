@@ -125,11 +125,15 @@
   .comment-item .av{width:32px; height:32px; border-radius:50%; background:var(--purple); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex:none; overflow:hidden;}
   .comment-item .av img{width:100%; height:100%; object-fit:cover; object-position:center top;}
   .comment-bubble{background:var(--panel-2); border-radius:12px; padding:10px 12px; flex:1;}
-  .comment-bubble .top{display:flex; align-items:center; justify-content:space-between; margin-bottom:3px;}
+  .comment-bubble .top{display:flex; align-items:center; justify-content:space-between; margin-bottom:3px; gap:8px;}
+  .comment-bubble .top-left{display:flex; align-items:center; gap:6px; min-width:0;}
+  .comment-bubble .top-right{display:flex; align-items:center; gap:8px; flex:none;}
   .comment-bubble b{font-size:12px;}
-  .comment-bubble .time{font-size:10px; color:var(--text-dim);}
+  .comment-bubble .time{font-size:10px; color:var(--text-dim); white-space:nowrap;}
   .comment-bubble p{font-size:12.5px; color:var(--text-dim); line-height:1.4;}
-  .comment-bubble .tag-interne{font-size:9.5px; color:var(--purple); font-weight:700; margin-left:6px;}
+  .comment-bubble .tag-interne{font-size:9.5px; color:var(--purple); font-weight:700;}
+  .btn-supprimer-commentaire{color:var(--red); opacity:.7; display:flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:6px; flex:none;}
+  .btn-supprimer-commentaire:hover{opacity:1; background:rgba(239,68,68,.15);}
 
   .comment-form textarea{width:100%; background:var(--panel-2); border:1px solid var(--border); border-radius:12px; padding:10px 12px; color:#fff; font-size:12.5px; resize:vertical; min-height:60px;}
   .comment-form .row{display:flex; align-items:center; justify-content:space-between; margin-top:8px; gap:8px; flex-wrap:wrap;}
@@ -205,6 +209,7 @@
     background:rgba(245,158,11,.15); box-shadow:0 0 0 8px rgba(245,158,11,.08);
     color:var(--orange);
   }
+  .modal-box.modal-danger .modal-ico-ring{background:rgba(239,68,68,.15); box-shadow:0 0 0 8px rgba(239,68,68,.08); color:var(--red);}
   .modal-box h3{font-size:18px; font-weight:800; color:#fff; margin-bottom:10px;}
   .modal-box p{font-size:13px; color:var(--text-dim); line-height:1.55; margin-bottom:26px;}
   .modal-box p b{color:#fff; font-weight:700;}
@@ -219,6 +224,12 @@
     color:#fff; box-shadow:0 8px 20px rgba(194,65,12,.4), inset 0 1px 0 rgba(255,255,255,.25);
   }
   .modal-btn-confirm:hover{filter:brightness(1.08);}
+  .modal-btn-confirm-danger{
+    display:flex; align-items:center; justify-content:center; gap:7px;
+    background:linear-gradient(160deg, #EF4444, #7F1D1D 75%); color:#fff;
+    box-shadow:0 8px 20px rgba(127,29,29,.4);
+  }
+  .modal-btn-confirm-danger:hover{filter:brightness(1.08);}
 
   @media (max-width:1100px){
     .content-grid{grid-template-columns:1fr;}
@@ -417,7 +428,7 @@
 
           @forelse ($leaveRequest->comments as $commentaire)
             @if ($commentaire->visibilite === 'employe' || auth()->user()->role === 'rh')
-              <div class="comment-item">
+              <div class="comment-item" id="commentaire-{{ $commentaire->id }}">
                 <span class="av">
                   @if ($commentaire->user && $commentaire->user->photo_path)
                     <img src="{{ asset('storage/'.$commentaire->user->photo_path) }}" alt="">
@@ -427,10 +438,22 @@
                 </span>
                 <div class="comment-bubble">
                   <div class="top">
-                    <b>{{ $commentaire->user->name ?? '—' }}
+                    <div class="top-left">
+                      <b>{{ $commentaire->user->name ?? '—' }}</b>
                       @if ($commentaire->visibilite === 'interne')<span class="tag-interne">Interne RH</span>@endif
-                    </b>
-                    <span class="time">{{ $commentaire->created_at->diffForHumans() }}</span>
+                    </div>
+                    <div class="top-right">
+                      <span class="time">{{ $commentaire->created_at->diffForHumans() }}</span>
+                      @if (auth()->user()->role === 'rh')
+                        <button type="button" class="btn-supprimer-commentaire" onclick="ouvrirSuppressionCommentaire({{ $commentaire->id }})" title="Supprimer ce commentaire">
+                          <i data-lucide="trash-2" style="width:12px;height:12px;"></i>
+                        </button>
+                        <form method="POST" action="{{ route('conges.comment.destroy', [$leaveRequest->id, $commentaire->id]) }}" id="supprimerCommentaireForm-{{ $commentaire->id }}">
+                          @csrf
+                          @method('delete')
+                        </form>
+                      @endif
+                    </div>
                   </div>
                   <p>{{ $commentaire->message }}</p>
                 </div>
@@ -599,6 +622,22 @@
 </div>
 @endif
 
+@if (auth()->user()->role === 'rh')
+<div class="modal-overlay" id="confirmSuppressionCommentaireOverlay">
+  <div class="modal-box modal-danger">
+    <div class="modal-ico-ring"><i data-lucide="trash-2" style="width:24px;height:24px;"></i></div>
+    <h3>Supprimer ce commentaire ?</h3>
+    <p>Cette action est définitive et ne peut pas être annulée.</p>
+    <div class="modal-actions">
+      <button type="button" class="modal-btn modal-btn-cancel" id="btnFermerSuppressionCommentaire">Non, garder</button>
+      <button type="button" class="modal-btn modal-btn-confirm-danger" id="btnConfirmerSuppressionCommentaire">
+        <i data-lucide="trash-2" style="width:14px;height:14px;"></i> Oui, supprimer
+      </button>
+    </div>
+  </div>
+</div>
+@endif
+
 <script>
   lucide.createIcons();
   document.querySelectorAll('a[href="#"]').forEach(l => l.addEventListener('click', e => e.preventDefault()));
@@ -648,7 +687,7 @@
     });
   }
 
-  // ===== Modale moderne "Annuler la décision" (remplace le confirm() natif) =====
+  // ===== Modale "Annuler la décision" =====
   const btnOuvrirAnnulation = document.getElementById('btnOuvrirAnnulation');
   const confirmAnnulationOverlay = document.getElementById('confirmAnnulationOverlay');
   const btnFermerAnnulation = document.getElementById('btnFermerAnnulation');
@@ -667,6 +706,35 @@
     });
     btnConfirmerAnnulation.addEventListener('click', () => {
       annulerDecisionForm.submit();
+    });
+  }
+
+  // ===== Modale "Supprimer ce commentaire" =====
+  const confirmSuppressionCommentaireOverlay = document.getElementById('confirmSuppressionCommentaireOverlay');
+  const btnFermerSuppressionCommentaire = document.getElementById('btnFermerSuppressionCommentaire');
+  const btnConfirmerSuppressionCommentaire = document.getElementById('btnConfirmerSuppressionCommentaire');
+  let idCommentaireASupprimer = null;
+
+  function ouvrirSuppressionCommentaire(id) {
+    idCommentaireASupprimer = id;
+    confirmSuppressionCommentaireOverlay.classList.add('open');
+  }
+
+  if (confirmSuppressionCommentaireOverlay) {
+    btnFermerSuppressionCommentaire.addEventListener('click', () => {
+      confirmSuppressionCommentaireOverlay.classList.remove('open');
+      idCommentaireASupprimer = null;
+    });
+    confirmSuppressionCommentaireOverlay.addEventListener('click', (e) => {
+      if (e.target === confirmSuppressionCommentaireOverlay) {
+        confirmSuppressionCommentaireOverlay.classList.remove('open');
+        idCommentaireASupprimer = null;
+      }
+    });
+    btnConfirmerSuppressionCommentaire.addEventListener('click', () => {
+      if (idCommentaireASupprimer) {
+        document.getElementById('supprimerCommentaireForm-' + idCommentaireASupprimer).submit();
+      }
     });
   }
 </script>

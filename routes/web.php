@@ -63,6 +63,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/rh/calendrier', [CalendrierController::class, 'index'])->name('calendrier.index');
     Route::get('/rh/conges/{leaveRequest}', [LeaveRequestController::class, 'show'])->name('conges.show');
     Route::post('/rh/conges/{leaveRequest}/commentaire', [LeaveRequestController::class, 'storeComment'])->name('conges.comment');
+    Route::delete('/rh/conges/{leaveRequest}/commentaire/{comment}', [LeaveRequestController::class, 'destroyComment'])->name('conges.comment.destroy');
     Route::post('/rh/conges/{leaveRequest}/approuver', [LeaveRequestController::class, 'approve'])->name('conges.approve');
     Route::post('/rh/conges/{leaveRequest}/refuser', [LeaveRequestController::class, 'reject'])->name('conges.reject');
     Route::post('/rh/conges/{leaveRequest}/annuler-decision', [LeaveRequestController::class, 'annulerDecision'])->name('conges.annulerDecision');

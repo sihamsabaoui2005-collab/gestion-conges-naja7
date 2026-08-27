@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LeaveComment;
 use App\Models\LeaveRequest;
 use App\Models\User;
 use App\Notifications\LeaveRequestDecided;
@@ -589,6 +590,25 @@ class LeaveRequestController extends Controller
         }
 
         return back()->with('success', 'Commentaire ajouté.');
+    }
+
+    /**
+     * Supprimer un commentaire (n'importe quel RH peut supprimer n'importe quel
+     * commentaire sur une demande — pas seulement celui qui l'a écrit).
+     */
+    public function destroyComment(LeaveRequest $leaveRequest, LeaveComment $comment)
+    {
+        if (auth()->user()->role !== 'rh') {
+            abort(403);
+        }
+
+        if ($comment->leave_request_id !== $leaveRequest->id) {
+            abort(404);
+        }
+
+        $comment->delete();
+
+        return back()->with('success', 'Commentaire supprimé.');
     }
 
     public function approve(Request $request, LeaveRequest $leaveRequest)

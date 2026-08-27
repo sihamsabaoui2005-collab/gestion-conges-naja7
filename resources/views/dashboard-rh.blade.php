@@ -464,7 +464,7 @@
         <div class="panel panel-pad">
           <div class="card-head"><h2>Actions rapides</h2></div>
           <div style="display:flex; gap:10px;">
-            <button type="button" id="genererRapport" class="action-tile tile-orange"><span class="ico"><i data-lucide="file-down" style="width:14px;height:14px;"></i></span> Générer rapport</button>
+            <a href="{{ route('rapports.index') }}" class="action-tile tile-orange"><span class="ico"><i data-lucide="file-down" style="width:14px;height:14px;"></i></span> Générer rapport</a>
             <a href="{{ route('conges.index') }}" class="action-tile tile-blue"><span class="ico"><i data-lucide="check-square" style="width:14px;height:14px;"></i></span> Valider les demandes</a>
           </div>
         </div>
@@ -619,10 +619,6 @@
 
   document.querySelectorAll('.sidebar a[href="#"]').forEach(lien => {
     lien.addEventListener('click', (e) => e.preventDefault());
-  });
-
-  document.getElementById('genererRapport').addEventListener('click', () => {
-    alert('Rapport RH à générer (fonctionnalité PDF à venir)');
   });
 
   const userChip = document.getElementById('userChip');
