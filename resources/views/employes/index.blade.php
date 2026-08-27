@@ -127,6 +127,37 @@
   .rh-intelligent p{font-size:11.5px; color:var(--text-dim); line-height:1.4; margin-bottom:10px;}
   .rh-intelligent a{font-size:12px; font-weight:700; color:var(--blue-2); display:inline-flex; align-items:center; gap:4px;}
 
+  /* ===== Modale moderne de confirmation de suppression (remplace confirm() natif) ===== */
+  .modal-overlay{position:fixed; inset:0; background:rgba(2,4,10,.68); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); z-index:300; display:none; align-items:center; justify-content:center; padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal-box{
+    position:relative; overflow:hidden; width:400px; max-width:100%;
+    background: radial-gradient(120% 160% at 15% -10%, rgba(239,68,68,.14), transparent 55%), linear-gradient(165deg, #171d33, #0c1120 100%);
+    border:1px solid rgba(239,68,68,.25); border-radius:24px; padding:30px 28px 26px;
+    box-shadow:0 24px 60px rgba(0,0,0,.55), 0 0 40px rgba(239,68,68,.08);
+    text-align:center; animation:modalPop .22s cubic-bezier(.2,.9,.3,1.1);
+  }
+  @keyframes modalPop{ from{ opacity:0; transform:translateY(10px) scale(.97);} to{ opacity:1; transform:translateY(0) scale(1);} }
+  .modal-box .modal-ico-ring{
+    width:64px; height:64px; border-radius:50%; margin:0 auto 18px; display:flex; align-items:center; justify-content:center;
+    background:rgba(239,68,68,.15); box-shadow:0 0 0 8px rgba(239,68,68,.08);
+    color:var(--red);
+  }
+  .modal-box h3{font-size:18px; font-weight:800; color:#fff; margin-bottom:10px;}
+  .modal-box p{font-size:13px; color:var(--text-dim); line-height:1.55; margin-bottom:26px;}
+  .modal-box p b{color:#fff; font-weight:700;}
+  .modal-actions{display:flex; gap:10px;}
+  .modal-btn{flex:1; padding:13px; border-radius:13px; font-size:13.5px; font-weight:700; transition:transform .15s ease, filter .15s ease;}
+  .modal-btn:hover{transform:translateY(-1px);}
+  .modal-btn-cancel{background:var(--panel-2); border:1px solid var(--border); color:#fff;}
+  .modal-btn-cancel:hover{background:rgba(255,255,255,.1);}
+  .modal-btn-confirm-danger{
+    display:flex; align-items:center; justify-content:center; gap:7px;
+    background:linear-gradient(160deg, #EF4444, #7F1D1D 75%); color:#fff;
+    box-shadow:0 8px 20px rgba(127,29,29,.4);
+  }
+  .modal-btn-confirm-danger:hover{filter:brightness(1.08);}
+
   @media (max-width:800px){ .sidebar{display:none;} }
 </style>
 </head>
@@ -246,14 +277,13 @@
                   @endif
 
                   @if ($e->user->id !== auth()->id())
-                    <form method="POST" action="{{ route('employes.destroy', $e->user->id) }}"
-                          onsubmit="return confirm('Supprimer définitivement {{ $e->user->name }} ? Cette action est irréversible.');">
+                    <form method="POST" action="{{ route('employes.destroy', $e->user->id) }}" id="supprimerEmployeForm-{{ $e->user->id }}">
                       @csrf
                       @method('DELETE')
-                      <button type="submit" class="btn-supprimer">
-                        <i data-lucide="trash-2" style="width:11px;height:11px;"></i> Supprimer
-                      </button>
                     </form>
+                    <button type="button" class="btn-supprimer" onclick="ouvrirSuppressionEmploye({{ $e->user->id }}, '{{ addslashes($e->user->name) }}')">
+                      <i data-lucide="trash-2" style="width:11px;height:11px;"></i> Supprimer
+                    </button>
                   @endif
                 </div>
               @endforeach
@@ -326,6 +356,20 @@
   </main>
 </div>
 
+<div class="modal-overlay" id="confirmSuppressionEmployeOverlay">
+  <div class="modal-box">
+    <div class="modal-ico-ring"><i data-lucide="trash-2" style="width:26px;height:26px;"></i></div>
+    <h3>Supprimer cet employé ?</h3>
+    <p>Supprimer définitivement <b id="nomEmployeASupprimer">—</b> ? Cette action est <b>irréversible</b> et effacera son compte ainsi que l'historique associé.</p>
+    <div class="modal-actions">
+      <button type="button" class="modal-btn modal-btn-cancel" id="btnFermerSuppressionEmploye">Annuler</button>
+      <button type="button" class="modal-btn modal-btn-confirm-danger" id="btnConfirmerSuppressionEmploye">
+        <i data-lucide="trash-2" style="width:14px;height:14px;"></i> Oui, supprimer
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
   lucide.createIcons();
   document.querySelectorAll('a[href="#"]').forEach(l => l.addEventListener('click', e => e.preventDefault()));
@@ -340,6 +384,35 @@
     document.addEventListener('click', () => notifPanel.classList.remove('open'));
     notifPanel.addEventListener('click', (e) => e.stopPropagation());
   }
+
+  // ===== Modale moderne "Supprimer cet employé" (remplace le confirm() natif) =====
+  const confirmSuppressionEmployeOverlay = document.getElementById('confirmSuppressionEmployeOverlay');
+  const btnFermerSuppressionEmploye = document.getElementById('btnFermerSuppressionEmploye');
+  const btnConfirmerSuppressionEmploye = document.getElementById('btnConfirmerSuppressionEmploye');
+  const nomEmployeASupprimer = document.getElementById('nomEmployeASupprimer');
+  let idEmployeASupprimer = null;
+
+  function ouvrirSuppressionEmploye(id, nom) {
+    idEmployeASupprimer = id;
+    nomEmployeASupprimer.textContent = nom;
+    confirmSuppressionEmployeOverlay.classList.add('open');
+  }
+
+  btnFermerSuppressionEmploye.addEventListener('click', () => {
+    confirmSuppressionEmployeOverlay.classList.remove('open');
+    idEmployeASupprimer = null;
+  });
+  confirmSuppressionEmployeOverlay.addEventListener('click', (e) => {
+    if (e.target === confirmSuppressionEmployeOverlay) {
+      confirmSuppressionEmployeOverlay.classList.remove('open');
+      idEmployeASupprimer = null;
+    }
+  });
+  btnConfirmerSuppressionEmploye.addEventListener('click', () => {
+    if (idEmployeASupprimer) {
+      document.getElementById('supprimerEmployeForm-' + idEmployeASupprimer).submit();
+    }
+  });
 </script>
 </body>
 </html>
