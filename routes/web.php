@@ -13,17 +13,6 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SoldeController;
 use App\Http\Controllers\NotificationController;
 
-Route::get('/debug-locale', function () {
-    return response()->json([
-        'locale' => app()->getLocale(),
-        'trans' => trans('auth.failed'),
-        'config_locale' => config('app.locale'),
-        'env_helper' => env('APP_LOCALE'),
-        'getenv_raw' => getenv('APP_LOCALE'),
-        'env_file_exists' => file_exists(base_path('.env')),
-    ]);
-});
-
 Route::get('/', function () {
     return view('pages.home');
 })->name('home');
