@@ -10,6 +10,12 @@
   $moyDept = collect($d['moyenne_jours_par_employe_departement'] ?? []);
   $maxMoyDept = $moyDept->max() ?: 1;
   $detailType = collect($d['detail_par_type'] ?? []);
+
+  // Sections cochées dans "Personnaliser le contenu"
+  $indicateurs = collect($rapport->indicateurs ?? []);
+  $afficherStats   = $indicateurs->isEmpty() || $indicateurs->contains('demandes_totales');
+  $afficherRepType = $indicateurs->isEmpty() || $indicateurs->contains('repartition_par_type');
+  $afficherRepDept = $indicateurs->isEmpty() || $indicateurs->contains('repartition_par_departement');
 @endphp
 
 <!-- PAGE 1 — COUVERTURE -->
@@ -41,6 +47,7 @@
   <div class="pagefoot"><span class="l">NAJA7 HOST — Plateforme de gestion des congés</span><span class="r">Page 2</span></div>
 </div>
 
+@if ($afficherStats)
 <!-- PAGE 3 — INDICATEURS CLES -->
 <div class="sheet">
   <div class="pageheader"><span class="l">{{ $rapport->titre }}</span><span class="r">Indicateurs clés</span></div>
@@ -54,12 +61,15 @@
   </tr></table>
   <div class="pagefoot"><span class="l">NAJA7 HOST — Plateforme de gestion des congés</span><span class="r">Page 3</span></div>
 </div>
+@endif
 
+@if ($afficherRepType || $afficherRepDept)
 <!-- PAGE 4 — GRAPHIQUES + POINTS CLES -->
 <div class="sheet">
   <div class="pageheader"><span class="l">{{ $rapport->titre }}</span><span class="r">Vue graphique</span></div>
   <h2 class="section-title">Vue graphique</h2>
   <div class="two-col">
+    @if ($afficherRepType)
     <div class="col">
       <div class="chart-box">
         <h3>Répartition par type</h3>
@@ -75,6 +85,8 @@
         @endif
       </div>
     </div>
+    @endif
+    @if ($afficherRepDept)
     <div class="col">
       <div class="chart-box">
         <h3>Moyenne jours/employé par département</h3>
@@ -86,16 +98,17 @@
         @endforeach
       </div>
     </div>
+    @endif
   </div>
   <h2 class="section-title" style="margin-top:18px;">Points clés</h2>
   <ul class="insight-list">
-    @if($moyDept->isNotEmpty())
+    @if($afficherRepDept && $moyDept->isNotEmpty())
       <li>Le département <strong>{{ $moyDept->sortDesc()->keys()->first() }}</strong> enregistre la moyenne de congés la plus élevée ({{ $moyDept->max() }} j/employé).</li>
     @endif
-    @if($detailType->isNotEmpty() && $detailType->min('taux_approbation') < 90)
+    @if($afficherRepType && $detailType->isNotEmpty() && $detailType->min('taux_approbation') < 90)
       @php $typeMoinsApprouve = $detailType->sortBy('taux_approbation')->keys()->first(); @endphp
       <li>Le taux d'approbation global reste de {{ $d['taux_approbation'] ?? 0 }}%, tiré vers le bas par le type <strong>{{ $typeLabels[$typeMoinsApprouve] ?? $typeMoinsApprouve }}</strong> ({{ $detailType[$typeMoinsApprouve]['taux_approbation'] }}%).</li>
-    @else
+    @elseif($afficherRepType)
       <li>Le taux d'approbation global reste élevé sur la période ({{ $d['taux_approbation'] ?? 0 }}%), tous types de congé confondus.</li>
     @endif
     <li>{{ $d['en_attente'] ?? 0 }} demande(s) restent en attente de décision à la date de génération.</li>
@@ -105,15 +118,16 @@
   </ul>
   <div class="pagefoot"><span class="l">NAJA7 HOST — Plateforme de gestion des congés</span><span class="r">Page 4</span></div>
 </div>
+@endif
 
 <!-- PAGE 5 — RECOMMANDATIONS -->
 <div class="sheet">
   <div class="pageheader"><span class="l">{{ $rapport->titre }}</span><span class="r">Recommandations</span></div>
   <h2 class="section-title">Recommandations</h2>
-  @if($moyDept->isNotEmpty())
+  @if($afficherRepDept && $moyDept->isNotEmpty())
     <div class="reco"><strong>Recommandation 1</strong>Surveiller la charge du département {{ $moyDept->sortDesc()->keys()->first() }}, dont la moyenne de {{ $moyDept->max() }} jours par employé est la plus élevée de l'entreprise.</div>
   @endif
-  @if($detailType->isNotEmpty() && $detailType->min('taux_approbation') < 90)
+  @if($afficherRepType && $detailType->isNotEmpty() && $detailType->min('taux_approbation') < 90)
     @php $typeMoinsApprouve = $detailType->sortBy('taux_approbation')->keys()->first(); @endphp
     <div class="reco"><strong>Recommandation 2</strong>Clarifier les critères de refus du congé « {{ $typeLabels[$typeMoinsApprouve] ?? $typeMoinsApprouve }} » afin d'améliorer son taux d'approbation ({{ $detailType[$typeMoinsApprouve]['taux_approbation'] }}%).</div>
   @endif

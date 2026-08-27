@@ -5,7 +5,7 @@
   $logoData = file_exists($logoPath) ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath)) : null;
   $d = $rapport->donnees ?? [];
   $typeLabels = ['paye'=>'Congé annuel','rtt'=>'RTT','exceptionnel'=>'Exceptionnel','maladie'=>'Maladie','sans_solde'=>'Sans solde','autre'=>'Autre'];
-  $shades = ['#FF7A1A','#E85D04','#FFA94D','#FFC08A','#C2440C','#7A2E00'];
+  $shades = ['#FF7A1A','#E85D04','#FFA94D','#FFC08A','#C2410C','#7A2E00'];
   $deptStats = collect($d['departements_stats'] ?? []);
   $repDeptJours = collect($d['repartition_par_departement'] ?? []);
   $maxDeptJours = $repDeptJours->max() ?: 1;
@@ -19,6 +19,13 @@
       $totalP1 = $comparaison->sum('periode_1'); $totalP2 = $comparaison->sum('periode_2');
       $evolutionGlobale = $totalP1 > 0 ? round((($totalP2 - $totalP1) / $totalP1) * 100) : null;
   }
+
+  // Sections cochées dans "Personnaliser le contenu"
+  $indicateurs = collect($rapport->indicateurs ?? []);
+  $afficherStats    = $indicateurs->isEmpty() || $indicateurs->contains('demandes_totales');
+  $afficherRepDept  = $indicateurs->isEmpty() || $indicateurs->contains('repartition_par_departement');
+  $afficherTendance = $indicateurs->isEmpty() || $indicateurs->contains('tendance_mensuelle');
+  $afficherTopEmp   = $indicateurs->isEmpty() || $indicateurs->contains('top_employes');
 @endphp
 
 <!-- PAGE 1 — COUVERTURE -->
@@ -56,11 +63,11 @@
   <h2 class="section-title">Sommaire</h2>
   <ul class="toc-list">
     <li><span class="txt"><span class="num">01</span>Vue d'ensemble — indicateurs globaux</span><span class="pg">p.4</span></li>
-    <li><span class="txt"><span class="num">02</span>Classement des départements</span><span class="pg">p.5</span></li>
-    <li><span class="txt"><span class="num">03</span>Comparaison des jours de congé pris</span><span class="pg">p.6</span></li>
-    <li><span class="txt"><span class="num">04</span>Tendances mensuelles par département</span><span class="pg">p.7</span></li>
-    <li><span class="txt"><span class="num">05</span>Comparaison entre périodes</span><span class="pg">p.8</span></li>
-    <li><span class="txt"><span class="num">06</span>Focus employés — top 5</span><span class="pg">p.9</span></li>
+    @if($afficherRepDept)<li><span class="txt"><span class="num">02</span>Classement des départements</span><span class="pg">p.5</span></li>@endif
+    @if($afficherRepDept)<li><span class="txt"><span class="num">03</span>Comparaison des jours de congé pris</span><span class="pg">p.6</span></li>@endif
+    @if($afficherTendance)<li><span class="txt"><span class="num">04</span>Tendances mensuelles par département</span><span class="pg">p.7</span></li>@endif
+    @if($afficherRepDept)<li><span class="txt"><span class="num">05</span>Comparaison entre périodes</span><span class="pg">p.8</span></li>@endif
+    @if($afficherTopEmp)<li><span class="txt"><span class="num">06</span>Focus employés — top 5</span><span class="pg">p.9</span></li>@endif
     <li><span class="txt"><span class="num">07</span>Conclusion, recommandations et glossaire</span><span class="pg">p.10</span></li>
   </ul>
   <p class="body-text" style="margin-top:20px;">Ce rapport présente une analyse comparative de l'utilisation des congés au sein de Naja7 Host sur la période du {{ $rapport->periode_debut->format('d/m/Y') }} au {{ $rapport->periode_fin->format('d/m/Y') }}, département par département.</p>
@@ -71,40 +78,48 @@
 <div class="sheet">
   <div class="pageheader"><span class="l">{{ $rapport->titre }}</span><span class="r">01 · Vue d'ensemble</span></div>
   <h2 class="section-title">Vue d'ensemble — indicateurs globaux</h2>
-  <table class="kpi-table"><tr>
-    <td><span class="kpi-num">{{ $d['nb_departements'] ?? 0 }}</span><span class="kpi-lbl">Départements analysés</span></td>
-    <td><span class="kpi-num">{{ $d['demandes_totales'] ?? 0 }}</span><span class="kpi-lbl">Demandes totales</span></td>
-    <td><span class="kpi-num">{{ $deptStats->avg('moyenne_par_employe') ? round($deptStats->avg('moyenne_par_employe'),1) : 0 }}</span><span class="kpi-lbl">Jours moyens / employé</span></td>
-    <td><span class="kpi-num">{{ $evolutionGlobale !== null ? ($evolutionGlobale >= 0 ? '+' : '').$evolutionGlobale.'%' : '—' }}</span><span class="kpi-lbl">Évolution 1ère → 2e moitié</span></td>
-  </tr></table>
-  <div class="chart-box">
-    <h3>Répartition des {{ $d['jours_utilises'] ?? 0 }} jours de congé par département</h3>
-    @if($repDeptJours->isNotEmpty())
-      {{-- FIX : ?: 1 pour éviter une division par zéro quand aucun jour de congé
-           n'est encore approuvé sur la période (tous les $valeur à 0, somme = 0) --}}
-      @php $totalJoursDept = $repDeptJours->sum() ?: 1; @endphp
-      <div class="segbar">
+
+  @if ($afficherStats)
+    <table class="kpi-table"><tr>
+      <td><span class="kpi-num">{{ $d['nb_departements'] ?? 0 }}</span><span class="kpi-lbl">Départements analysés</span></td>
+      <td><span class="kpi-num">{{ $d['demandes_totales'] ?? 0 }}</span><span class="kpi-lbl">Demandes totales</span></td>
+      <td><span class="kpi-num">{{ $deptStats->avg('moyenne_par_employe') ? round($deptStats->avg('moyenne_par_employe'),1) : 0 }}</span><span class="kpi-lbl">Jours moyens / employé</span></td>
+      <td><span class="kpi-num">{{ $evolutionGlobale !== null ? ($evolutionGlobale >= 0 ? '+' : '').$evolutionGlobale.'%' : '—' }}</span><span class="kpi-lbl">Évolution 1ère → 2e moitié</span></td>
+    </tr></table>
+  @endif
+
+  @if ($afficherRepDept)
+    <div class="chart-box">
+      <h3>Répartition des {{ $d['jours_utilises'] ?? 0 }} jours de congé par département</h3>
+      @if($repDeptJours->isNotEmpty())
+        {{-- FIX : ?: 1 pour éviter une division par zéro quand aucun jour de congé
+             n'est encore approuvé sur la période (tous les $valeur à 0, somme = 0) --}}
+        @php $totalJoursDept = $repDeptJours->sum() ?: 1; @endphp
+        <div class="segbar">
+          @foreach($repDeptJours->sortDesc() as $dept => $valeur)
+            <div class="seg" style="width:{{ round($valeur/$totalJoursDept*100) }}%; background:{{ $shades[$loop->index % count($shades)] }};"></div>
+          @endforeach
+        </div>
         @foreach($repDeptJours->sortDesc() as $dept => $valeur)
-          <div class="seg" style="width:{{ round($valeur/$totalJoursDept*100) }}%; background:{{ $shades[$loop->index % count($shades)] }};"></div>
+          <div class="legend-item"><span class="l"><span class="legend-dot" style="background:{{ $shades[$loop->index % count($shades)] }};"></span>{{ $dept }}</span><span class="v">{{ round($valeur/$totalJoursDept*100) }}% ({{ $valeur }} j)</span></div>
         @endforeach
-      </div>
-      @foreach($repDeptJours->sortDesc() as $dept => $valeur)
-        <div class="legend-item"><span class="l"><span class="legend-dot" style="background:{{ $shades[$loop->index % count($shades)] }};"></span>{{ $dept }}</span><span class="v">{{ round($valeur/$totalJoursDept*100) }}% ({{ $valeur }} j)</span></div>
-      @endforeach
-    @endif
-  </div>
-  <p class="body-text" style="margin-top:12px;">
-    Sur la période du {{ $rapport->periode_debut->format('d/m/Y') }} au {{ $rapport->periode_fin->format('d/m/Y') }}, {{ $d['nb_employes_concernes'] ?? 0 }} employé(s) répartis sur {{ $d['nb_departements'] ?? 0 }} département(s) ont déposé {{ $d['demandes_totales'] ?? 0 }} demande(s) de congé, pour une durée moyenne de {{ $d['duree_moyenne'] ?? 0 }} jour(s) par demande.
-    @if(($d['taux_refus'] ?? 0) > 0)
-      Le taux de refus s'établit à {{ $d['taux_refus'] }}%, un point à surveiller sur les prochaines périodes.
-    @else
-      Aucune demande n'a été refusée sur la période, signe d'un processus de validation fluide.
-    @endif
-    Le délai moyen de traitement d'une demande est de {{ $d['delai_moyen_traitement'] ?? 0 }} jour(s).
-  </p>
+      @endif
+    </div>
+    <p class="body-text" style="margin-top:12px;">
+      Sur la période du {{ $rapport->periode_debut->format('d/m/Y') }} au {{ $rapport->periode_fin->format('d/m/Y') }}, {{ $d['nb_employes_concernes'] ?? 0 }} employé(s) répartis sur {{ $d['nb_departements'] ?? 0 }} département(s) ont déposé {{ $d['demandes_totales'] ?? 0 }} demande(s) de congé, pour une durée moyenne de {{ $d['duree_moyenne'] ?? 0 }} jour(s) par demande.
+      @if(($d['taux_refus'] ?? 0) > 0)
+        Le taux de refus s'établit à {{ $d['taux_refus'] }}%, un point à surveiller sur les prochaines périodes.
+      @else
+        Aucune demande n'a été refusée sur la période, signe d'un processus de validation fluide.
+      @endif
+      Le délai moyen de traitement d'une demande est de {{ $d['delai_moyen_traitement'] ?? 0 }} jour(s).
+    </p>
+  @endif
+
   <div class="pagefoot"><span class="l">NAJA7 HOST — Plateforme de gestion des congés</span><span class="r">Page 4</span></div>
 </div>
 
+@if ($afficherRepDept)
 <!-- PAGE 5 — CLASSEMENT -->
 <div class="sheet">
   <div class="pageheader"><span class="l">{{ $rapport->titre }}</span><span class="r">02 · Classement</span></div>
@@ -157,7 +172,9 @@
   </p>
   <div class="pagefoot"><span class="l">NAJA7 HOST — Plateforme de gestion des congés</span><span class="r">Page 6</span></div>
 </div>
+@endif
 
+@if ($afficherTendance)
 <!-- PAGE 7 — TENDANCES MENSUELLES -->
 <div class="sheet">
   <div class="pageheader"><span class="l">{{ $rapport->titre }}</span><span class="r">04 · Tendances</span></div>
@@ -181,7 +198,9 @@
   </p>
   <div class="pagefoot"><span class="l">NAJA7 HOST — Plateforme de gestion des congés</span><span class="r">Page 7</span></div>
 </div>
+@endif
 
+@if ($afficherRepDept)
 <!-- PAGE 8 — T1 VS T2 -->
 <div class="sheet">
   <div class="pageheader"><span class="l">{{ $rapport->titre }}</span><span class="r">05 · Comparaison périodes</span></div>
@@ -207,7 +226,9 @@
   @endif
   <div class="pagefoot"><span class="l">NAJA7 HOST — Plateforme de gestion des congés</span><span class="r">Page 8</span></div>
 </div>
+@endif
 
+@if ($afficherTopEmp)
 <!-- PAGE 9 — FOCUS EMPLOYES -->
 <div class="sheet">
   <div class="pageheader"><span class="l">{{ $rapport->titre }}</span><span class="r">06 · Focus employés</span></div>
@@ -232,6 +253,7 @@
   @endif
   <div class="pagefoot"><span class="l">NAJA7 HOST — Plateforme de gestion des congés</span><span class="r">Page 9</span></div>
 </div>
+@endif
 
 <!-- PAGE 10 — CONCLUSION -->
 <div class="sheet">
@@ -239,7 +261,7 @@
   <h2 class="section-title">Conclusion et recommandations</h2>
   <p class="body-text">L'analyse comparative fait ressortir un taux d'approbation global de {{ $d['taux_approbation'] ?? 0 }}%, avec des écarts notables entre départements sur la charge de congés par employé. Sur la période, {{ $d['nb_employes_concernes'] ?? 0 }} employé(s) ont sollicité un congé, pour une durée moyenne de {{ $d['duree_moyenne'] ?? 0 }} jour(s) par demande et un délai de traitement moyen de {{ $d['delai_moyen_traitement'] ?? 0 }} jour(s).</p>
   <ul class="body-list">
-    @if($deptStats->isNotEmpty())
+    @if($afficherRepDept && $deptStats->isNotEmpty())
       <li>Suivre de près la charge du département <strong>{{ $deptStats->keys()->first() }}</strong>, en tête du classement par jours moyens/employé.</li>
     @endif
     @if($detailType->isNotEmpty() && $detailType->min('taux_approbation') < 90)
