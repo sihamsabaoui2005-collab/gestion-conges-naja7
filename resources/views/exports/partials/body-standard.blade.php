@@ -10,6 +10,14 @@
   $tendance = collect($d['tendance_mensuelle'] ?? []);
   $maxTendance = $tendance->max() ?: 1;
   $detailType = collect($d['detail_par_type'] ?? []);
+
+  // Sections cochées par l'utilisateur dans "Personnaliser le contenu" (colonne 1 du builder).
+  // Valeurs possibles : demandes_totales, repartition_par_type, repartition_par_departement,
+  // top_employes, tendance_mensuelle, top_departements_demandes.
+  $indicateurs = collect($rapport->indicateurs ?? []);
+  $afficherStats       = $indicateurs->isEmpty() || $indicateurs->contains('demandes_totales');
+  $afficherRepartition = $indicateurs->isEmpty() || $indicateurs->contains('repartition_par_type');
+  $afficherTendance    = $indicateurs->isEmpty() || $indicateurs->contains('tendance_mensuelle');
 @endphp
 
 <!-- PAGE 1 — COUVERTURE -->
@@ -39,35 +47,41 @@
   </div>
 </div>
 
+@if ($afficherStats || $afficherRepartition || $afficherTendance)
 <!-- PAGE 3 — INDICATEURS + REPARTITION -->
 <div class="sheet">
   <div class="pageheader"><span class="l">{{ $rapport->titre }}</span><span class="r">Indicateurs</span></div>
-  <h2 class="section-title">Indicateurs généraux</h2>
-  <table class="kpi-table"><tr>
-    <td><span class="kpi-num">{{ $d['demandes_totales'] ?? 0 }}</span><span class="kpi-lbl">Demandes de congé</span></td>
-    <td><span class="kpi-num">{{ $d['jours_utilises'] ?? 0 }}</span><span class="kpi-lbl">Jours de congé pris</span></td>
-    <td><span class="kpi-num">{{ $d['taux_approbation'] ?? 0 }}%</span><span class="kpi-lbl">Taux d'approbation</span></td>
-    <td><span class="kpi-num">{{ $d['nb_employes_concernes'] ?? 0 }}</span><span class="kpi-lbl">Employés concernés</span></td>
-  </tr></table>
 
-  <h2 class="section-title">Répartition par type de congé</h2>
-  <div class="chart-box">
-    <h3>Demandes par type</h3>
-    @if($totalType > 0)
-      <div class="segbar">
+  @if ($afficherStats)
+    <h2 class="section-title">Indicateurs généraux</h2>
+    <table class="kpi-table"><tr>
+      <td><span class="kpi-num">{{ $d['demandes_totales'] ?? 0 }}</span><span class="kpi-lbl">Demandes de congé</span></td>
+      <td><span class="kpi-num">{{ $d['jours_utilises'] ?? 0 }}</span><span class="kpi-lbl">Jours de congé pris</span></td>
+      <td><span class="kpi-num">{{ $d['taux_approbation'] ?? 0 }}%</span><span class="kpi-lbl">Taux d'approbation</span></td>
+      <td><span class="kpi-num">{{ $d['nb_employes_concernes'] ?? 0 }}</span><span class="kpi-lbl">Employés concernés</span></td>
+    </tr></table>
+  @endif
+
+  @if ($afficherRepartition)
+    <h2 class="section-title">Répartition par type de congé</h2>
+    <div class="chart-box">
+      <h3>Demandes par type</h3>
+      @if($totalType > 0)
+        <div class="segbar">
+          @foreach($repType->sortDesc() as $type => $valeur)
+            <div class="seg" style="width:{{ round($valeur/$totalType*100) }}%; background:{{ $shades[$loop->index % count($shades)] }};"></div>
+          @endforeach
+        </div>
         @foreach($repType->sortDesc() as $type => $valeur)
-          <div class="seg" style="width:{{ round($valeur/$totalType*100) }}%; background:{{ $shades[$loop->index % count($shades)] }};"></div>
+          <div class="legend-item"><span class="l"><span class="legend-dot" style="background:{{ $shades[$loop->index % count($shades)] }};"></span>{{ $typeLabels[$type] ?? $type }}</span><span class="v">{{ round($valeur/$totalType*100) }}% ({{ $valeur }})</span></div>
         @endforeach
-      </div>
-      @foreach($repType->sortDesc() as $type => $valeur)
-        <div class="legend-item"><span class="l"><span class="legend-dot" style="background:{{ $shades[$loop->index % count($shades)] }};"></span>{{ $typeLabels[$type] ?? $type }}</span><span class="v">{{ round($valeur/$totalType*100) }}% ({{ $valeur }})</span></div>
-      @endforeach
-    @else
-      <p class="caption">Aucune demande sur la période.</p>
-    @endif
-  </div>
+      @else
+        <p class="caption">Aucune demande sur la période.</p>
+      @endif
+    </div>
+  @endif
 
-  @if($tendance->isNotEmpty())
+  @if ($afficherTendance && $tendance->isNotEmpty())
   <div class="chart-box">
     <h3>Évolution mensuelle des demandes</h3>
     <table class="bar-col-table"><tr>
@@ -81,9 +95,12 @@
     </tr></table>
   </div>
   @endif
+
   <div class="pagefoot"><span class="l">NAJA7 HOST — Plateforme de gestion des congés</span><span class="r">Page 3</span></div>
 </div>
+@endif
 
+@if ($afficherRepartition)
 <!-- PAGE 4 — DETAIL + ANALYSE -->
 <div class="sheet">
   <div class="pageheader"><span class="l">{{ $rapport->titre }}</span><span class="r">Détail et analyse</span></div>
@@ -118,4 +135,5 @@
   </ul>
   <div class="pagefoot"><span class="l">NAJA7 HOST — Plateforme de gestion des congés</span><span class="r">Page 4</span></div>
 </div>
+@endif
 </div>
