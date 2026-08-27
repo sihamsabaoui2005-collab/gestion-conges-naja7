@@ -13,6 +13,12 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [\App\Http\Middleware\SetLocale::class]);
+
+        // Railway (comme Heroku, Render, etc.) place l'app derrière un proxy inverse.
+        // Sans ça, Laravel ne sait pas que la requête entrante est en HTTPS et génère
+        // des URLs signées (Livewire upload, vérification email...) avec le mauvais
+        // schéma, ce qui casse leur validation avec une erreur 401 "Invalid signature."
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
