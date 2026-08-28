@@ -68,7 +68,7 @@ class SoldeController extends Controller
             })
             ->values();
 
-        // ----- Détail par type de congé (4 catégories affichées sur la page) -----
+        // ----- Détail par type de congé (catégories affichées sur la page) -----
         $typesConges = [
             [
                 'label'   => 'Congés annuels',
@@ -109,6 +109,16 @@ class SoldeController extends Controller
                 'icone'   => 'clock',
                 'couleur' => '#8B5CF6',
                 'rgb'     => '139,92,246',
+            ],
+            [
+                'label'   => 'Autre congé',
+                'utilise' => $demandesApprouvees->whereIn('type', ['autre', 'sans_solde'])->sum('jours'),
+                'restant' => null,
+                'total'   => null,
+                'regle'   => 'Soumis à validation selon le motif',
+                'icone'   => 'more-horizontal',
+                'couleur' => '#60A5FA',
+                'rgb'     => '96,165,250',
             ],
         ];
 
